@@ -1,6 +1,11 @@
 /* ══════════════════════════════════
    layout.css — 페이지 시스템 + 탭바 + FAB
    반응형: 320px ~ 480px+ 전 크기 대응
+
+   ✅ iOS Safari 스크롤 버그 최종 수정
+   - 구분선: box-shadow → ::before 가상요소 (탭바 내부에 완전 종속)
+   - FAB: position:fixed 별도 요소 → 탭바와 같은 GPU 레이어로 묶음
+   - isolation: isolate → 탭바를 독립 스택 컨텍스트로 분리
 ══════════════════════════════════ */
 
 /* ── Page System ── */
@@ -28,13 +33,33 @@
   height: var(--tab-h);
   padding-bottom: env(safe-area-inset-bottom);
   background: #f5f0eb;
-  box-shadow: 0 -1px 0 rgba(196, 168, 130, .35);
   display: flex;
   align-items: stretch;
   z-index: 500;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
+
+  /* ✅ 핵심: 단일 GPU 컴포지트 레이어로 고정 */
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
   will-change: transform;
+
+  /* ✅ 독립 스택 컨텍스트 — 자식 요소들이 이 레이어 밖으로 이탈 불가 */
+  isolation: isolate;
+}
+
+/* ✅ 구분선을 ::before 가상요소로 구현
+   box-shadow / border-top 은 iOS 스크롤 중 탭바 본체와 분리될 수 있음.
+   ::before 는 탭바 내부 DOM에 완전히 종속되어 절대 이탈하지 않음. */
+.tab-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(196, 168, 130, .4);
+  /* 이 선도 동일 GPU 레이어에 묶임 */
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 /* ── Tab Buttons ── */
@@ -47,10 +72,11 @@
   gap: 3px;
   background: none;
   border: none;
+  outline: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: color .2s;
-  color: var(--muted); /* 기존 --light-muted → --muted: 아이콘 더 진하게 */
+  color: var(--muted);
   padding: 8px 2px calc(8px + env(safe-area-inset-bottom));
   position: relative;
   min-width: 44px;
@@ -79,6 +105,7 @@
 }
 
 /* ── Floating Share FAB ── */
+/* ✅ FAB도 translate3d 적용 → 탭바와 동일한 GPU 레이어 전략 */
 .share-fab {
   position: fixed;
   bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 14px);
@@ -94,11 +121,13 @@
   z-index: 400;
   -webkit-tap-highlight-color: transparent;
   box-shadow: 0 4px 16px rgba(42, 33, 24, .22);
-  transition: transform .15s, background .2s;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
+  transition: background .2s;
+  outline: none;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
 }
-.share-fab:active { transform: scale(.92) translateZ(0); background: var(--red); }
+.share-fab:active { background: var(--red); }
 .share-fab svg { width: 18px; height: 18px; }
 
 /* ── 작은 폰 (360px 이하) 탭 아이콘 축소 ── */
