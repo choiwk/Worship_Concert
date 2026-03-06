@@ -76,13 +76,6 @@
   margin-right: clamp(16px, 10vw, 48px);
 }
 
-/* 유튜브 오버레이 UI 차단 */
-.yt-cover-block {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-
 /* ── Section: Media Visual ── */
 .sec-media {
   width: 100%;
@@ -98,12 +91,39 @@
   overflow: hidden;
 }
 
-/* YouTube embed 반응형 */
+/* ── Video — 모바일 재생 버튼 완전 제거 ── */
+#main-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* iOS Safari 기본 재생 버튼 숨김 */
+#main-video::-webkit-media-controls {
+  display: none !important;
+}
+#main-video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+#main-video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+/* ── YouTube embed 반응형 ── */
 .media-wrapper iframe {
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
   border: none;
+}
+
+/* 유튜브 오버레이 UI 차단 */
+.yt-cover-block {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 .media-placeholder {
@@ -125,6 +145,7 @@
   opacity: .6;
 }
 
+/* 하단 그라데이션 페이드 */
 .media-wrapper::after {
   content: '';
   position: absolute;
@@ -132,6 +153,7 @@
   height: 80px;
   background: linear-gradient(to top, var(--cream), transparent);
   pointer-events: none;
+  z-index: 2;
 }
 
 /* ── Section: Event Info ── */
@@ -189,8 +211,6 @@
   color: var(--light-muted);
   margin-top: 14px;
 }
-
-
 
 /* ── Detail Cards ── */
 .detail-grid {
