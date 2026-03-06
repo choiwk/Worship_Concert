@@ -1,0 +1,149 @@
+/* ══════════════════════════════════
+   components/share.css — 공유 바텀시트 + 토스트
+   반응형: 320px ~ 480px+ 전 크기 대응
+══════════════════════════════════ */
+
+/* ── Modal Backdrop ── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(42, 33, 24, .45);
+  z-index: 800;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+/* ── Share Bottom Sheet ── */
+.share-sheet {
+  position: fixed;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  width: 100%;
+  max-width: var(--max-w);
+  background: var(--cream);
+  border-radius: 20px 20px 0 0;
+  /* iOS 홈바 여백 확보 */
+  padding: 0 0 calc(28px + env(safe-area-inset-bottom));
+  z-index: 900;
+  transition: transform .38s cubic-bezier(.32, 0, .18, 1);
+  border-top: 1px solid rgba(196, 168, 130, .3);
+}
+.share-sheet.open { transform: translateX(-50%) translateY(0); }
+
+.sheet-handle {
+  width: 36px; height: 4px;
+  background: rgba(196, 168, 130, .5);
+  border-radius: 2px;
+  margin: 12px auto 0;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+}
+
+.sheet-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(14px, 3.8vw, 16px);
+  font-weight: 400;
+  letter-spacing: .04em;
+  color: var(--brown);
+}
+
+.sheet-close {
+  width: 32px; height: 32px;
+  background: rgba(196, 168, 130, .18);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .2s;
+  /* 터치 타겟 확보 */
+  min-width: 44px; min-height: 44px;
+}
+.sheet-close:active { background: rgba(192, 57, 43, .12); }
+
+.sheet-divider {
+  height: 1px;
+  background: rgba(196, 168, 130, .25);
+  margin: 0 20px 20px;
+}
+
+/* ── Share Option Buttons ── */
+.share-options {
+  display: flex;
+  gap: clamp(12px, 4vw, 24px);
+  padding: 0 clamp(16px, 5vw, 28px);
+  justify-content: center;
+}
+
+.share-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  flex: 1;
+  max-width: 80px;
+  /* 터치 타겟 */
+  min-width: 56px;
+}
+
+.share-opt-icon {
+  width: clamp(48px, 13vw, 60px);
+  height: clamp(48px, 13vw, 60px);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s;
+}
+.share-opt:active .share-opt-icon { transform: scale(.88); }
+
+.share-opt-icon.kakao  { background: #FEE500; }
+.share-opt-icon.insta  { background: linear-gradient(135deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D); }
+.share-opt-icon.link   { background: var(--brown); }
+
+.share-opt-label {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(10px, 2.8vw, 12px);
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: .03em;
+  text-align: center;
+  word-break: keep-all;
+}
+
+/* ── Toast Notification ── */
+.toast {
+  position: fixed;
+  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 72px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--brown);
+  color: var(--cream);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(12px, 3.2vw, 14px);
+  letter-spacing: .12em;
+  padding: 10px clamp(16px, 4.5vw, 24px);
+  border-radius: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s, transform .25s;
+  z-index: 1000;
+  white-space: nowrap;
+  max-width: 90vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }

@@ -1,0 +1,333 @@
+/* ══════════════════════════════════
+   pages/main.css — Page 1 메인 페이지
+   반응형: 320px ~ 480px+ 전 크기 대응
+══════════════════════════════════ */
+
+/* ── Section: Title ── */
+.sec-title {
+  min-height: 45vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(44px, 12vw, 64px) clamp(20px, 6vw, 28px) clamp(36px, 10vw, 52px);
+  background: var(--cream);
+  position: relative;
+  text-align: center;
+}
+
+.sec-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 48px; height: 1px;
+  background: var(--gold);
+}
+
+.title-deco {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: clamp(18px, 5vw, 22px);
+  color: var(--red);
+  letter-spacing: .04em;
+  line-height: 1;
+  animation: fadeIn 1.2s ease .1s both;
+}
+
+.title-main {
+  margin-top: 4px;
+  animation: fadeUp 1s ease .3s both;
+}
+
+.title-main .line-ko {
+  display: block;
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 300;
+  font-size: clamp(22px, 6.5vw, 32px);
+  color: var(--brown);
+  letter-spacing: .06em;
+  line-height: 1.8;
+}
+
+.title-main .line-ko.accent {
+  font-weight: 600;
+  color: var(--red);
+}
+
+.title-main .line-en {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(10px, 2.8vw, 13px);
+  letter-spacing: .22em;
+  color: var(--muted);
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+
+.title-deco-bottom {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: clamp(18px, 5vw, 22px);
+  color: var(--red);
+  animation: fadeIn 1.2s ease .5s both;
+  align-self: flex-end;
+  margin-right: clamp(16px, 10vw, 48px);
+}
+
+/* ── Section: Media Visual ── */
+.sec-media {
+  width: 100%;
+  position: relative;
+  background: #ddd5c8;
+  overflow: hidden;
+}
+
+.media-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  position: relative;
+  overflow: hidden;
+}
+
+/* YouTube embed 반응형 */
+.media-wrapper iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: none;
+}
+
+.media-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #c9bfb0 0%, #a8977f 40%, #8b7355 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.media-placeholder svg { opacity: .35; }
+.media-placeholder .placeholder-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(11px, 3vw, 13px);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: #f5f0eb;
+  opacity: .6;
+}
+
+.media-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 80px;
+  background: linear-gradient(to top, var(--cream), transparent);
+  pointer-events: none;
+}
+
+/* ── Section: Event Info ── */
+.sec-info {
+  padding: clamp(32px, 10vw, 48px) clamp(16px, 5.5vw, 28px) clamp(36px, 10vw, 52px);
+  text-align: center;
+  background: var(--cream);
+  position: relative;
+}
+
+.sec-info::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 1px; height: 40px;
+  background: var(--gold);
+  opacity: .6;
+}
+
+.event-date {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: clamp(13px, 3.8vw, 17px);
+  letter-spacing: .18em;
+  color: var(--red);
+  margin-bottom: clamp(18px, 6vw, 28px);
+}
+
+.event-name {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 300;
+  font-size: clamp(17px, 5vw, 24px);
+  line-height: 1.9;
+  color: var(--brown);
+  letter-spacing: .04em;
+}
+
+.event-name .connector {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(12px, 3.2vw, 15px);
+  color: var(--muted);
+  letter-spacing: .12em;
+  margin: 2px 0;
+}
+
+.event-name .sub-label {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(10px, 2.8vw, 14px);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--light-muted);
+  margin-top: 14px;
+}
+
+/* ── Detail Cards ── */
+.detail-grid {
+  margin-top: clamp(24px, 8vw, 40px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(10px, 3vw, 16px);
+}
+
+.detail-card {
+  background: rgba(255, 255, 255, .55);
+  border: 1px solid rgba(196, 168, 130, .3);
+  border-radius: 4px;
+  padding: clamp(12px, 3.8vw, 18px) clamp(8px, 2.5vw, 12px);
+  text-align: center;
+}
+
+.detail-card .card-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(9px, 2.4vw, 11px);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--light-muted);
+  margin-bottom: 8px;
+}
+
+.detail-card .card-value {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(11px, 3vw, 14px);
+  font-weight: 400;
+  color: var(--brown);
+  line-height: 1.6;
+}
+
+.detail-card.full-width { grid-column: 1 / -1; }
+
+/* ── Ticket Buttons ── */
+.ticket-cta { margin-top: clamp(24px, 8vw, 40px); }
+
+.btn-ticket {
+  display: block;
+  width: 100%;
+  padding: clamp(14px, 4vw, 18px);
+  background: var(--brown);
+  color: var(--cream);
+  border: none;
+  border-radius: 3px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(12px, 3.4vw, 14px);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background .3s, transform .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-ticket:active { background: var(--red); transform: scale(.98); }
+
+.btn-secondary {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: clamp(12px, 3.5vw, 16px);
+  background: transparent;
+  color: var(--brown);
+  border: 1px solid rgba(42, 33, 24, .35);
+  border-radius: 3px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(11px, 3.2vw, 13px);
+  letter-spacing: .20em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .3s, background .3s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-secondary:active { background: rgba(42, 33, 24, .06); }
+
+/* ── Section: Message ── */
+.sec-message {
+  padding: clamp(36px, 12vw, 56px) clamp(20px, 7vw, 36px) clamp(56px, 16vw, 80px);
+  text-align: center;
+  background: var(--cream-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+.sec-message::before {
+  content: '\201C';
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(100px, 28vw, 140px);
+  color: rgba(192, 57, 43, .08);
+  position: absolute;
+  top: -10px; left: 12px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.message-text {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 300;
+  font-size: clamp(14px, 4vw, 17px);
+  line-height: 2.2;
+  color: #3d3028;
+  letter-spacing: .04em;
+  word-break: keep-all;
+  position: relative;
+  z-index: 1;
+}
+
+.message-ref {
+  margin-top: clamp(18px, 6vw, 28px);
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(11px, 3vw, 14px);
+  letter-spacing: .15em;
+  color: var(--red);
+  position: relative;
+  z-index: 1;
+}
+
+.ornament {
+  display: block;
+  text-align: center;
+  color: var(--gold);
+  font-size: 18px;
+  letter-spacing: 8px;
+  margin: clamp(18px, 6vw, 28px) 0 0;
+  opacity: .7;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Footer ── */
+.footer {
+  padding: clamp(18px, 5vw, 28px);
+  text-align: center;
+  background: var(--brown);
+}
+
+.footer-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(10px, 2.6vw, 12px);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 235, .35);
+}

@@ -1,0 +1,113 @@
+/* ══════════════════════════════════
+   layout.css — 페이지 시스템 + 탭바 + FAB
+   반응형: 320px ~ 480px+ 전 크기 대응
+══════════════════════════════════ */
+
+/* ── Page System ── */
+.page {
+  display: none;
+  min-height: calc(100dvh - var(--tab-h));
+  padding-bottom: calc(var(--tab-h) + 20px);
+  animation: pageFade .35s ease both;
+}
+
+.page.active {
+  display: block;
+}
+
+/* ── Bottom Tab Bar ── */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--max-w);
+  height: var(--tab-h);
+  /* iOS 홈바 영역까지 배경 확장 */
+  padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(245, 240, 235, .97);
+  border-top: 1px solid rgba(196, 168, 130, .35);
+  display: flex;
+  align-items: stretch;
+  z-index: 500;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .2s;
+  color: var(--light-muted);
+  /* 터치 영역 충분히 확보 */
+  padding: 8px 2px calc(8px + env(safe-area-inset-bottom));
+  position: relative;
+  min-width: 44px; /* 최소 터치 타겟 44px */
+}
+
+.tab-btn.active { color: var(--red); }
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 24px; height: 2px;
+  background: var(--red);
+  border-radius: 0 0 2px 2px;
+  transition: transform .25s cubic-bezier(.4, 0, .2, 1);
+}
+.tab-btn.active::after { transform: translateX(-50%) scaleX(1); }
+
+.tab-icon {
+  width: 20px; height: 20px;
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+.tab-btn.active .tab-icon { transform: scale(1.1); }
+
+.tab-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(9px, 2.5vw, 11px);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ── Floating Share FAB ── */
+.share-fab {
+  position: fixed;
+  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 14px);
+  right: max(16px, env(safe-area-inset-right) + 16px);
+  width: 44px; height: 44px;
+  background: var(--brown);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 400;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 4px 16px rgba(42, 33, 24, .22);
+  transition: transform .15s, background .2s;
+}
+.share-fab:active { transform: scale(.92); background: var(--red); }
+.share-fab svg { width: 18px; height: 18px; }
+
+/* ── 작은 폰 (360px 이하) 탭 아이콘 축소 ── */
+@media (max-width: 359px) {
+  .tab-icon { width: 18px; height: 18px; }
+  .tab-label { letter-spacing: .06em; }
+  .share-fab { width: 40px; height: 40px; right: 12px; }
+  .share-fab svg { width: 16px; height: 16px; }
+}

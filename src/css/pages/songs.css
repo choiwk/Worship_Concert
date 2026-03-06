@@ -1,0 +1,202 @@
+/* ══════════════════════════════════
+   pages/songs.css — Page 2 곡 리스트
+   반응형: 320px ~ 480px+ 전 크기 대응
+══════════════════════════════════ */
+
+/* ── Page Common Header ── */
+.page-header {
+  padding: clamp(36px, 10vw, 48px) clamp(18px, 5.5vw, 28px) clamp(24px, 7vw, 32px);
+  text-align: center;
+  background: var(--cream);
+  position: relative;
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 48px; height: 1px;
+  background: var(--gold);
+}
+
+.page-header .ph-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(9px, 2.5vw, 11px);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--light-muted);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.page-header .ph-title {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 300;
+  font-size: clamp(20px, 5.5vw, 26px);
+  color: var(--brown);
+  letter-spacing: .05em;
+}
+
+/* ── Song Overview List ── */
+.song-overview {
+  padding: clamp(24px, 7vw, 36px) clamp(16px, 5.5vw, 28px) 0;
+  background: var(--cream);
+}
+
+.song-row {
+  display: flex;
+  align-items: baseline;
+  padding: clamp(11px, 3.2vw, 14px) 0;
+  border-bottom: 1px solid rgba(196, 168, 130, .2);
+  position: relative;
+}
+.song-row:first-child { border-top: 1px solid rgba(196, 168, 130, .2); }
+
+.song-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(11px, 3vw, 13px);
+  color: var(--light-muted);
+  width: clamp(22px, 6vw, 28px);
+  flex-shrink: 0;
+  letter-spacing: .05em;
+}
+
+.song-title-text {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 300;
+  font-size: clamp(14px, 4vw, 17px);
+  color: var(--brown);
+  letter-spacing: .03em;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.song-row .song-arrow {
+  font-size: 10px;
+  color: var(--gold);
+  margin-left: 8px;
+  opacity: .6;
+  flex-shrink: 0;
+}
+
+/* ── Intermission Break ── */
+.song-break { padding: 18px 0 14px; text-align: center; }
+
+.song-break-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--light-muted);
+}
+.song-break-line::before,
+.song-break-line::after {
+  content: ''; flex: 1; height: 1px;
+  background: rgba(196, 168, 130, .3);
+}
+
+.song-break-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(11px, 3vw, 13px);
+  letter-spacing: .15em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── Song Detail Cards ── */
+.song-detail-section {
+  padding: clamp(28px, 8vw, 40px) clamp(16px, 5.5vw, 28px) 0;
+  background: var(--cream);
+}
+
+.detail-section-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(9px, 2.4vw, 11px);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--light-muted);
+  margin-bottom: 20px;
+  text-align: center;
+  display: block;
+}
+.detail-section-label::before {
+  content: ''; display: block;
+  width: 1px; height: 28px;
+  background: var(--gold); opacity: .5;
+  margin: 0 auto 16px;
+}
+
+.song-card {
+  background: rgba(255, 255, 255, .55);
+  border: 1px solid rgba(196, 168, 130, .25);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: transform .15s;
+}
+.song-card:active { transform: scale(.99); }
+
+.song-card-inner {
+  display: flex;
+  align-items: center;
+  padding: clamp(12px, 3.5vw, 16px) clamp(14px, 4vw, 18px);
+  gap: clamp(10px, 3vw, 14px);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+}
+
+.song-card-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(11px, 3vw, 13px);
+  color: var(--light-muted);
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.song-card-info { flex: 1; min-width: 0; }
+
+.song-card-name {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 400;
+  font-size: clamp(13px, 3.5vw, 15px);
+  color: var(--brown);
+  letter-spacing: .03em;
+  margin-bottom: 2px;
+  /* 긴 제목 말줄임 처리 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-card-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(10px, 2.6vw, 12px);
+  letter-spacing: .12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.song-card-yt {
+  width: clamp(30px, 8vw, 36px);
+  height: clamp(30px, 8vw, 36px);
+  flex-shrink: 0;
+  background: #FF0000;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.song-card-yt svg {
+  width: clamp(12px, 3.2vw, 15px);
+  height: clamp(12px, 3.2vw, 15px);
+}
+
+/* ── 작은 폰 (360px 이하) 추가 조정 ── */
+@media (max-width: 359px) {
+  .song-card-name { font-size: 13px; }
+  .song-card-yt   { width: 28px; height: 28px; border-radius: 6px; }
+}

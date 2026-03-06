@@ -1,0 +1,71 @@
+/* ══════════════════════════════════
+   reset.css — CSS 변수 + 전역 리셋 + body + paper texture
+   반응형: 320px ~ 480px+ 전 모바일 지원
+══════════════════════════════════ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* iOS Safari 바운스 스크롤 허용 */
+  -webkit-overflow-scrolling: touch;
+}
+
+:root {
+  --cream:       #f5f0eb;
+  --cream-dark:  #ede7df;
+  --brown:       #2a2118;
+  --red:         #c0392b;
+  --gold:        #c4a882;
+  --muted:       #9a8470;
+  --light-muted: #b5a494;
+  --tab-h:       60px;   /* 탭바 높이 */
+  --max-w:       480px;  /* 최대 너비 */
+
+  /* ── 반응형 간격 변수 ── */
+  --space-xs:  8px;
+  --space-sm:  16px;
+  --space-md:  24px;
+  --space-lg:  36px;
+  --space-xl:  52px;
+}
+
+/* 작은 폰 (320px 이하) 에서 간격 축소 */
+@media (max-width: 359px) {
+  :root {
+    --space-xs:  6px;
+    --space-sm:  12px;
+    --space-md:  18px;
+    --space-lg:  28px;
+    --space-xl:  40px;
+    --tab-h:     56px;
+  }
+}
+
+body {
+  font-family: 'Noto Serif KR', 'Cormorant Garamond', serif;
+  background: var(--cream);
+  color: var(--brown);
+  max-width: var(--max-w);
+  margin: 0 auto;
+  overflow-x: hidden;
+  min-height: 100dvh;
+  /* iOS Safari에서 노치·홈바 영역 보호 */
+  padding-left:  env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* ── Paper texture overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+  opacity: .45;
+}
