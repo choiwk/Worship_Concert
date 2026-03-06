@@ -68,18 +68,22 @@
                style="width:100%;height:100%;object-fit:cover;"/> -->
 
         <!-- 영상: -->
-          <video autoplay muted loop playsinline
+          <!-- <video autoplay muted loop playsinline
                  style="width:100%;height:100%;object-fit:cover;">
             <source src="public/videos/MainWorship.mp4" type="video/mp4"/>
-          </video>
-        
-      <div class="media-placeholder">
-        <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-          <circle cx="26" cy="26" r="24" stroke="#f5f0eb" stroke-width="1.5"/>
-          <polygon points="21,17 38,26 21,35" fill="#f5f0eb"/>
-        </svg>
-        <span class="placeholder-text">Concert Highlight Video</span>
-      </div>
+          </video> -->
+
+          <!-- index.html → Page 1 Media 섹션 안의 media-placeholder를 이걸로 교체 -->
+        <!-- 기존 iframe을 아래 코드 전체로 교체 -->
+<div class="media-wrapper">
+  <div class="yt-cover-block"></div>
+  <iframe
+    src="https://www.youtube.com/embed/3WtGWJmhUaA?autoplay=1&mute=1&loop=1&playlist=3WtGWJmhUaA&controls=0&playsinline=1&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&showinfo=0"
+    style="position:absolute;top:50%;left:50%;width:177.78%;height:177.78%;transform:translate(-50%,-50%);border:none;"
+    allow="autoplay; encrypted-media"
+    allowfullscreen>
+  </iframe>
+</div>
     </div>
   </section>
 

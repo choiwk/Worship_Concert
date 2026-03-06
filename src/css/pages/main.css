@@ -76,6 +76,13 @@
   margin-right: clamp(16px, 10vw, 48px);
 }
 
+/* 유튜브 오버레이 UI 차단 */
+.yt-cover-block {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
 /* ── Section: Media Visual ── */
 .sec-media {
   width: 100%;
