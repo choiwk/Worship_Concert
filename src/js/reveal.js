@@ -27,3 +27,32 @@ function triggerReveal() {
 
 // 첫 페이지 로드 시 즉시 실행
 triggerReveal();
+
+// ── 모바일 자동재생 강제 실행 ──────────────────
+(function () {
+  const video = document.getElementById('main-video');
+  if (!video) return;
+
+  const tryPlay = () => {
+    video.muted = true;
+    video.play().catch(() => {});
+  };
+
+  if (document.readyState === 'complete') {
+    tryPlay();
+  } else {
+    window.addEventListener('load', tryPlay);
+  }
+
+  const onFirstTouch = () => {
+    video.play().catch(() => {});
+    document.removeEventListener('touchstart', onFirstTouch);
+  };
+  document.addEventListener('touchstart', onFirstTouch, { once: true });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      video.play().catch(() => {});
+    }
+  });
+})();

@@ -1,16 +1,6 @@
 /* ══════════════════════════════════
    layout.css — 페이지 시스템 + 탭바 + FAB
    반응형: 320px ~ 480px+ 전 크기 대응
-
-   ✅ iOS Safari 스크롤 중 nav 깨짐 버그 해결
-   원인: position:fixed + transform:translateX(-50%) + backdrop-filter 조합 시
-         iOS가 스크롤 중 레이어를 재합성하면서 레이아웃 붕괴
-   수정:
-     1. left:50%+transform 방식 → left:0/right:0/margin:auto 방식으로 교체
-        (transform을 centering에 사용하지 않아 충돌 제거)
-     2. backdrop-filter 제거 → 불투명 배경으로 교체
-        (iOS에서 backdrop-filter는 fixed 요소 레이어를 불안정하게 만듦)
-     3. translateZ(0) 단독 적용 → GPU 단일 컴포지트 레이어 확보
 ══════════════════════════════════ */
 
 /* ── Page System ── */
@@ -29,37 +19,19 @@
 .tab-bar {
   position: fixed;
   bottom: 0;
-
-  /* ✅ 수정 1: left:50%+translateX(-50%) → left/right/margin 방식
-     이유: transform을 centering에 쓰면 translateZ(0)와 혼용 불가.
-           left:0/right:0/margin:auto는 transform 없이 중앙 고정 가능. */
   left: 0;
   right: 0;
   margin-left: auto;
   margin-right: auto;
-
   width: 100%;
   max-width: var(--max-w);
   height: var(--tab-h);
-
-  /* iOS 홈바 영역까지 배경 확장 */
   padding-bottom: env(safe-area-inset-bottom);
-
-  /* ✅ 수정 2: backdrop-filter 제거 → 불투명 단색 배경으로 교체
-     이유: iOS Safari에서 position:fixed 요소에 backdrop-filter 적용 시
-           관성 스크롤 중 레이어 재합성 비용으로 레이아웃이 붕괴됨.
-           불투명 배경(opacity 1)은 별도 레이어 합성이 필요 없어 안전. */
   background: #f5f0eb;
-
-  /* 구분선: box-shadow 유지 (border-top보다 레이어 안정적) */
   box-shadow: 0 -1px 0 rgba(196, 168, 130, .35);
-
   display: flex;
   align-items: stretch;
   z-index: 500;
-
-  /* ✅ 수정 3: translateZ(0) 단독 → GPU 컴포지트 레이어 고정
-     transform이 centering에서 빠졌으므로 translateZ(0)만 단독 적용 가능. */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
   will-change: transform;
@@ -78,27 +50,18 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: color .2s;
-  color: var(--light-muted);
-  /* 터치 영역 충분히 확보 */
+  color: var(--muted); /* 기존 --light-muted → --muted: 아이콘 더 진하게 */
   padding: 8px 2px calc(8px + env(safe-area-inset-bottom));
   position: relative;
-  min-width: 44px; /* 최소 터치 타겟 44px */
+  min-width: 44px;
 }
 
 .tab-btn.active { color: var(--red); }
 
-/* 활성 탭 상단 빨간 인디케이터 선 */
+/* 상단 인디케이터 선 제거 */
 .tab-btn::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 50%;
-  transform: translateX(-50%) scaleX(0);
-  width: 24px; height: 2px;
-  background: var(--red);
-  border-radius: 0 0 2px 2px;
-  transition: transform .25s cubic-bezier(.4, 0, .2, 1);
+  display: none;
 }
-.tab-btn.active::after { transform: translateX(-50%) scaleX(1); }
 
 .tab-icon {
   width: 20px; height: 20px;
