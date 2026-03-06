@@ -211,15 +211,14 @@
 }
 
 .venue-highlight {
-  font-size: clamp(12px, 4vw, 20px);
-
+  font-size: clamp(17px, 5vw, 22px);
+  font-weight: 600;
+  color: var(--brown);
 }
 
 .detail-card .card-value {
   font-family: 'Noto Serif KR', serif;
   font-size: clamp(11px, 3vw, 14px);
-  font-weight: 400;
-  color: var(--brown);
   line-height: 1.6;
 }
 
