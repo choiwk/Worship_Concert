@@ -20,19 +20,28 @@
   position: fixed;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateZ(0); /* GPU 레이어 강제 고정 */
+  -webkit-transform: translateX(-50%) translateZ(0);
   width: 100%;
   max-width: var(--max-w);
   height: var(--tab-h);
-  /* iOS 홈바 영역까지 배경 확장 */
   padding-bottom: env(safe-area-inset-bottom);
   background: rgba(245, 240, 235, .97);
-  border-top: 1px solid rgba(196, 168, 130, .35);
+
+  /*
+   * 핵심 수정: border-top → box-shadow
+   * iOS Safari에서 position:fixed + backdrop-filter 조합 시
+   * 관성 스크롤 중 border-top 레이어가 요소 본체에서 분리되는 버그.
+   * box-shadow는 GPU 레이어에 완전히 종속되어 이탈하지 않음.
+   */
+  box-shadow: 0 -1px 0 rgba(196, 168, 130, .35);
+
   display: flex;
   align-items: stretch;
   z-index: 500;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  will-change: transform;
 }
 
 .tab-btn {
@@ -48,10 +57,9 @@
   -webkit-tap-highlight-color: transparent;
   transition: color .2s;
   color: var(--light-muted);
-  /* 터치 영역 충분히 확보 */
   padding: 8px 2px calc(8px + env(safe-area-inset-bottom));
   position: relative;
-  min-width: 44px; /* 최소 터치 타겟 44px */
+  min-width: 44px;
 }
 
 .tab-btn.active { color: var(--red); }

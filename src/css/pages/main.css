@@ -183,6 +183,8 @@
   margin-top: 14px;
 }
 
+
+
 /* ── Detail Cards ── */
 .detail-grid {
   margin-top: clamp(24px, 8vw, 40px);
@@ -206,6 +208,11 @@
   text-transform: uppercase;
   color: var(--light-muted);
   margin-bottom: 8px;
+}
+
+.venue-highlight {
+  font-size: clamp(12px, 4vw, 20px);
+
 }
 
 .detail-card .card-value {
