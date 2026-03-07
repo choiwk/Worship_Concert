@@ -1,86 +1,71 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
-<meta charset="UTF-8"/>
+<meta charset="utf-8"/>
 <!-- 모바일 반응형: viewport-fit=cover → 노치/홈바 영역까지 확장 -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>찬양이 좋아서 모인 청년들 — LIVE CONCERT 2026</title>
-
 <!-- PWA / 모바일 앱 느낌 메타태그 -->
-<meta name="theme-color" content="#f5f0eb"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-<meta name="apple-mobile-web-app-title" content="찬양 콘서트 2026"/>
-
+<meta content="#f5f0eb" name="theme-color"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="default" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="찬양 콘서트 2026" name="apple-mobile-web-app-title"/>
 <!-- SNS 공유 미리보기 (OG 태그) — 배포 후 실제 URL로 교체 -->
-<meta property="og:title"       content="찬양이 좋아서 모인 청년들 — LIVE CONCERT 2026"/>
-<meta property="og:description" content="2026.11.21 SAT · 찬양 콘서트 · 함께해요"/>
-<meta property="og:type"        content="website"/>
+<meta content="찬양이 좋아서 모인 청년들 — LIVE CONCERT 2026" property="og:title"/>
+<meta content="2026.11.21 SAT · 찬양 콘서트 · 함께해요" property="og:description"/>
+<meta content="website" property="og:type"/>
 <!-- <meta property="og:image" content="https://your-site.com/public/images/og-cover.jpg"/> -->
 <!-- <meta property="og:url"   content="https://your-site.com"/> -->
-
 <!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet"/>
-
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=IM+Fell+English:ital@0;1&amp;display=swap" rel="stylesheet"/>
 <!-- ─── CSS ─── -->
 <!-- 1. 변수 + 리셋: 가장 먼저 로드 -->
-<link rel="stylesheet" href="src/css/reset.css"/>
+<link href="src/css/reset.css" rel="stylesheet"/>
 <!-- 2. 애니메이션 keyframes + .reveal -->
-<link rel="stylesheet" href="src/css/animations.css"/>
+<link href="src/css/animations.css" rel="stylesheet"/>
 <!-- 3. 페이지 시스템 + 탭바 + FAB -->
-<link rel="stylesheet" href="src/css/layout.css"/>
+<link href="src/css/layout.css" rel="stylesheet"/>
 <!-- 4. 공유 바텀시트 + 토스트 -->
-<link rel="stylesheet" href="src/css/components/share.css"/>
+<link href="src/css/components/share.css" rel="stylesheet"/>
 <!-- 5. 각 페이지별 스타일 -->
-<link rel="stylesheet" href="src/css/pages/main.css"/>
-<link rel="stylesheet" href="src/css/pages/songs.css"/>
-<link rel="stylesheet" href="src/css/pages/artists.css"/>
+<link href="src/css/pages/main.css" rel="stylesheet"/>
+<link href="src/css/pages/songs.css" rel="stylesheet"/>
+<link href="src/css/pages/artists.css" rel="stylesheet"/>
+<link href="src/css/pages/story.css" rel="stylesheet"/>
+<!-- 반응형 css -->
+<link rel="stylesheet" href="src/css/responsive.css"/>
 </head>
 <body>
-
 <!-- ════════════════════════════════
      PAGE 1 — MAIN
 ════════════════════════════════ -->
-<div id="page-main" class="page active">
-
-  <!-- Title -->
-  <section class="sec-title">
-    <span class="title-deco">/</span>
-    <div class="title-main">
-      <span class="line-ko accent">찬양이</span>
-      <span class="line-ko">좋아서 모인</span>
-      <span class="line-ko">청년들</span>
-      <span class="line-en">Live Concert · 2026</span>
-    </div>
-
-  </section>
-
-  <!-- Media Visual -->
-  <section class="sec-media reveal">
-    <div class="media-wrapper">
-     
-
-        <!-- 이미지: -->
-          <!-- <img src="public/images/concert-main.jpg"
+<div class="page active" id="page-main">
+<!-- Title -->
+<section class="sec-title">
+<span class="title-deco">/</span>
+<div class="title-main">
+<span class="line-ko accent">찬양이</span>
+<span class="line-ko">좋아서 모인</span>
+<span class="line-ko">청년들</span>
+<span class="line-en">Live Concert · 2026</span>
+</div>
+</section>
+<!-- Media Visual -->
+<section class="sec-media reveal">
+<div class="media-wrapper">
+<!-- 이미지: -->
+<!-- <img src="public/images/concert-main.jpg"
                alt="Concert"
                style="width:100%;height:100%;object-fit:cover;"/> -->
-
-        <!-- 영상: -->
-        <video id="main-video" autoplay muted loop playsinline
-        disablepictureinpicture
-        disableremoteplayback
-        x-webkit-airplay="deny"
-        style="width:100%;height:100%;object-fit:cover;"
-        preload="auto">
-   <source src="public/videos/MainWorship.mp4" type="video/mp4"/>
- </video>
-
- 
-
-          <!-- index.html → Page 1 Media 섹션 안의 media-placeholder를 이걸로 교체 -->
-        <!-- 기존 iframe을 아래 코드 전체로 교체 -->
+<!-- 영상: -->
+<video autoplay="" disablepictureinpicture="" disableremoteplayback="" id="main-video" loop="" muted="" playsinline="" preload="auto" style="width:100%;height:100%;object-fit:cover;" x-webkit-airplay="deny">
+<source src="public/videos/MainWorship.mp4" type="video/mp4"/>
+</video>
+<!-- index.html → Page 1 Media 섹션 안의 media-placeholder를 이걸로 교체 -->
+<!-- 기존 iframe을 아래 코드 전체로 교체 -->
 <!-- <div class="media-wrapper">
   <div class="yt-cover-block"></div>
   <iframe
@@ -91,580 +76,617 @@
   </iframe>
 </div>
     </div> -->
-  </section>
-
-  <!-- Event Info -->
-  <section class="sec-info">
-    <p class="event-date reveal">2026 . 11 . 21 . SAT</p>
-
-    <div class="event-name reveal">
-      <span>찬양이 좋아서 모인 청년들ㄹ</span>
-      <span class="connector">presents</span>
-      <span>LIVE CONCERT</span>
-      <span class="sub-label">Praise · Worship · Together</span>
-    </div>
-
-    <div class="detail-grid reveal">
-      <div class="detail-card">
-        <p class="card-label">Date</p>
-        <p class="card-value">2026년 11월 00일<br/>토요일</p>
-      </div>
-      <div class="detail-card">
-        <p class="card-label">Time</p>
-        <p class="card-value">오후 8:00 ~ <br/>9:40</p>
-      </div>
-      <div class="detail-card full-width">
-        <p class="card-label">Venue</p>
-      
-        <p class="card-value">
-          <span class="venue-highlight">향상교회 3층</span> 강당
+</div></section>
+<!-- Event Info -->
+<section class="sec-info">
+<p class="event-date reveal">2026 . 11 . 21 . SAT</p>
+<div class="event-name reveal">
+<span>찬양이 좋아서 모인 청년들</span>
+<span class="connector">presents</span>
+<span>LIVE CONCERT</span>
+<span class="sub-label">Praise · Worship · Together</span>
+</div>
+<div class="detail-grid reveal">
+<div class="detail-card">
+<p class="card-label">Date</p>
+<p class="card-value">2026년 11월 00일<br/>토요일</p>
+</div>
+<div class="detail-card">
+<p class="card-label">Time</p>
+<p class="card-value">오후 8:00 ~ <br/>9:40</p>
+</div>
+<div class="detail-card full-width">
+<p class="card-label">Venue</p>
+<p class="card-value">
+<span class="venue-highlight">향상교회 3층</span> 강당
         </p>
-        <p class="card-value">기흥구 언동로 140</p>
-      </div>
-    </div>
-
-    <div class="ticket-cta reveal">
-      <a href="#" class="btn-ticket">참여하기</a>
-      <a href="#" class="btn-secondary">공연 문의 · 인스타그램</a>
-    </div>
-  </section>
-
-  <!-- Message -->
-  <section class="sec-message reveal">
-    <p class="message-text">
+<p class="card-value">기흥구 언동로 140</p>
+</div>
+</div>
+<div class="ticket-cta reveal">
+<a class="btn-ticket" href="#">참여하기</a>
+<a class="btn-secondary" href="#">공연 문의 · 인스타그램</a>
+</div>
+</section>
+<!-- Message -->
+<section class="sec-message reveal">
+<p class="message-text">
       그의 안에서 건물마다 서로 연결하여<br/>
       주 안에서 성전이 되어가고
     </p>
-    <p class="message-ref">에베소서 2:21</p>
-    <span class="ornament">· · ·</span>
-  </section>
-
-  <footer class="footer">
-    <p class="footer-text">찬양이 좋아서 모인 청년들 &copy; 2026</p>
-  </footer>
-
+<p class="message-text">
+      너희도 성령 안에서 하나님이 거하실<br/>
+      처소가 되기 위하여
+    </p>
+<p class="message-text">
+      그리스도 예수 안에서<br/>
+<br/>
+      “함께 지어져 가느니라”
+    </p>
+<p class="message-ref">에베소서 2:21</p>
+<!-- <span class="ornament">· · ·</span> -->
+</section>
+<footer class="footer">
+<p class="footer-text">찬양이 좋아서 모인 청년들 © 2026</p>
+</footer>
 </div><!-- /page-main -->
-
-
 <!-- ════════════════════════════════
      PAGE 2 — SONG LIST
 ════════════════════════════════ -->
-<div id="page-songs" class="page">
-
-  <div class="page-header">
-    <span class="ph-label">Setlist</span>
-    <h2 class="ph-title">곡 리스트</h2>
-  </div>
-
-  <!-- Quick overview: 10곡 한눈에 -->
-  <div class="song-overview">
-    <div class="song-row reveal">
-      <span class="song-num">01</span>
-      <span class="song-title-text">주를 찾는 모든 자들이</span>
-      <span class="song-arrow">›</span>
-    </div>
-    <div class="song-row reveal">
-      <span class="song-num">02</span>
-      <span class="song-title-text">친구야</span>
-      <span class="song-arrow">›</span>
-    </div>
-    <div class="song-row reveal">
-      <span class="song-num">03</span>
-      <span class="song-title-text">주를 바라보며</span>
-      <span class="song-arrow">›</span>
-    </div>
-    <div class="song-row reveal">
-      <span class="song-num">04</span>
-      <span class="song-title-text">모든 생명들아 소리쳐</span>
-      <span class="song-arrow">›</span>
-    </div>
-    <div class="song-row reveal">
-      <span class="song-num">05</span>
-      <span class="song-title-text">그리운 예루살렘</span>
-      <span class="song-arrow">›</span>
-    </div>
-    <div class="song-row reveal">
-      <span class="song-num">06</span>
-      <span class="song-title-text">아름다운 나라</span>
-      <span class="song-arrow">›</span>
-    </div>
-
-    <div class="song-break">
-      <div class="song-break-line">
-        <span class="song-break-text"> 편지와 기도 </span>
-      </div>
-    </div>
-
-    <div class="song-row reveal">
-      <span class="song-num">07</span>
-      <span class="song-title-text">다시 밤은 없겠고</span>
-      <span class="song-arrow">›</span>
-    </div>
-    <div class="song-row reveal">
-      <span class="song-num">08</span>
-      <span class="song-title-text">함께 지어져가네</span>
-      <span class="song-arrow">›</span>
-    </div>
-    <div class="song-row reveal">
-      <span class="song-num">09</span>
-      <span class="song-title-text">어둔날 다 지나고</span>
-      <span class="song-arrow">›</span>
-    </div>
-    <div class="song-row reveal">
-      <span class="song-num">10</span>
-      <span class="song-title-text">우린 물러서지 않으리</span>
-      <span class="song-arrow">›</span>
-    </div>
-  </div>
-
-  <!-- Song Detail Cards with YouTube Links -->
-  <div class="song-detail-section">
-    <span class="detail-section-label">곡 소개 및 미리듣기</span>
-
-    <!--
+<div class="page" id="page-songs">
+<div class="page-header">
+<span class="ph-label">Setlist</span>
+<h2 class="ph-title">곡 리스트</h2>
+</div>
+<!-- Quick overview: 10곡 한눈에 -->
+<div class="song-overview">
+<div class="song-row reveal">
+<span class="song-num">01</span>
+<span class="song-title-text">주를 찾는 모든 자들이</span>
+<span class="song-arrow">›</span>
+</div>
+<div class="song-row reveal">
+<span class="song-num">02</span>
+<span class="song-title-text">친구야</span>
+<span class="song-arrow">›</span>
+</div>
+<div class="song-row reveal">
+<span class="song-num">03</span>
+<span class="song-title-text">주를 바라보며</span>
+<span class="song-arrow">›</span>
+</div>
+<div class="song-row reveal">
+<span class="song-num">04</span>
+<span class="song-title-text">모든 생명들아 소리쳐</span>
+<span class="song-arrow">›</span>
+</div>
+<div class="song-row reveal">
+<span class="song-num">05</span>
+<span class="song-title-text">그리운 예루살렘</span>
+<span class="song-arrow">›</span>
+</div>
+<div class="song-row reveal">
+<span class="song-num">06</span>
+<span class="song-title-text">아름다운 나라</span>
+<span class="song-arrow">›</span>
+</div>
+<div class="song-break">
+<div class="song-break-line">
+<span class="song-break-text"> 편지와 기도 </span>
+</div>
+</div>
+<div class="song-row reveal">
+<span class="song-num">07</span>
+<span class="song-title-text">다시 밤은 없겠고</span>
+<span class="song-arrow">›</span>
+</div>
+<div class="song-row reveal">
+<span class="song-num">08</span>
+<span class="song-title-text">함께 지어져가네</span>
+<span class="song-arrow">›</span>
+</div>
+<div class="song-row reveal">
+<span class="song-num">09</span>
+<span class="song-title-text">어둔날 다 지나고</span>
+<span class="song-arrow">›</span>
+</div>
+<div class="song-row reveal">
+<span class="song-num">10</span>
+<span class="song-title-text">우린 물러서지 않으리</span>
+<span class="song-arrow">›</span>
+</div>
+</div>
+<!-- Song Detail Cards with YouTube Links -->
+<div class="song-detail-section">
+<span class="detail-section-label">곡 소개 및 미리듣기</span>
+<!--
       각 href 값을 실제 유튜브 링크로 교체하세요.
       예: href="https://www.youtube.com/watch?v=실제VIDEO_ID"
     -->
-
-    <div class="song-card reveal">
-      <a class="song-card-inner" href="https://www.youtube.com/results?search_query=주를+찾는+모든+자들이" target="_blank" rel="noopener">
-        <span class="song-card-num">01</span>
-        <div class="song-card-info">
-          <p class="song-card-name">주를 찾는 모든 자들이</p>
-          <p class="song-card-sub">YouTube에서 듣기</p>
-        </div>
-        <div class="song-card-yt">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </div>
-      </a>
-    </div>
-
-    <div class="song-card reveal">
-      <a class="song-card-inner" href="https://www.youtube.com/results?search_query=친구야+찬양" target="_blank" rel="noopener">
-        <span class="song-card-num">02</span>
-        <div class="song-card-info">
-          <p class="song-card-name">친구야</p>
-          <p class="song-card-sub">YouTube에서 듣기</p>
-        </div>
-        <div class="song-card-yt">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </div>
-      </a>
-    </div>
-
-    <div class="song-card reveal">
-      <a class="song-card-inner" href="https://www.youtube.com/results?search_query=주를+바라보며+찬양" target="_blank" rel="noopener">
-        <span class="song-card-num">03</span>
-        <div class="song-card-info">
-          <p class="song-card-name">주를 바라보며</p>
-          <p class="song-card-sub">YouTube에서 듣기</p>
-        </div>
-        <div class="song-card-yt">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </div>
-      </a>
-    </div>
-
-    <div class="song-card reveal">
-      <a class="song-card-inner" href="https://www.youtube.com/results?search_query=모든+생명들아+소리쳐" target="_blank" rel="noopener">
-        <span class="song-card-num">04</span>
-        <div class="song-card-info">
-          <p class="song-card-name">모든 생명들아 소리쳐</p>
-          <p class="song-card-sub">YouTube에서 듣기</p>
-        </div>
-        <div class="song-card-yt">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </div>
-      </a>
-    </div>
-
-    <div class="song-card reveal">
-      <a class="song-card-inner" href="https://www.youtube.com/results?search_query=그리운+예루살렘+찬양" target="_blank" rel="noopener">
-        <span class="song-card-num">05</span>
-        <div class="song-card-info">
-          <p class="song-card-name">그리운 예루살렘</p>
-          <p class="song-card-sub">YouTube에서 듣기</p>
-        </div>
-        <div class="song-card-yt">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </div>
-      </a>
-    </div>
-
-    <div class="song-card reveal">
-      <a class="song-card-inner" href="https://www.youtube.com/results?search_query=아름다운+나라+찬양" target="_blank" rel="noopener">
-        <span class="song-card-num">06</span>
-        <div class="song-card-info">
-          <p class="song-card-name">아름다운 나라</p>
-          <p class="song-card-sub">YouTube에서 듣기</p>
-        </div>
-        <div class="song-card-yt">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </div>
-      </a>
-    </div>
-
-    <div class="song-card reveal">
-      <a class="song-card-inner" href="https://www.youtube.com/results?search_query=다시+밤은+없겠고" target="_blank" rel="noopener">
-        <span class="song-card-num">07</span>
-        <div class="song-card-info">
-          <p class="song-card-name">다시 밤은 없겠고</p>
-          <p class="song-card-sub">YouTube에서 듣기</p>
-        </div>
-        <div class="song-card-yt">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </div>
-      </a>
-    </div>
-
-    <div class="song-card reveal">
-      <a class="song-card-inner" href="https://www.youtube.com/results?search_query=함께+지어져가네" target="_blank" rel="noopener">
-        <span class="song-card-num">08</span>
-        <div class="song-card-info">
-          <p class="song-card-name">함께 지어져가네</p>
-          <p class="song-card-sub">YouTube에서 듣기</p>
-        </div>
-        <div class="song-card-yt">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </div>
-      </a>
-    </div>
-
-    <div class="song-card reveal">
-      <a class="song-card-inner" href="https://www.youtube.com/results?search_query=어둔날+다+지나고+찬양" target="_blank" rel="noopener">
-        <span class="song-card-num">09</span>
-        <div class="song-card-info">
-          <p class="song-card-name">어둔날 다 지나고</p>
-          <p class="song-card-sub">YouTube에서 듣기</p>
-        </div>
-        <div class="song-card-yt">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </div>
-      </a>
-    </div>
-
-    <div class="song-card reveal" style="margin-bottom:0;">
-      <a class="song-card-inner" href="https://www.youtube.com/results?search_query=우린+물러서지+않으리" target="_blank" rel="noopener">
-        <span class="song-card-num">10</span>
-        <div class="song-card-info">
-          <p class="song-card-name">우린 물러서지 않으리</p>
-          <p class="song-card-sub">YouTube에서 듣기</p>
-        </div>
-        <div class="song-card-yt">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </div>
-      </a>
-    </div>
-  </div>
-
-  <div style="height:28px;"></div>
-
+<div class="song-card reveal">
+<a class="song-card-inner" href="https://www.youtube.com/results?search_query=주를+찾는+모든+자들이" rel="noopener" target="_blank">
+<span class="song-card-num">01</span>
+<div class="song-card-info">
+<p class="song-card-name">주를 찾는 모든 자들이</p>
+<p class="song-card-sub">YouTube에서 듣기</p>
+</div>
+<div class="song-card-yt">
+<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+</div>
+</a>
+</div>
+<div class="song-card reveal">
+<a class="song-card-inner" href="https://www.youtube.com/results?search_query=친구야+찬양" rel="noopener" target="_blank">
+<span class="song-card-num">02</span>
+<div class="song-card-info">
+<p class="song-card-name">친구야</p>
+<p class="song-card-sub">YouTube에서 듣기</p>
+</div>
+<div class="song-card-yt">
+<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+</div>
+</a>
+</div>
+<div class="song-card reveal">
+<a class="song-card-inner" href="https://www.youtube.com/results?search_query=주를+바라보며+찬양" rel="noopener" target="_blank">
+<span class="song-card-num">03</span>
+<div class="song-card-info">
+<p class="song-card-name">주를 바라보며</p>
+<p class="song-card-sub">YouTube에서 듣기</p>
+</div>
+<div class="song-card-yt">
+<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+</div>
+</a>
+</div>
+<div class="song-card reveal">
+<a class="song-card-inner" href="https://www.youtube.com/results?search_query=모든+생명들아+소리쳐" rel="noopener" target="_blank">
+<span class="song-card-num">04</span>
+<div class="song-card-info">
+<p class="song-card-name">모든 생명들아 소리쳐</p>
+<p class="song-card-sub">YouTube에서 듣기</p>
+</div>
+<div class="song-card-yt">
+<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+</div>
+</a>
+</div>
+<div class="song-card reveal">
+<a class="song-card-inner" href="https://www.youtube.com/results?search_query=그리운+예루살렘+찬양" rel="noopener" target="_blank">
+<span class="song-card-num">05</span>
+<div class="song-card-info">
+<p class="song-card-name">그리운 예루살렘</p>
+<p class="song-card-sub">YouTube에서 듣기</p>
+</div>
+<div class="song-card-yt">
+<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+</div>
+</a>
+</div>
+<div class="song-card reveal">
+<a class="song-card-inner" href="https://www.youtube.com/results?search_query=아름다운+나라+찬양" rel="noopener" target="_blank">
+<span class="song-card-num">06</span>
+<div class="song-card-info">
+<p class="song-card-name">아름다운 나라</p>
+<p class="song-card-sub">YouTube에서 듣기</p>
+</div>
+<div class="song-card-yt">
+<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+</div>
+</a>
+</div>
+<div class="song-card reveal">
+<a class="song-card-inner" href="https://www.youtube.com/results?search_query=다시+밤은+없겠고" rel="noopener" target="_blank">
+<span class="song-card-num">07</span>
+<div class="song-card-info">
+<p class="song-card-name">다시 밤은 없겠고</p>
+<p class="song-card-sub">YouTube에서 듣기</p>
+</div>
+<div class="song-card-yt">
+<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+</div>
+</a>
+</div>
+<div class="song-card reveal">
+<a class="song-card-inner" href="https://www.youtube.com/results?search_query=함께+지어져가네" rel="noopener" target="_blank">
+<span class="song-card-num">08</span>
+<div class="song-card-info">
+<p class="song-card-name">함께 지어져가네</p>
+<p class="song-card-sub">YouTube에서 듣기</p>
+</div>
+<div class="song-card-yt">
+<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+</div>
+</a>
+</div>
+<div class="song-card reveal">
+<a class="song-card-inner" href="https://www.youtube.com/results?search_query=어둔날+다+지나고+찬양" rel="noopener" target="_blank">
+<span class="song-card-num">09</span>
+<div class="song-card-info">
+<p class="song-card-name">어둔날 다 지나고</p>
+<p class="song-card-sub">YouTube에서 듣기</p>
+</div>
+<div class="song-card-yt">
+<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+</div>
+</a>
+</div>
+<div class="song-card reveal" style="margin-bottom:0;">
+<a class="song-card-inner" href="https://www.youtube.com/results?search_query=우린+물러서지+않으리" rel="noopener" target="_blank">
+<span class="song-card-num">10</span>
+<div class="song-card-info">
+<p class="song-card-name">우린 물러서지 않으리</p>
+<p class="song-card-sub">YouTube에서 듣기</p>
+</div>
+<div class="song-card-yt">
+<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+</div>
+</a>
+</div>
+</div>
+<div style="height:28px;"></div>
 </div><!-- /page-songs -->
-
-
 <!-- ════════════════════════════════
      PAGE 3 — ARTISTS
 ════════════════════════════════ -->
-<div id="page-artists" class="page">
-
-  <div class="page-header">
-    <span class="ph-label">Members</span>
-    <h2 class="ph-title">청년들 소개</h2>
-  </div>
-
-  <!-- SINGERS -->
-  <div class="artist-section-block">
-    <span class="artist-group-label">Singers &amp; Worship</span>
-    <div class="artist-grid">
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <!-- <img src="public/images/singer1.jpg" alt="이름 1"/> -->
-          <span class="avatar-placeholder">♪</span>
-        </div>
-        <p class="artist-card-name">최원근</p>
-        <p class="artist-card-role">Worship Leader</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">♪</span>
-        </div>
-        <p class="artist-card-name">최주희</p>
-        <p class="artist-card-role">Vocalist</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">♪</span>
-        </div>
-        <p class="artist-card-name">김예은</p>
-        <p class="artist-card-role">Vocalist</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">♪</span>
-        </div>
-        <p class="artist-card-name">유승은</p>
-        <p class="artist-card-role">Vocalist</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">♪</span>
-        </div>
-        <p class="artist-card-name">박성은</p>
-        <p class="artist-card-role">Vocalist</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">♪</span>
-        </div>
-        <p class="artist-card-name">황유찬</p>
-        <p class="artist-card-role">Vocalist</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">♪</span>
-        </div>
-        <p class="artist-card-name">이기준</p>
-        <p class="artist-card-role">Vocalist</p>
-      </div>
-
-    </div>
-  </div>
-
- 
-
-  <!-- BAND / INSTRUMENTS -->
-  <div class="artist-section-block">
-    <span class="artist-group-label">Band &amp; Instruments</span>
-    <div class="artist-grid">
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">🎸</span>
-        </div>
-        <p class="artist-card-name">김도윤</p>
-        <p class="artist-card-role">Guitar</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">🥁</span>
-        </div>
-        <p class="artist-card-name">최원근</p>
-        <p class="artist-card-role">Drums</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">🎹</span>
-        </div>
-        <p class="artist-card-name">장수환</p>
-        <p class="artist-card-role">Keys</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">🎸</span>
-        </div>
-        <p class="artist-card-name">이름 10</p>
-        <p class="artist-card-role">Bass</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">🎻</span>
-        </div>
-        <p class="artist-card-name">이름 12</p>
-        <p class="artist-card-role">Strings</p>
-      </div>
-
-    </div>
-  </div>
-
-
-  <!-- CAMERA TEAM -->
-  <div class="artist-section-block">
-    <span class="artist-group-label">Camera Team</span>
-    <div class="artist-grid">
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">📷</span>
-        </div>
-        <p class="artist-card-name">여명</p>
-        <p class="artist-card-role">Director</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">📷</span>
-        </div>
-        <p class="artist-card-name">이름 14</p>
-        <p class="artist-card-role">Camera</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">📷</span>
-        </div>
-        <p class="artist-card-name">이름 15</p>
-        <p class="artist-card-role">Camera</p>
-      </div>
-
-    </div>
-  </div>
-
-
-  <!-- GUIDE TEAM -->
-  <div class="artist-section-block" style="padding-bottom:28px;">
-    <span class="artist-group-label">안내팀</span>
-    <div class="artist-grid">
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">🤝</span>
-        </div>
-        <p class="artist-card-name">이름 16</p>
-        <p class="artist-card-role">안내</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">🤝</span>
-        </div>
-        <p class="artist-card-name">이름 17</p>
-        <p class="artist-card-role">안내</p>
-      </div>
-
-      <div class="artist-card reveal">
-        <div class="artist-avatar">
-          <span class="avatar-placeholder">🤝</span>
-        </div>
-        <p class="artist-card-name">이름 18</p>
-        <p class="artist-card-role">안내</p>
-      </div>
-
-    </div>
-  </div>
-
-</div><!-- /page-artists -->
-
-
+<div class="page" id="page-artists">
+<div class="page-header">
+<span class="ph-label">Members</span>
+<h2 class="ph-title">청년들 소개</h2>
+</div>
+<!-- SINGERS -->
+<div class="artist-section-block">
+<span class="artist-group-label">Singers &amp; Worship</span>
+<div class="artist-grid">
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<!-- <img src="public/images/singer1.jpg" alt="이름 1"/> -->
+<span class="avatar-placeholder">♪</span>
+</div>
+<p class="artist-card-name">최원근</p>
+<p class="artist-card-role">Worship Leader</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">♪</span>
+</div>
+<p class="artist-card-name">최주희</p>
+<p class="artist-card-role">Vocalist</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">♪</span>
+</div>
+<p class="artist-card-name">김예은</p>
+<p class="artist-card-role">Vocalist</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">♪</span>
+</div>
+<p class="artist-card-name">유승은</p>
+<p class="artist-card-role">Vocalist</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">♪</span>
+</div>
+<p class="artist-card-name">박성은</p>
+<p class="artist-card-role">Vocalist</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">♪</span>
+</div>
+<p class="artist-card-name">황유찬</p>
+<p class="artist-card-role">Vocalist</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">♪</span>
+</div>
+<p class="artist-card-name">이기준</p>
+<p class="artist-card-role">Vocalist</p>
+</div>
+</div>
+</div>
+<!-- BAND / INSTRUMENTS -->
+<div class="artist-section-block">
+<span class="artist-group-label">Band &amp; Instruments</span>
+<div class="artist-grid">
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">🎸</span>
+</div>
+<p class="artist-card-name">김도윤</p>
+<p class="artist-card-role">Guitar</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">🥁</span>
+</div>
+<p class="artist-card-name">최원근</p>
+<p class="artist-card-role">Drums</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">🎹</span>
+</div>
+<p class="artist-card-name">장수환</p>
+<p class="artist-card-role">Keys</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">🎸</span>
+</div>
+<p class="artist-card-name">이름 10</p>
+<p class="artist-card-role">Bass</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">🎻</span>
+</div>
+<p class="artist-card-name">이름 12</p>
+<p class="artist-card-role">Strings</p>
+</div>
+</div>
+</div>
+<!-- CAMERA TEAM -->
+<div class="artist-section-block">
+<span class="artist-group-label">Camera Team</span>
+<div class="artist-grid">
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">📷</span>
+</div>
+<p class="artist-card-name">여명</p>
+<p class="artist-card-role">Director</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">📷</span>
+</div>
+<p class="artist-card-name">이름 14</p>
+<p class="artist-card-role">Camera</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">📷</span>
+</div>
+<p class="artist-card-name">이름 15</p>
+<p class="artist-card-role">Camera</p>
+</div>
+</div>
+</div>
+<!-- GUIDE TEAM -->
+<div class="artist-section-block" style="padding-bottom:28px;">
+<span class="artist-group-label">안내팀</span>
+<div class="artist-grid">
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">🤝</span>
+</div>
+<p class="artist-card-name">이름 16</p>
+<p class="artist-card-role">안내</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">🤝</span>
+</div>
+<p class="artist-card-name">이름 17</p>
+<p class="artist-card-role">안내</p>
+</div>
+<div class="artist-card reveal">
+<div class="artist-avatar">
+<span class="avatar-placeholder">🤝</span>
+</div>
+<p class="artist-card-name">이름 18</p>
+<p class="artist-card-role">안내</p>
+</div>
+</div>
+</div>
+</div><div class="page story-page" id="page-story"><div class="prog" id="storyProg"></div><header class="opening reveal">
+<p class="open-eyebrow">Our Story · 2023 — 2026</p>
+<h1 class="open-title"><strong>찬양이</strong><br/>좋아서<br/>모인 청년들</h1>
+<div class="open-divider"></div>
+<p class="open-sub">왜 우리가 여기 모였는지의 이야기</p>
+</header><section class="scene">
+<div class="scene-img-wrap">
+<img alt="악기 세팅" src="public/images/story-01.jpg" style="aspect-ratio:4/3"/>
+</div>
+<div class="scene-text reveal">
+<p class="ch-label">01 · 준비</p>
+<h2 class="scene-headline">지금 우리는 너무 빠르게<br/>변하는 시대를 살아가고 있습니다</h2>
+<p class="scene-body">세상은 점점 더 빠르게 움직이고,<br/>우리의 시선은 자연스럽게<br/>눈에 보이는 것들로 향합니다.</p>
+</div>
+</section><div class="divider reveal"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="혼자 앉아있는 장면" src="public/images/story-02.jpg" style="aspect-ratio:2/3"/>
+</div>
+<div class="scene-text reveal">
+<p class="ch-label">02 · 고민</p>
+<h2 class="scene-headline">그러다 문득<br/>이런 생각이 들었습니다</h2>
+<p class="scene-body">이렇게 바쁜 세상 속에서<br/>우리는 하나님을<br/>너무 쉽게 잊고 살아가고 있는 것은 아닐까.</p>
+</div>
+</section><div class="divider reveal"></div><div class="text-block reveal">
+<p class="ch-label">03 · 결심</p>
+<h2 class="scene-headline">특히 청년들이<br/>하나님을 향한 <em>찬양</em>을<br/>점점 잃어버리게 되는 것은 아닐까</h2>
+<p class="scene-body">그래서 우리는 시작했습니다.<br/>조명을 직접 구하고, 악기를 날랐습니다.<br/>아무것도 없었지만, 마음은 있었습니다.</p>
+</div><section class="scene" style="margin-top:3px">
+<div class="double-img">
+<div class="double-img-item reveal">
+<img alt="차에 싣는 조명" src="public/images/story-03.jpg"/>
+</div>
+<div class="double-img-item reveal d2">
+<img alt="차에 싣는 물건" src="public/images/story-04.jpg"/>
+</div>
+</div>
+</section><div class="divider reveal" style="margin-top:clamp(48px,14vw,64px)"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="리허설 / 소규모 공연" src="public/images/story-05.jpg" style="aspect-ratio:4/3"/>
+</div>
+<div class="scene-text reveal">
+<p class="ch-label">04 · 작은 시작</p>
+<h2 class="scene-headline">청년들이 함께 모여<br/>하나님을 찬양하고 예배하는<br/><em>작은 자리</em></h2>
+</div>
+</section><div class="divider reveal"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="첫 찬양" src="public/images/story-06.jpg" style="aspect-ratio:3/2"/>
+</div>
+<div class="scene-text reveal">
+<p class="ch-label">05 · 찬양이 시작됨</p>
+<h2 class="scene-headline">하나님을 향한 노래가<br/>다시 울려 퍼지기<br/>시작했습니다</h2>
+</div>
+</section><div class="divider reveal"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="관객들" src="public/images/story-07.jpg" style="aspect-ratio:4/3"/>
+</div>
+<div class="scene-img-wrap" style="margin-top:3px">
+<img alt="함께 모여 찬양" src="public/images/story-08.jpg" style="aspect-ratio:4/3"/>
+</div>
+<div class="scene-text reveal">
+<p class="ch-label">06 · 함께</p>
+<h2 class="scene-headline">그리고 그 작은 자리에<br/>사람들이 모이기<br/>시작했습니다</h2>
+</div>
+</section><div class="divider reveal"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="함께 찬양" src="public/images/story-09.jpg" style="aspect-ratio:9/16"/>
+</div>
+<div class="scene-text reveal">
+<p class="ch-label">07 · 공동체</p>
+<h2 class="scene-headline">우리는 믿습니다</h2>
+<p class="scene-body">이 작은 시작이 다시 하나님을 바라보는 시간이 되고,<br/>찬양하는 청년들이 더 많아지는 시작이 되기를.</p>
+</div>
+</section><div class="double-img" style="margin-top:3px">
+<div class="double-img-item reveal">
+<img alt="팀 단체 사진" src="public/images/story-10.jpg"/>
+</div>
+<div class="double-img-item reveal d2">
+<img alt="팀 식사" src="public/images/story-11.jpg"/>
+</div>
+</div><div class="divider reveal" style="margin-top:clamp(48px,14vw,64px)"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="핸드폰 불빛 찬양" src="public/images/story-12.jpg" style="aspect-ratio:3/2"/>
+</div>
+<div class="scene-text reveal">
+<p class="ch-label">08 · 더 큰 울림</p>
+<h2 class="scene-headline">그리고 이 찬양이<br/>세상 가운데<br/>계속 울려 퍼지기를<br/>바랍니다</h2>
+</div>
+</section><div class="scene-img-wrap reveal" style="margin-top:3px">
+<img alt="기타와 게시판" src="public/images/story-13.jpg" style="aspect-ratio:4/3;width:100%;display:block;object-fit:cover;filter:brightness(.92) saturate(.9)"/>
+</div><div class="quote-wrap">
+<div class="quote-deco">"</div>
+<p class="quote-text reveal">
+    우리가 시작한 이유는<br/>단 하나입니다.<br/><br/>
+<strong>하나님을 찬양하는<br/>청년들이 이 시대에<br/>더 많아지기를 바라기 때문입니다.</strong>
+</p>
+<p class="quote-ref reveal d2">— 찬양이 좋아서 모인 청년들</p>
+</div><section class="finale">
+<div class="reveal">
+<h2 class="finale-title">세상 가운데<br/>찬양이 계속<br/><strong>울려 퍼지기를 바랍니다</strong></h2>
+<p class="finale-date">2026 · 11 · 21 · SAT<br/>향상교회 3층 강당</p>
+</div>
+<a class="btn-primary reveal" href="#" onclick="switchTab('main', document.querySelector('.tab-btn[data-tab=&quot;main&quot;]')); return false;">공연 정보 보기</a>
+<a class="btn-secondary reveal d1" href="#">인스타그램 · 공연 문의</a>
+</section><footer><p>찬양이 좋아서 모인 청년들 © 2026</p></footer></div><!-- /page-artists -->
 <!-- ════════════════════════════════
      BOTTOM TAB BAR
 ════════════════════════════════ -->
 <nav class="tab-bar">
-
-  <button class="tab-btn active" onclick="switchTab('main', this)" aria-label="메인">
-    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/>
-      <path d="M9 21V12h6v9"/>
-    </svg>
-    <span class="tab-label">메인</span>
-  </button>
-
-  <button class="tab-btn" onclick="switchTab('songs', this)" aria-label="곡 리스트">
-    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path d="M9 19V6l12-3v13"/>
-      <circle cx="6" cy="19" r="3"/>
-      <circle cx="18" cy="16" r="3"/>
-    </svg>
-    <span class="tab-label">곡 리스트</span>
-  </button>
-
-  <button class="tab-btn" onclick="switchTab('artists', this)" aria-label="아티스트">
-    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <circle cx="9" cy="7" r="3"/>
-      <path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
-      <circle cx="18" cy="7" r="2"/>
-      <path d="M21 21v-1.5a3 3 0 00-2-2.83"/>
-    </svg>
-    <span class="tab-label">맴버소개</span>
-  </button>
-
+<button aria-label="메인" class="tab-btn active" data-tab="main" onclick="switchTab('main', this)">
+<svg class="tab-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"></path>
+<path d="M9 21V12h6v9"></path>
+</svg>
+<span class="tab-label">메인</span>
+</button>
+<button aria-label="곡 리스트" class="tab-btn" data-tab="songs" onclick="switchTab('songs', this)">
+<svg class="tab-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M9 19V6l12-3v13"></path>
+<circle cx="6" cy="19" r="3"></circle>
+<circle cx="18" cy="16" r="3"></circle>
+</svg>
+<span class="tab-label">곡 리스트</span>
+</button>
+<button aria-label="아티스트" class="tab-btn" data-tab="artists" onclick="switchTab('artists', this)">
+<svg class="tab-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
+<circle cx="9" cy="7" r="3"></circle>
+<path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"></path>
+<circle cx="18" cy="7" r="2"></circle>
+<path d="M21 21v-1.5a3 3 0 00-2-2.83"></path>
+</svg>
+<span class="tab-label">맴버소개</span>
+</button><button aria-label="팀 소개" class="tab-btn" data-tab="story" onclick="switchTab('story', this)">
+<svg class="tab-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M12 3l7 4v10l-7 4-7-4V7l7-4z"></path>
+<path d="M9 10h6"></path>
+<path d="M9 14h6"></path>
+</svg>
+<span class="tab-label">팀 소개</span>
+</button>
 </nav>
-
-
 <!-- ════════════════════════════════
      FLOATING SHARE BUTTON
 ════════════════════════════════ -->
-<button class="share-fab" onclick="openShare()" aria-label="공유하기">
-  <svg viewBox="0 0 24 24" fill="none" stroke="#f5f0eb" stroke-width="1.8">
-    <circle cx="18" cy="5" r="3"/>
-    <circle cx="6" cy="12" r="3"/>
-    <circle cx="18" cy="19" r="3"/>
-    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-  </svg>
+<button aria-label="공유하기" class="share-fab" onclick="openShare()">
+<svg fill="none" stroke="#f5f0eb" stroke-width="1.8" viewbox="0 0 24 24">
+<circle cx="18" cy="5" r="3"></circle>
+<circle cx="6" cy="12" r="3"></circle>
+<circle cx="18" cy="19" r="3"></circle>
+<line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line>
+<line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line>
+</svg>
 </button>
-
-
 <!-- ════════════════════════════════
      SHARE BOTTOM SHEET MODAL
 ════════════════════════════════ -->
 <div class="modal-backdrop" id="modalBackdrop" onclick="closeShare()"></div>
-
 <div class="share-sheet" id="shareSheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <span class="sheet-title">공유하기</span>
-    <button class="sheet-close" onclick="closeShare()" aria-label="닫기">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#9a8470" stroke-width="1.8">
-        <line x1="1" y1="1" x2="13" y2="13"/>
-        <line x1="13" y1="1" x2="1" y2="13"/>
-      </svg>
-    </button>
-  </div>
-  <div class="sheet-divider"></div>
-
-  <div class="share-options">
-
-    <div class="share-opt" onclick="shareKakao()">
-      <div class="share-opt-icon kakao">
-        <svg width="28" height="28" viewBox="0 0 48 48">
-          <path d="M24 6C13.5 6 5 13.2 5 22.1c0 5.5 3.4 10.4 8.6 13.3l-2.2 8.1 9.4-6.2c1 .1 2.1.2 3.2.2 10.5 0 19-7.2 19-16.1S34.5 6 24 6z" fill="#3C1E1E"/>
-        </svg>
-      </div>
-      <span class="share-opt-label">카카오톡</span>
-    </div>
-
-    <div class="share-opt" onclick="shareInstagram()">
-      <div class="share-opt-icon insta">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
-      </div>
-      <span class="share-opt-label">인스타그램 DM</span>
-    </div>
-
-    <div class="share-opt" onclick="copyLink()">
-      <div class="share-opt-icon link">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f5f0eb" stroke-width="1.8">
-          <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
-          <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
-        </svg>
-      </div>
-      <span class="share-opt-label">링크 복사</span>
-    </div>
-
-  </div>
+<div class="sheet-handle"></div>
+<div class="sheet-header">
+<span class="sheet-title">공유하기</span>
+<button aria-label="닫기" class="sheet-close" onclick="closeShare()">
+<svg fill="none" height="14" stroke="#9a8470" stroke-width="1.8" viewbox="0 0 14 14" width="14">
+<line x1="1" x2="13" y1="1" y2="13"></line>
+<line x1="13" x2="1" y1="1" y2="13"></line>
+</svg>
+</button>
 </div>
-
+<div class="sheet-divider"></div>
+<div class="share-options">
+<div class="share-opt" onclick="shareKakao()">
+<div class="share-opt-icon kakao">
+<svg height="28" viewbox="0 0 48 48" width="28">
+<path d="M24 6C13.5 6 5 13.2 5 22.1c0 5.5 3.4 10.4 8.6 13.3l-2.2 8.1 9.4-6.2c1 .1 2.1.2 3.2.2 10.5 0 19-7.2 19-16.1S34.5 6 24 6z" fill="#3C1E1E"></path>
+</svg>
+</div>
+<span class="share-opt-label">카카오톡</span>
+</div>
+<div class="share-opt" onclick="shareInstagram()">
+<div class="share-opt-icon insta">
+<svg fill="white" height="28" viewbox="0 0 24 24" width="28">
+<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path>
+</svg>
+</div>
+<span class="share-opt-label">인스타그램 DM</span>
+</div>
+<div class="share-opt" onclick="copyLink()">
+<div class="share-opt-icon link">
+<svg fill="none" height="22" stroke="#f5f0eb" stroke-width="1.8" viewbox="0 0 24 24" width="22">
+<path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"></path>
+<path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"></path>
+</svg>
+</div>
+<span class="share-opt-label">링크 복사</span>
+</div>
+</div>
+</div>
 <!-- Toast -->
 <div class="toast" id="toast"></div>
-
-
 <!-- ─── JavaScript ─── -->
 <!-- 로드 순서 중요: tabs → reveal → share -->
 <script src="src/js/tabs.js"></script>
 <script src="src/js/reveal.js"></script>
 <script src="src/js/share.js"></script>
-
 </body>
 </html>

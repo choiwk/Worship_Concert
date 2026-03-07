@@ -5,27 +5,40 @@
  * - 비활성 페이지 숨김
  * - 페이지 전환 후 스크롤 상단 이동
  * - reveal 애니메이션 재트리거
- */
-
-/**
- * 탭 전환 함수
- * @param {string} name   - 전환할 페이지 ID 접미사 ('main' | 'songs' | 'artists')
- * @param {HTMLElement} btn - 클릭된 탭 버튼 요소
+ * - story 탭 진행 바 갱신
  */
 function switchTab(name, btn) {
-  // 모든 페이지 비활성화
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-
-  // 모든 탭 버튼 비활성화
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
-  // 선택된 페이지 & 버튼 활성화
-  document.getElementById('page-' + name).classList.add('active');
-  btn.classList.add('active');
+  const page = document.getElementById('page-' + name);
+  if (page) {
+    page.classList.add('active');
+  }
+  if (btn) {
+    btn.classList.add('active');
+  }
 
-  // 스크롤 최상단 이동
-  window.scrollTo({ top: 0, behavior: 'instant' });
-
-  // 새 페이지의 reveal 요소 관찰 시작
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   triggerReveal();
+  updateStoryProgress();
 }
+
+function updateStoryProgress() {
+  const prog = document.getElementById('storyProg');
+  const storyPage = document.getElementById('page-story');
+  if (!prog || !storyPage) return;
+
+  if (!storyPage.classList.contains('active')) {
+    prog.style.width = '0%';
+    return;
+  }
+
+  const max = document.body.scrollHeight - window.innerHeight;
+  const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+  prog.style.width = pct + '%';
+}
+
+window.addEventListener('scroll', updateStoryProgress, { passive: true });
+window.addEventListener('resize', updateStoryProgress);
+document.addEventListener('DOMContentLoaded', updateStoryProgress);
