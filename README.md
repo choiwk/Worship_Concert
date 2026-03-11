@@ -1,121 +1,398 @@
 # 찬양이 좋아서 모인 청년들 — LIVE CONCERT 2026
-> QR Landing Page / Event Micro Page
+
+모바일에서 가장 먼저 열리고, 가장 자연스럽게 공유되며, 공연의 **정보·곡·사람·이야기**를 한 번에 전달하기 위해 만든 QR 기반 콘서트 랜딩 페이지이다.
+
+> Static HTML/CSS/JavaScript · Mobile-first · QR Landing Page · Story-driven Event Microsite
 
 ---
 
-## 폴더 구조
+## 프로젝트 개요
 
+이 프로젝트는 단순한 행사 안내 페이지가 아니다.
+
+이 사이트의 목적은 다음 4가지를 하나의 흐름으로 연결하는 데 있다.
+
+1. **공연 정보를 빠르게 전달한다**
+2. **셋리스트와 팀 구성을 직관적으로 보여준다**
+3. **공연이 왜 열리는지 스토리로 설득한다**
+4. **QR 스캔 후 모바일에서 바로 공유되도록 만든다**
+
+즉, 이 프로젝트는
+
+**“청년 찬양 콘서트를 위한 모바일 중심 홍보·안내·스토리텔링 마이크로사이트”** 이다.
+
+---
+
+## 이 프로젝트가 해결하려는 문제
+
+포스터나 인스타그램 카드 한 장만으로는 아래 내용을 충분히 전달하기 어렵다.
+
+- 공연 날짜 / 장소 / 문의 정보
+- 어떤 곡을 부르는지
+- 누가 함께하는지
+- 왜 이 공연이 열리는지
+- 링크를 받은 사람이 즉시 공유하거나 저장할 수 있는지
+
+이 프로젝트는 그 문제를 해결하기 위해,
+**포스터의 압축성**과 **웹페이지의 확장성**을 동시에 가져가도록 설계되었다.
+
+QR을 찍으면 바로 열리고,
+스크롤과 탭 전환만으로 공연의 전체 맥락을 이해할 수 있도록 구성했다.
+
+---
+
+## 핵심 경험 설계
+
+### 1) Main — 첫 화면에서 핵심 정보 전달
+첫 화면은 공연명, 메인 비주얼(영상/이미지), 날짜·시간·장소, 참여 버튼, 성경 구절까지 한 흐름으로 배치되어 있다.
+사용자는 사이트에 들어오자마자 “무슨 공연인지 / 언제 어디서 하는지 / 어떤 분위기인지”를 즉시 파악할 수 있다.
+
+### 2) Songs — 셋리스트와 미리듣기 연결
+곡 리스트는 한눈에 보는 개요와 YouTube 미리듣기 카드로 나뉜다.
+단순 텍스트 나열이 아니라, 실제 공연 전 기대감을 높이는 탐색형 구조이다.
+
+### 3) Artists — 팀과 참여자를 소개
+보컬, 밴드, 카메라팀, 안내팀 등으로 그룹을 나누어,
+이 공연이 혼자 만드는 무대가 아니라 **함께 만드는 공동체의 결과물**이라는 점을 드러낸다.
+
+### 4) Story — 공연의 이유를 감정적으로 전달
+4번째 탭은 이 프로젝트의 핵심 차별점이다.
+단순한 행사 페이지를 넘어서, 이미지와 짧은 문장, 진행 바, 리듬감 있는 레이아웃으로
+“왜 우리가 모였는가”를 하나의 서사처럼 보여준다.
+
+---
+
+## 주요 기능
+
+- **모바일 퍼스트 레이아웃**
+- **하단 4탭 네비게이션**
+- **스크롤 reveal 애니메이션**
+- **스토리 페이지 진행 바**
+- **공유 바텀시트 + 토스트 메시지**
+- **카카오톡 / 인스타그램 / 링크 복사 공유 흐름**
+- **유튜브 미리듣기 링크 연결**
+- **모바일 자동재생 비디오 처리**
+- **safe-area 대응(iPhone 노치 / 홈바, Android 하단바 변화 대응)**
+- **초소형 모바일 ~ 큰 모바일까지 반응형 보정**
+- **prefers-reduced-motion 대응**
+
+---
+
+## 기술 스택
+
+- **HTML5**
+- **CSS3**
+  - CSS Custom Properties
+  - `clamp()` 기반 유동 타이포그래피
+  - `env(safe-area-inset-*)` 기반 모바일 안정화
+  - `@media` 기반 디바이스별 보정
+- **Vanilla JavaScript**
+  - 탭 전환
+  - IntersectionObserver 기반 reveal
+  - 공유 바텀시트 인터랙션
+  - 클립보드 복사 / Web Share API fallback
+- **Google Fonts**
+  - Noto Serif KR
+  - Cormorant Garamond
+  - IM Fell English
+
+프레임워크 없이 만든 이유는 명확하다.
+이 프로젝트는 앱이 아니라 **빠르게 열리는 행사 랜딩 페이지**이기 때문에,
+번들링보다 **배포 단순성, 로딩 단순성, 수정 편의성**이 더 중요하다.
+
+---
+
+## 정보 구조(IA)
+
+```text
+Main
+├─ 공연명 / 비주얼
+├─ 날짜 / 시간 / 장소
+├─ 참여 CTA / 문의
+└─ 핵심 메시지
+
+Songs
+├─ 셋리스트 개요
+└─ 유튜브 미리듣기 카드
+
+Artists
+├─ Singers & Worship
+├─ Band & Instruments
+├─ Camera Team
+└─ 안내팀
+
+Story
+├─ 준비
+├─ 고민
+├─ 결심
+├─ 작은 시작
+├─ 찬양이 시작됨
+├─ 함께
+├─ 공동체
+└─ 더 큰 울림
 ```
-concert-landing/
-├── index.html                      ← 진입점. HTML 마크업 + CSS·JS 링크
-│
+
+---
+
+## 프로젝트 구조
+
+```bash
+.
+├── index.html
+├── README.md
 ├── public/
-│   ├── images/                     ← 아티스트 사진, 콘서트 이미지 넣는 곳
-│   │   └── (singer1.jpg 등)
-│   └── videos/                     ← 공연 하이라이트 영상 넣는 곳
-│       └── (highlight.mp4 등)
-│
+│   ├── images/
+│   └── videos/
 └── src/
     ├── css/
-    │   ├── reset.css               ← CSS 변수(:root) + 전역 리셋 + body + paper texture
-    │   ├── animations.css          ← @keyframes + .reveal 스크롤 애니메이션
-    │   ├── layout.css              ← 페이지 전환 시스템 + 탭바 + 공유 FAB 버튼
+    │   ├── reset.css
+    │   ├── animations.css
+    │   ├── layout.css
     │   ├── components/
-    │   │   └── share.css           ← 공유 바텀시트 모달 + 토스트 알림
+    │   │   └── share.css
     │   └── pages/
-    │       ├── main.css            ← Page 1: 타이틀·미디어·이벤트정보·메시지·푸터
-    │       ├── songs.css           ← Page 2: 곡 한눈에 보기 + 유튜브 카드
-    │       └── artists.css         ← Page 3: 3열 그리드 + 원형 아바타 + 그룹 섹션
+    │       ├── main.css
+    │       ├── songs.css
+    │       ├── artists.css
+    │       ├── story.css
+    │       └── responsive.css
     └── js/
-        ├── tabs.js                 ← 탭 전환 함수 switchTab()
-        ├── reveal.js               ← 스크롤 Fade-up triggerReveal()
-        └── share.js                ← 공유 시트 open/close + 카카오/인스타/링크복사
+        ├── tabs.js
+        ├── reveal.js
+        └── share.js
 ```
+
+### 파일 역할
+
+| 파일 | 역할 |
+|---|---|
+| `index.html` | 전체 콘텐츠 구조, 탭 페이지, 공유 모달, 스크립트 로드 |
+| `reset.css` | 전역 리셋, 색상 변수, 기본 바디 설정, paper texture |
+| `animations.css` | reveal 관련 공통 애니메이션 |
+| `layout.css` | 페이지 시스템, 하단 탭바, FAB 배치 |
+| `share.css` | 공유 바텀시트와 토스트 UI |
+| `main.css` | 메인 페이지 전용 스타일 |
+| `songs.css` | 곡 리스트 / 유튜브 카드 전용 스타일 |
+| `artists.css` | 멤버 카드 / 그룹 레이아웃 전용 스타일 |
+| `story.css` | 팀 소개 스토리 페이지 전용 스타일 |
+| `responsive.css` | 초소형 모바일 ~ 큰 모바일까지 보정 레이어 |
+| `tabs.js` | 탭 전환 및 story 진행 바 갱신 |
+| `reveal.js` | IntersectionObserver reveal + 모바일 비디오 재생 보조 |
+| `share.js` | 공유 시트 열기/닫기, 카카오/인스타그램/복사 기능 |
 
 ---
 
-## Cursor에서 실행하는 방법
+## 빠른 실행
 
-### 방법 1 — Live Server 확장 (권장)
-1. Cursor에서 `concert-landing/` 폴더를 연다
-2. Extensions에서 **Live Server** 설치
-3. `index.html` 우클릭 → **Open with Live Server**
-4. 브라우저에서 `http://127.0.0.1:5500` 열림
+### 1. 로컬 서버로 실행
+정적 사이트이므로 별도 빌드 과정 없이 바로 실행 가능하다.
 
-### 방법 2 — 터미널에서 Python 서버
+#### Python
 ```bash
-cd concert-landing
 python3 -m http.server 8080
-# 브라우저: http://localhost:8080
 ```
 
-> ⚠️ `index.html`을 브라우저에서 직접 파일로 열면 (`file://`) 폰트가 로드되지 않을 수 있습니다. 반드시 서버를 통해 열어주세요.
+브라우저에서 아래 주소로 접속:
+
+```bash
+http://localhost:8080
+```
+
+#### VS Code / Cursor Live Server
+- 프로젝트 폴더 열기
+- `index.html` 우클릭
+- **Open with Live Server**
+
+> `file://`로 직접 열기보다 로컬 서버 실행을 권장한다.
+> 브라우저 정책에 따라 폰트·비디오·링크 동작이 달라질 수 있다.
 
 ---
 
-## 콘텐츠 교체 방법
+## 콘텐츠 수정 가이드
 
-### 영상 / 이미지 교체 (`index.html` → Page 1 Media 섹션)
+### 1. 공연 정보 수정
+`index.html`의 메인 섹션에서 아래 내용을 바꾸면 된다.
+
+- 공연명
+- 날짜
+- 시간
+- 장소
+- 참여 버튼 링크
+- 문의 / 인스타그램 링크
+
+### 2. 메인 비주얼 교체
 ```html
-<!-- 이미지 -->
-<img src="public/images/concert-main.jpg"
-     alt="Concert"
-     style="width:100%;height:100%;object-fit:cover;"/>
-
-<!-- 영상 -->
-<video autoplay muted loop playsinline
-       style="width:100%;height:100%;object-fit:cover;">
-  <source src="public/videos/highlight.mp4" type="video/mp4"/>
+<video id="main-video" ...>
+  <source src="public/videos/MainWorship.mp4" type="video/mp4" />
 </video>
 ```
 
-### 아티스트 사진 교체 (`index.html` → Page 3)
+또는 이미지로 교체:
+
 ```html
-<div class="artist-avatar">
-  <img src="public/images/singer1.jpg" alt="이름 1"/>
-</div>
+<img src="public/images/concert-main.jpg" alt="Concert" />
 ```
 
-### 유튜브 링크 교체 (`index.html` → Page 2 Song Cards)
-```html
-<!-- href 값을 실제 유튜브 주소로 교체 -->
-<a class="song-card-inner"
-   href="https://www.youtube.com/watch?v=실제VIDEO_ID"
-   target="_blank" rel="noopener">
-```
+### 3. 곡 리스트 수정
+`page-songs` 영역에서
+- 곡 제목
+- 순서
+- 유튜브 검색 링크 또는 실제 영상 링크
+를 변경하면 된다.
 
-### 공연 정보 수정
-- 날짜, 시간, 장소: `index.html` → `sec-info` 섹션의 `.detail-card` 수정
-- 티켓 링크: `.btn-ticket` 의 `href="#"` 를 실제 예매 URL로 교체
+### 4. 멤버 정보 수정
+`page-artists` 영역에서
+- 이름
+- 역할
+- 그룹명
+- 아바타 이미지
+를 바꾸면 된다.
+
+### 5. 스토리 콘텐츠 수정
+`page-story`는
+- 이미지
+- 장면 제목
+- 짧은 본문
+- 마지막 메시지
+순으로 구성된다.
+
+이 영역을 바꾸면 프로젝트의 정체성이 가장 크게 달라진다.
+단순 홍보 페이지가 아니라 **브랜드 스토리 페이지**처럼 작동하기 때문이다.
 
 ---
 
-## 배포 후 QR코드 만들기
+## 디자인 원칙
 
-1. **Netlify Drop** (무료, 가장 빠름)
-   - https://app.netlify.com/drop 에서 `concert-landing/` 폴더를 드래그 앤 드롭
-   - 자동으로 URL 발급됨 (예: `https://amazing-name-123.netlify.app`)
+이 프로젝트는 교회 행사 사이트이지만,
+전형적인 공지형 교회 웹페이지 톤을 그대로 따르지 않는다.
 
-2. **GitHub Pages** (무료)
-   - GitHub 저장소에 push → Settings → Pages → Deploy
+대신 아래의 방향을 취한다.
 
-3. **QR 코드 생성**
-   - https://qr-code-generator.com 또는 https://qrcode.kr
-   - 발급된 URL 입력 → QR 코드 PNG 다운로드 → 포스터에 삽입
+- **모바일 앱처럼 익숙한 하단 탭 구조**
+- **종이 질감 + 세리프 타이포 기반의 따뜻한 인상**
+- **과한 장식보다 여백과 리듬을 중시한 편집형 레이아웃**
+- **정보 전달과 정서 전달의 균형**
+- **광고 페이지보다 초대장에 가까운 감도**
+
+즉, 이 사이트는 “정보”만 전달하는 것이 아니라
+**공연의 분위기와 진심을 함께 전달하는 것**을 목표로 한다.
 
 ---
 
-## 파일 분리 설계 이유
+## 모바일/반응형 설계 포인트
 
-| 파일 | 분리 이유 |
-|------|-----------|
-| `reset.css` | CSS 변수가 나머지 모든 파일에 선행되어야 함 |
-| `animations.css` | `.reveal` 클래스는 모든 페이지에서 공통 사용 |
-| `layout.css` | 탭바·FAB은 페이지와 무관한 전역 레이아웃 |
-| `components/share.css` | 모달 컴포넌트는 독립적으로 수정·재사용 가능 |
-| `pages/main.css` | Page 1 전용 — 나머지 페이지와 분리해서 수정 편의성 확보 |
-| `pages/songs.css` | Page 2 전용 — 곡 카드 디자인 변경 시 영향 범위 최소화 |
-| `pages/artists.css` | Page 3 전용 — 그리드·아바타 스타일 독립 관리 |
-| `tabs.js` | `switchTab()` 함수만 담당, 역할 명확 |
-| `reveal.js` | `triggerReveal()` 독립 관리 — 성능 튜닝 시 이 파일만 수정 |
-| `share.js` | 공유 관련 모든 함수 집중 — 카카오 SDK 교체 시 이 파일만 수정 |
+이 프로젝트는 데스크톱 우선이 아니라 **모바일 우선**으로 설계되었다.
+
+특히 아래 상황을 고려했다.
+
+- 320px급 초소형 모바일
+- 일반적인 360px / 390px / 430px 대 모바일
+- 가로 모드 모바일
+- iPhone safe-area
+- Android 브라우저 하단 UI 변화
+- 터치 기반 인터랙션
+- 모션 감소 환경
+
+그래서 단순히 `max-width`만 둔 것이 아니라,
+별도의 `responsive.css`에서 기기 구간별 레이아웃 보정을 추가했다.
+
+---
+
+## 접근성 / UX 배려
+
+- `prefers-reduced-motion` 대응
+- 작은 화면에서 2열/1열 자동 전환
+- 터치 타겟 최소 크기 확보
+- 공유 시트 스와이프 다운 닫기 지원
+- overflow 방지 처리
+- safe-area inset 반영
+- 자동재생 비디오의 모바일 브라우저 제약 대응
+
+---
+
+## 배포
+
+이 프로젝트는 정적 파일만으로 구성되어 있어 아래 플랫폼에 바로 배포할 수 있다.
+
+- GitHub Pages
+- Netlify
+- Vercel (Static)
+- Cloudflare Pages
+
+배포 후에는 해당 URL을 QR 코드로 만들어
+아래와 같은 접점에 붙이면 된다.
+
+- 포스터
+- 인스타그램 프로필 링크
+- 단체 채팅방 공지
+- 행사 현장 배너
+- 초청장 / 홍보 카드뉴스
+
+---
+
+## 실제 운영 전 체크리스트
+
+배포 전에 아래 항목은 반드시 실제 값으로 교체하는 것을 권장한다.
+
+- [ ] 날짜 / 시간 / 장소 확정값 반영
+- [ ] `href="#"` 링크 실제 URL로 교체
+- [ ] 인스타그램 주소 연결
+- [ ] 참여하기 버튼 링크 연결
+- [ ] 멤버 이름 / 역할 최종 반영
+- [ ] placeholder 이미지 / 영상 교체
+- [ ] YouTube 검색 링크를 실제 영상 링크로 교체
+- [ ] OG 이미지 / URL 설정
+- [ ] 카카오 SDK 기반 실제 공유 방식 적용 여부 검토
+
+---
+
+## 향후 확장 아이디어
+
+이 프로젝트는 현재도 완성도가 높지만,
+운영 단계에서 아래 기능을 추가하면 더 강력해질 수 있다.
+
+- 예매/신청 폼 연동
+- Google Maps 연동
+- 공연 D-day 카운트다운
+- 공지사항 팝업
+- 아티스트 상세 프로필 모달
+- 곡별 가사/묵상 연결
+- 다국어 지원
+- 실제 PWA(Manifest / Service Worker) 확장
+- 관리자용 콘텐츠 JSON 분리
+
+---
+
+## 이 README가 전제하는 프로젝트 성격
+
+이 README는 이 저장소를 단순 HTML 파일 묶음이 아니라,
+다음과 같은 프로젝트로 이해하고 작성했다.
+
+> **청년 찬양 콘서트를 위해 만든, 모바일 중심의 감성형 QR 랜딩 마이크로사이트**
+
+핵심은 예쁘게 보이는 것만이 아니다.
+
+- **빠르게 열려야 하고**
+- **정보가 바로 보여야 하며**
+- **공동체의 스토리가 느껴져야 하고**
+- **링크 공유가 쉬워야 한다**
+
+이 사이트는 바로 그 목적에 맞게 설계되어 있다.
+
+---
+
+## License
+
+내부/행사용 프로젝트라면 비공개 운영을 권장한다.
+오픈소스로 전환할 경우 아래처럼 명시하면 된다.
+
+```text
+MIT License
+```
+
+---
+
+## Credits
+
+Designed & built for
+**찬양이 좋아서 모인 청년들 — LIVE CONCERT 2026**
