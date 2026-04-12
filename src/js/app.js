@@ -20,9 +20,11 @@ function switchTab(name, btn) {
     btn.classList.add('active');
   }
 
-  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-  triggerReveal();
-  updateStoryProgress();
+  requestAnimationFrame(() => {
+    window.scrollTo(0, 0);
+    triggerReveal();
+    updateStoryProgress();
+  });
 }
 
 function updateStoryProgress() {
@@ -118,7 +120,7 @@ let _bgmWasPlaying = false;
 
 function _tryStartBgm() {
   if (!_bgm || !_bgm.paused) return;
-  _bgm.volume = 0.24;
+  _bgm.volume = 0.16;
   _bgm.play().catch(() => {});
 }
 
@@ -126,7 +128,7 @@ function toggleBgmFromBar() {
   if (!_bgm) return;
   const bar = document.getElementById('nowPlaying');
   if (_bgm.paused) {
-    _bgm.volume = 0.24;
+    _bgm.volume = 0.16;
     _bgm.play().then(() => bar.classList.remove('paused')).catch(() => {});
   } else {
     _bgm.pause();
@@ -140,16 +142,16 @@ function toggleBgmFromBar() {
 ══════════════════════════════════ */
 
 const _lpTracks = [
-  { num: '01', name: '주를 찾는 모든 자들이', url: 'https://www.youtube.com/results?search_query=주를+찾는+모든+자들이' },
-  { num: '02', name: '친구야', url: 'https://www.youtube.com/results?search_query=친구야+찬양' },
-  { num: '03', name: '주를 바라보며', url: 'https://www.youtube.com/results?search_query=주를+바라보며+찬양' },
-  { num: '04', name: '모든 생명들아 소리쳐', url: 'https://www.youtube.com/results?search_query=모든+생명들아+소리쳐' },
-  { num: '05', name: '그리운 예루살렘', url: 'https://www.youtube.com/results?search_query=그리운+예루살렘+찬양' },
-  { num: '06', name: '아름다운 나라', url: 'https://www.youtube.com/results?search_query=아름다운+나라+찬양' },
-  { num: '07', name: '아버지의 사랑으로', url: 'https://www.youtube.com/results?search_query=다시+밤은+없겠고' },
-  { num: '08', name: '함께 지어져가네', url: 'https://www.youtube.com/results?search_query=함께+지어져가네' },
-  { num: '09', name: '어둔날 다 지나고', url: 'https://www.youtube.com/results?search_query=어둔날+다+지나고+찬양' },
-  { num: '10', name: '우린 물러서지 않으리', url: 'https://www.youtube.com/results?search_query=우린+물러서지+않으리' }
+  { num: '01', name: '주를 찾는 모든 자들이', url: 'https://www.youtube.com/results?search_query=주를+찾는+모든+자들이', color: '#c47a6e' },
+  { num: '02', name: '친구야', url: 'https://www.youtube.com/results?search_query=친구야+찬양', color: '#7a9e8e' },
+  { num: '03', name: '주를 바라보며', url: 'https://www.youtube.com/results?search_query=주를+바라보며+찬양', color: '#8e8aab' },
+  { num: '04', name: '모든 생명들아 소리쳐', url: 'https://www.youtube.com/results?search_query=모든+생명들아+소리쳐', color: '#c4a06e' },
+  { num: '05', name: '그리운 예루살렘', url: 'https://www.youtube.com/results?search_query=그리운+예루살렘+찬양', color: '#6e9ab5' },
+  { num: '06', name: '아름다운 나라', url: 'https://www.youtube.com/results?search_query=아름다운+나라+찬양', color: '#b07e8e' },
+  { num: '07', name: '아버지의 사랑으로', url: 'https://www.youtube.com/results?search_query=다시+밤은+없겠고', color: '#8aaa7e' },
+  { num: '08', name: '함께 지어져가네', url: 'https://www.youtube.com/results?search_query=함께+지어져가네', color: '#a08a6e' },
+  { num: '09', name: '어둔날 다 지나고', url: 'https://www.youtube.com/results?search_query=어둔날+다+지나고+찬양', color: '#7e8ea5' },
+  { num: '10', name: '우린 물러서지 않으리', url: 'https://www.youtube.com/results?search_query=우린+물러서지+않으리', color: '#b5806e' }
 ];
 let _lpIndex = 0;
 
@@ -159,6 +161,9 @@ function _updateLP() {
   document.getElementById('lpTrackName').textContent = t.name;
   document.getElementById('lpTrackCount').textContent = (_lpIndex + 1) + ' / ' + _lpTracks.length;
   document.getElementById('lpYtLink').href = t.url;
+  // LP 라벨 + YouTube 버튼 색상 변경
+  document.getElementById('lpDisc').style.setProperty('--lp-label-color', t.color);
+  document.getElementById('lpYtLink').style.background = t.color;
 }
 
 function lpNext() {
@@ -261,19 +266,9 @@ function shareKakao() {
 
 function shareInstagram() {
   closeShare();
-  const shareData = {
-    title: '찬양이 좋아서 모인 청년들 LIVE CONCERT 2026',
-    text: '찬양 콘서트에 함께해요!',
-    url: window.location.href
-  };
-
-  if (navigator.share) {
-    navigator.share(shareData).catch(() => {});
-  } else {
-    _copyToClipboard(window.location.href, () => {
-      showToast('링크가 복사되었습니다. Instagram DM에 붙여넣기 해주세요');
-    });
-  }
+  _copyToClipboard(window.location.href, () => {
+    showToast('링크가 복사되었습니다. DM으로 공유해보세요');
+  });
 }
 
 function copyLink(silent) {
