@@ -17,28 +17,21 @@
 <meta content="website" property="og:type"/>
 <!-- <meta property="og:image" content="https://your-site.com/public/images/og-cover.jpg"/> -->
 <!-- <meta property="og:url"   content="https://your-site.com"/> -->
-<!-- Google Fonts -->
+<!-- Google Fonts (최적화: 미사용 wght@700 제거, preload 추가) -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=IM+Fell+English:ital@0;1&amp;display=swap" rel="stylesheet"/>
-<!-- ─── CSS ─── -->
-<!-- 1. 변수 + 리셋: 가장 먼저 로드 -->
-<link href="src/css/reset.css" rel="stylesheet"/>
-<!-- 2. 애니메이션 keyframes + .reveal -->
-<link href="src/css/animations.css" rel="stylesheet"/>
-<!-- 3. 페이지 시스템 + 탭바 + FAB -->
-<link href="src/css/layout.css" rel="stylesheet"/>
-<!-- 4. 공유 바텀시트 + 토스트 -->
-<link href="src/css/components/share.css" rel="stylesheet"/>
-<!-- 5. 각 페이지별 스타일 -->
-<link href="src/css/pages/main.css" rel="stylesheet"/>
-<link href="src/css/pages/songs.css" rel="stylesheet"/>
-<link href="src/css/pages/artists.css" rel="stylesheet"/>
-<link href="src/css/pages/story.css" rel="stylesheet"/>
-<!-- 반응형 css -->
-<link rel="stylesheet" href="src/css/responsive.css"/>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=IM+Fell+English:ital@0;1&amp;display=swap" as="style"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=IM+Fell+English:ital@0;1&amp;display=swap" rel="stylesheet"/>
+<!-- ─── CSS (통합 스타일시트) ─── -->
+<link href="src/css/style.css" rel="stylesheet"/>
 </head>
 <body>
+<!-- SVG 심볼 정의 (중복 제거용) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+<symbol id="icon-yt" viewBox="0 0 24 24">
+<path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+</symbol>
+</svg>
 <!-- ════════════════════════════════
      PAGE 1 — MAIN
 ════════════════════════════════ -->
@@ -61,7 +54,7 @@
                alt="Concert"
                style="width:100%;height:100%;object-fit:cover;"/> -->
 <!-- 영상: -->
-<video autoplay="" disablepictureinpicture="" disableremoteplayback="" id="main-video" loop="" muted="" playsinline="" preload="auto" style="width:100%;height:100%;object-fit:cover;" x-webkit-airplay="deny">
+<video autoplay="" disablepictureinpicture="" disableremoteplayback="" id="main-video" loop="" muted="" playsinline="" preload="metadata" style="width:100%;height:100%;object-fit:cover;" x-webkit-airplay="deny">
 <source src="public/videos/MainWorship.mp4" type="video/mp4"/>
 </video>
 <!-- index.html → Page 1 Media 섹션 안의 media-placeholder를 이걸로 교체 -->
@@ -213,7 +206,7 @@
 <p class="song-card-sub">YouTube에서 듣기</p>
 </div>
 <div class="song-card-yt">
-<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+<svg fill="white"><use href="#icon-yt"/></svg>
 </div>
 </a>
 </div>
@@ -225,7 +218,7 @@
 <p class="song-card-sub">YouTube에서 듣기</p>
 </div>
 <div class="song-card-yt">
-<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+<svg fill="white"><use href="#icon-yt"/></svg>
 </div>
 </a>
 </div>
@@ -237,7 +230,7 @@
 <p class="song-card-sub">YouTube에서 듣기</p>
 </div>
 <div class="song-card-yt">
-<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+<svg fill="white"><use href="#icon-yt"/></svg>
 </div>
 </a>
 </div>
@@ -249,7 +242,7 @@
 <p class="song-card-sub">YouTube에서 듣기</p>
 </div>
 <div class="song-card-yt">
-<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+<svg fill="white"><use href="#icon-yt"/></svg>
 </div>
 </a>
 </div>
@@ -261,7 +254,7 @@
 <p class="song-card-sub">YouTube에서 듣기</p>
 </div>
 <div class="song-card-yt">
-<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+<svg fill="white"><use href="#icon-yt"/></svg>
 </div>
 </a>
 </div>
@@ -273,7 +266,7 @@
 <p class="song-card-sub">YouTube에서 듣기</p>
 </div>
 <div class="song-card-yt">
-<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+<svg fill="white"><use href="#icon-yt"/></svg>
 </div>
 </a>
 </div>
@@ -285,7 +278,7 @@
 <p class="song-card-sub">YouTube에서 듣기</p>
 </div>
 <div class="song-card-yt">
-<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+<svg fill="white"><use href="#icon-yt"/></svg>
 </div>
 </a>
 </div>
@@ -297,7 +290,7 @@
 <p class="song-card-sub">YouTube에서 듣기</p>
 </div>
 <div class="song-card-yt">
-<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+<svg fill="white"><use href="#icon-yt"/></svg>
 </div>
 </a>
 </div>
@@ -309,7 +302,7 @@
 <p class="song-card-sub">YouTube에서 듣기</p>
 </div>
 <div class="song-card-yt">
-<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+<svg fill="white"><use href="#icon-yt"/></svg>
 </div>
 </a>
 </div>
@@ -321,7 +314,7 @@
 <p class="song-card-sub">YouTube에서 듣기</p>
 </div>
 <div class="song-card-yt">
-<svg fill="white" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+<svg fill="white"><use href="#icon-yt"/></svg>
 </div>
 </a>
 </div>
@@ -501,7 +494,7 @@
 <p class="open-sub">왜 우리가 여기 모였는지의 이야기</p>
 </header><section class="scene">
 <div class="scene-img-wrap">
-<img alt="악기 세팅" src="public/images/story-01.jpg" style="aspect-ratio:4/3"/>
+<img alt="악기 세팅" loading="lazy" src="public/images/story-01.jpg" style="aspect-ratio:4/3"/>
 </div>
 <div class="scene-text reveal">
 <p class="ch-label">01 · 준비</p>
@@ -510,7 +503,7 @@
 </div>
 </section><div class="divider reveal"></div><section class="scene">
 <div class="scene-img-wrap">
-<img alt="혼자 앉아있는 장면" src="public/images/story-02.jpg" style="aspect-ratio:2/3"/>
+<img alt="혼자 앉아있는 장면" loading="lazy" src="public/images/story-02.jpg" style="aspect-ratio:2/3"/>
 </div>
 <div class="scene-text reveal">
 <p class="ch-label">02 · 고민</p>
@@ -524,15 +517,15 @@
 </div><section class="scene" style="margin-top:3px">
 <div class="double-img">
 <div class="double-img-item reveal">
-<img alt="차에 싣는 조명" src="public/images/story-03.jpg"/>
+<img alt="차에 싣는 조명" loading="lazy" src="public/images/story-03.jpg"/>
 </div>
 <div class="double-img-item reveal d2">
-<img alt="차에 싣는 물건" src="public/images/story-04.jpg"/>
+<img alt="차에 싣는 물건" loading="lazy" src="public/images/story-04.jpg"/>
 </div>
 </div>
 </section><div class="divider reveal" style="margin-top:clamp(48px,14vw,64px)"></div><section class="scene">
 <div class="scene-img-wrap">
-<img alt="리허설 / 소규모 공연" src="public/images/story-05.jpg" style="aspect-ratio:4/3"/>
+<img alt="리허설 / 소규모 공연" loading="lazy" src="public/images/story-05.jpg" style="aspect-ratio:4/3"/>
 </div>
 <div class="scene-text reveal">
 <p class="ch-label">04 · 작은 시작</p>
@@ -540,7 +533,7 @@
 </div>
 </section><div class="divider reveal"></div><section class="scene">
 <div class="scene-img-wrap">
-<img alt="첫 찬양" src="public/images/story-06.jpg" style="aspect-ratio:3/2"/>
+<img alt="첫 찬양" loading="lazy" src="public/images/story-06.jpg" style="aspect-ratio:3/2"/>
 </div>
 <div class="scene-text reveal">
 <p class="ch-label">05 · 찬양이 시작됨</p>
@@ -548,10 +541,10 @@
 </div>
 </section><div class="divider reveal"></div><section class="scene">
 <div class="scene-img-wrap">
-<img alt="관객들" src="public/images/story-07.jpg" style="aspect-ratio:4/3"/>
+<img alt="관객들" loading="lazy" src="public/images/story-07.jpg" style="aspect-ratio:4/3"/>
 </div>
 <div class="scene-img-wrap" style="margin-top:3px">
-<img alt="함께 모여 찬양" src="public/images/story-08.jpg" style="aspect-ratio:4/3"/>
+<img alt="함께 모여 찬양" loading="lazy" src="public/images/story-08.jpg" style="aspect-ratio:4/3"/>
 </div>
 <div class="scene-text reveal">
 <p class="ch-label">06 · 함께</p>
@@ -559,9 +552,9 @@
 </div>
 </section><div class="divider reveal"></div><section class="scene">
 <div class="scene-img-wrap">
-<img alt="함께 찬양" src="public/images/story-09-0.JPG" style="aspect-ratio:3/2"/>
-<img alt="함께 찬양" src="public/images/story-09-1.JPG" style="aspect-ratio:3/2"/>
-<img alt="함께 찬양" src="public/images/story-09-2.JPG" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-0.JPG" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-1.JPG" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG" style="aspect-ratio:3/2"/>
 </div>
 <div class="scene-text reveal">
 <p class="ch-label">07 · 공동체</p>
@@ -570,21 +563,21 @@
 </div>
 </section><div class="double-img" style="margin-top:3px">
 <div class="double-img-item reveal">
-<img alt="팀 단체 사진" src="public/images/story-10.jpg"/>
+<img alt="팀 단체 사진" loading="lazy" src="public/images/story-10.jpg"/>
 </div>
 <div class="double-img-item reveal d2">
-<img alt="팀 식사" src="public/images/story-11.jpg"/>
+<img alt="팀 식사" loading="lazy" src="public/images/story-11.jpg"/>
 </div>
 </div><div class="divider reveal" style="margin-top:clamp(48px,14vw,64px)"></div><section class="scene">
 <div class="scene-img-wrap">
-<img alt="핸드폰 불빛 찬양" src="public/images/story-12.jpg" style="aspect-ratio:3/2"/>
+<img alt="핸드폰 불빛 찬양" loading="lazy" src="public/images/story-12.jpg" style="aspect-ratio:3/2"/>
 </div>
 <div class="scene-text reveal">
 <p class="ch-label">08 · 더 큰 울림</p>
 <h2 class="scene-headline">우리의 찬양이<br/>세상 가운데<br/>울려 퍼지기를<br/>바랍니다</h2>
 </div>
 </section><div class="scene-img-wrap reveal" style="margin-top:3px">
-<img alt="기타와 게시판" src="public/images/story-13.jpg" style="aspect-ratio:4/3;width:100%;display:block;object-fit:cover;filter:brightness(.92) saturate(.9)"/>
+<img alt="기타와 게시판" loading="lazy" src="public/images/story-13.jpg" style="aspect-ratio:4/3;width:100%;display:block;object-fit:cover;filter:brightness(.92) saturate(.9)"/>
 </div><div class="quote-wrap">
 <div class="quote-deco">"</div>
 <p class="quote-text reveal">
@@ -700,10 +693,7 @@
 </div>
 <!-- Toast -->
 <div class="toast" id="toast"></div>
-<!-- ─── JavaScript ─── -->
-<!-- 로드 순서 중요: tabs → reveal → share -->
-<script src="src/js/tabs.js"></script>
-<script src="src/js/reveal.js"></script>
-<script src="src/js/share.js"></script>
+<!-- ─── JavaScript (통합 스크립트) ─── -->
+<script src="src/js/app.js"></script>
 </body>
 </html>

@@ -1,25 +1,16 @@
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* ══════════════════════════════════
+   pages/story.css — Page 4 스토리
+   스토리 페이지 전용 변수 + 스타일
+══════════════════════════════════ */
 
-:root{
+/* 스토리 페이지 전용 색상 (글로벌과 다른 톤) */
+.story-page{
   --cream:#faf7f3;
   --cream2:#f2ece4;
-  --brown:#2a2118;
   --brown-soft:#4a3a2d;
-  --red:#c0392b;
   --gold:#b8956a;
   --muted:#8a7060;
   --line:rgba(180,150,110,.18);
-}
-
-html{scroll-behavior:smooth}
-
-body{
-  background:var(--cream);
-  color:var(--brown);
-  font-family:'Noto Serif KR',serif;
-  max-width:480px;
-  margin:0 auto;
-  overflow-x:hidden;
 }
 
 /* PROGRESS */
@@ -327,29 +318,7 @@ footer p{
   opacity:.5;
 }
 
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{
-  from{
-    opacity:0;
-    transform:translateY(16px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-.reveal{
-  opacity:0;
-  transform:translateY(16px);
-  transition:opacity .7s ease,transform .7s ease;
-}
-
-.reveal.visible{
-  opacity:1;
-  transform:translateY(0);
-}
-
+/* 애니메이션 딜레이 (스토리 전용) */
 .d1{transition-delay:.08s}
 .d2{transition-delay:.18s}
 .d3{transition-delay:.28s}

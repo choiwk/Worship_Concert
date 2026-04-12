@@ -9,20 +9,27 @@
 /**
  * 현재 활성 페이지의 미노출 .reveal 요소를 모두 관찰 시작
  * tabs.js의 switchTab() 호출 후 실행됨
+ * 단일 Observer를 재사용하여 메모리 누수 방지
  */
+let _revealObserver = null;
+
 function triggerReveal() {
+  if (_revealObserver) {
+    _revealObserver.disconnect();
+  }
+
   const els = document.querySelectorAll('.page.active .reveal:not(.visible)');
 
-  const observer = new IntersectionObserver((entries) => {
+  _revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         setTimeout(() => entry.target.classList.add('visible'), 60);
-        observer.unobserve(entry.target);
+        _revealObserver.unobserve(entry.target);
       }
     });
   }, { threshold: 0.10 });
 
-  els.forEach(el => observer.observe(el));
+  els.forEach(el => _revealObserver.observe(el));
 }
 
 // 첫 페이지 로드 시 즉시 실행
