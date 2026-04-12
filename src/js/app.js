@@ -118,7 +118,7 @@ let _bgmWasPlaying = false;
 
 function _tryStartBgm() {
   if (!_bgm || !_bgm.paused) return;
-  _bgm.volume = 0.3;
+  _bgm.volume = 0.24;
   _bgm.play().catch(() => {});
 }
 
@@ -126,7 +126,7 @@ function toggleBgmFromBar() {
   if (!_bgm) return;
   const bar = document.getElementById('nowPlaying');
   if (_bgm.paused) {
-    _bgm.volume = 0.3;
+    _bgm.volume = 0.24;
     _bgm.play().then(() => bar.classList.remove('paused')).catch(() => {});
   } else {
     _bgm.pause();
@@ -244,23 +244,35 @@ function showToast(msg) {
 
 function shareKakao() {
   closeShare();
-  const url = encodeURIComponent(window.location.href);
-  window.open('kakaotalk://msg/send?text=' + url, '_blank');
-  showToast('카카오톡으로 공유합니다');
+  const shareData = {
+    title: '찬양이 좋아서 모인 청년들 LIVE CONCERT 2026',
+    text: '찬양 콘서트에 함께해요!',
+    url: window.location.href
+  };
+
+  if (navigator.share) {
+    navigator.share(shareData).catch(() => {});
+  } else {
+    _copyToClipboard(window.location.href, () => {
+      showToast('링크가 복사되었습니다. 카카오톡에 붙여넣기 해주세요');
+    });
+  }
 }
 
 function shareInstagram() {
   closeShare();
+  const shareData = {
+    title: '찬양이 좋아서 모인 청년들 LIVE CONCERT 2026',
+    text: '찬양 콘서트에 함께해요!',
+    url: window.location.href
+  };
 
   if (navigator.share) {
-    navigator.share({
-      title: '찬양이 좋아서 모인 청년들 LIVE CONCERT 2026',
-      text: '2026.11.21 찬양 콘서트 — 함께해요!',
-      url: window.location.href
-    }).catch(() => {});
+    navigator.share(shareData).catch(() => {});
   } else {
-    _copyToClipboard(window.location.href);
-    showToast('링크를 복사했습니다. Instagram DM에 붙여넣기 해주세요 ✉️');
+    _copyToClipboard(window.location.href, () => {
+      showToast('링크가 복사되었습니다. Instagram DM에 붙여넣기 해주세요');
+    });
   }
 }
 
