@@ -138,7 +138,49 @@ function toggleBgmFromBar() {
 
 
 /* ══════════════════════════════════
-   3. lp-player.js — LP 플레이어 곡 전환
+   3. dday.js — D-Day 카운트다운 + 캘린더
+══════════════════════════════════ */
+
+// 콘서트 날짜 (확정 후 여기만 수정)
+const CONCERT_DATE = new Date('2026-11-21T20:00:00+09:00');
+
+function updateDday() {
+  const el = document.getElementById('ddayCounter');
+  if (!el) return;
+  const now = new Date();
+  const diff = CONCERT_DATE - now;
+
+  if (diff <= 0) {
+    el.textContent = 'TODAY';
+    return;
+  }
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  el.textContent = 'D-' + days;
+}
+
+updateDday();
+setInterval(updateDday, 60000);
+
+function addToCalendar() {
+  const title = '찬양이 좋아서 모인 청년들 LIVE CONCERT';
+  const start = '20261121T110000Z'; // UTC (KST 20:00)
+  const end = '20261121T124000Z';   // UTC (KST 21:40)
+  const location = '향상교회 3층, 기흥구 언동로 140';
+  const details = '찬양이 좋아서 모인 청년들 LIVE CONCERT 2026';
+
+  const gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+    + '&text=' + encodeURIComponent(title)
+    + '&dates=' + start + '/' + end
+    + '&location=' + encodeURIComponent(location)
+    + '&details=' + encodeURIComponent(details);
+
+  window.open(gcalUrl, '_blank');
+}
+
+
+/* ══════════════════════════════════
+   4. lp-player.js — LP 플레이어 곡 전환
 ══════════════════════════════════ */
 
 const _lpTracks = [
@@ -214,6 +256,23 @@ function closeShare() {
   document.getElementById('shareSheet').classList.remove('open');
   document.body.style.overflow = '';
 }
+
+/* ── ESC 키로 모달 닫기 ── */
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('shareSheet').classList.contains('open')) closeShare();
+    if (document.getElementById('donateModal').classList.contains('open')) closeDonate();
+  }
+});
+
+/* ── Now Playing 키보드 지원 ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const np = document.getElementById('nowPlaying');
+  if (np) np.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleBgmFromBar(); }
+  });
+});
 
 /* ── Swipe Down to Close ── */
 
