@@ -1,0 +1,16 @@
+{
+  "name": "찬양이 좋아서 모인 청년들 — LIVE CONCERT 2026",
+  "short_name": "찬양 콘서트",
+  "description": "2026.11.21 SAT · 찬양이 좋아서 모인 청년들 LIVE CONCERT",
+  "start_url": "/Worship_Concert/",
+  "scope": "/Worship_Concert/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f1ee",
+  "theme_color": "#f3f1ee",
+  "icons": [
+    { "src": "public/icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" },
+    { "src": "public/icons/icon-192.svg", "sizes": "512x512", "type": "image/svg+xml" },
+    { "src": "public/icons/icon-192.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
