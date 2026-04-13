@@ -508,6 +508,14 @@
 <!-- ════════════════════════════════
      BOTTOM TAB BAR
 ════════════════════════════════ -->
+<!-- PWA 설치 안내 배너 -->
+<div class="install-banner" id="installBanner">
+<div class="install-banner-text">
+<p class="install-banner-title">앱으로 사용하기</p>
+<p class="install-banner-desc" id="installDesc"></p>
+</div>
+<button class="install-banner-close" onclick="dismissInstall()" aria-label="닫기">&times;</button>
+</div>
 <nav class="tab-bar">
 <button aria-label="메인" class="tab-btn active" data-tab="main" onclick="switchTab('main', this)">
 <svg class="tab-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
