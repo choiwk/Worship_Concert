@@ -180,48 +180,7 @@ function addToCalendar() {
 
 
 /* ══════════════════════════════════
-   4. pwa-install.js — PWA 설치 안내 배너
-══════════════════════════════════ */
-
-(function () {
-  // 이미 PWA로 실행 중이면 배너 불필요
-  if (window.matchMedia('(display-mode: standalone)').matches) return;
-  if (navigator.standalone) return;
-
-  // 이미 닫았으면 표시 안 함
-  if (localStorage.getItem('install_dismissed')) return;
-
-  const banner = document.getElementById('installBanner');
-  const desc = document.getElementById('installDesc');
-  if (!banner || !desc) return;
-
-  const ua = navigator.userAgent;
-  const isIOS = /iP(hone|ad|od)/.test(ua);
-  const isAndroid = /Android/.test(ua);
-
-  if (isIOS) {
-    desc.textContent = '하단 공유 버튼 ⬆ → "홈 화면에 추가"를 눌러주세요';
-  } else if (isAndroid) {
-    desc.textContent = '메뉴 ⋮ → "홈 화면에 추가"를 눌러주세요';
-  } else {
-    banner.classList.add('hidden');
-    return;
-  }
-
-  // 3초 후 배너 표시
-  banner.classList.add('hidden');
-  setTimeout(() => banner.classList.remove('hidden'), 3000);
-})();
-
-function dismissInstall() {
-  const banner = document.getElementById('installBanner');
-  banner.classList.add('hidden');
-  localStorage.setItem('install_dismissed', '1');
-}
-
-
-/* ══════════════════════════════════
-   5. lp-player.js — LP 플레이어 곡 전환
+   4. lp-player.js — LP 플레이어 곡 전환
 ══════════════════════════════════ */
 
 const _lpTracks = [
