@@ -18,16 +18,19 @@ function switchTab(name, btn) {
   if (btn)  btn.classList.add('active');
 
   // ② scrollTop 직접 지정
-  //    → scroll-behavior: smooth 를 완전히 우회 (scrollTo()와 달리 항상 즉시 적용)
+  //    → scroll-behavior: smooth 완전 우회 (scrollTo()와 달리 항상 즉시 적용)
   //    → document.scrollingElement: Chrome=<html>, 구형 Safari=<body> 자동 반환
   const scroller = document.scrollingElement || document.documentElement;
   scroller.scrollTop = 0;
 
-  // ③ 레이아웃 재계산 후 한 번 더 (일부 브라우저 복원 방어)
+  // ③ 레이아웃 재계산 후 한 번 더 (브라우저 복원 방어)
   requestAnimationFrame(() => {
     scroller.scrollTop = 0;
-    triggerReveal();
-    updateStoryProgress();
+    requestAnimationFrame(() => {
+      scroller.scrollTop = 0;
+      triggerReveal();
+      updateStoryProgress();
+    });
   });
 }
 
