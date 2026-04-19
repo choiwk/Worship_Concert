@@ -9,12 +9,7 @@
 ══════════════════════════════════ */
 
 function switchTab(name, btn) {
-  // ① scroll-behavior: smooth 를 일시적으로 비활성화
-  //    → smooth가 켜져 있으면 scrollTo(0,0)이 애니메이션되어 효과 없음
-  document.documentElement.style.scrollBehavior = 'auto';
-  document.body.style.scrollBehavior = 'auto';
-
-  // ② 탭 / 페이지 클래스 전환
+  // ① 탭 / 페이지 클래스 전환
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
@@ -22,16 +17,15 @@ function switchTab(name, btn) {
   if (page) page.classList.add('active');
   if (btn)  btn.classList.add('active');
 
-  // ③ 즉시(instant) 스크롤 리셋 — 크로스 브라우저 3중 보장
-  window.scrollTo({ top: 0, behavior: 'instant' });
-  document.documentElement.scrollTop = 0;
-  document.body.scrollTop = 0;
+  // ② scrollTop 직접 지정
+  //    → scroll-behavior: smooth 를 완전히 우회 (scrollTo()와 달리 항상 즉시 적용)
+  //    → document.scrollingElement: Chrome=<html>, 구형 Safari=<body> 자동 반환
+  const scroller = document.scrollingElement || document.documentElement;
+  scroller.scrollTop = 0;
 
-  // ④ 다음 프레임에서 reveal 트리거 + scroll-behavior 복원
+  // ③ 레이아웃 재계산 후 한 번 더 (일부 브라우저 복원 방어)
   requestAnimationFrame(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    document.documentElement.style.scrollBehavior = '';
-    document.body.style.scrollBehavior = '';
+    scroller.scrollTop = 0;
     triggerReveal();
     updateStoryProgress();
   });
