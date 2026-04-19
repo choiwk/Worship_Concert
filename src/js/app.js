@@ -2,64 +2,68 @@
    app.js — 통합 스크립트
    순서: tabs → reveal → share
 ══════════════════════════════════════════════════════════ */
-
-
+ 
+ 
 /* ══════════════════════════════════
    1. tabs.js — 하단 탭 전환 로직
 ══════════════════════════════════ */
-
+ 
 function switchTab(name, btn) {
+  // ① 페이지 전환 전, 스크롤을 동기적으로 먼저 리셋
+  //    (브라우저가 이전 스크롤 위치를 새 페이지에 유지하는 현상 방지)
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+ 
+  // ② 탭 / 페이지 클래스 전환
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
+ 
   const page = document.getElementById('page-' + name);
-  if (page) {
-    page.classList.add('active');
-  }
-  if (btn) {
-    btn.classList.add('active');
-  }
-
+  if (page) page.classList.add('active');
+  if (btn)  btn.classList.add('active');
+ 
+  // ③ 렌더링 완료 후 한 번 더 보장 (iOS Safari 대응)
   requestAnimationFrame(() => {
     window.scrollTo(0, 0);
     triggerReveal();
     updateStoryProgress();
   });
 }
-
+ 
 function updateStoryProgress() {
   const prog = document.getElementById('storyProg');
   const storyPage = document.getElementById('page-story');
   if (!prog || !storyPage) return;
-
+ 
   if (!storyPage.classList.contains('active')) {
     prog.style.width = '0%';
     return;
   }
-
+ 
   const max = document.body.scrollHeight - window.innerHeight;
   const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
   prog.style.width = pct + '%';
 }
-
+ 
 window.addEventListener('scroll', updateStoryProgress, { passive: true });
 window.addEventListener('resize', updateStoryProgress);
 document.addEventListener('DOMContentLoaded', updateStoryProgress);
-
-
+ 
+ 
 /* ══════════════════════════════════
    2. reveal.js — 스크롤 Fade-up 애니메이션
 ══════════════════════════════════ */
-
+ 
 let _revealObserver = null;
-
+ 
 function triggerReveal() {
   if (_revealObserver) {
     _revealObserver.disconnect();
   }
-
+ 
   const els = document.querySelectorAll('.page.active .reveal:not(.visible)');
-
+ 
   _revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -68,29 +72,29 @@ function triggerReveal() {
       }
     });
   }, { threshold: 0.10 });
-
+ 
   els.forEach(el => _revealObserver.observe(el));
 }
-
+ 
 // 첫 페이지 로드 시 즉시 실행
 triggerReveal();
-
+ 
 // ── 모바일 자동재생 강제 실행 ──
 (function () {
   const video = document.getElementById('main-video');
   if (!video) return;
-
+ 
   const tryPlay = () => {
     video.muted = true;
     video.play().catch(() => {});
   };
-
+ 
   if (document.readyState === 'complete') {
     tryPlay();
   } else {
     window.addEventListener('load', tryPlay);
   }
-
+ 
   // 첫 터치 시 비디오 + 배경음악 동시 시작
   const onFirstTouch = () => {
     video.play().catch(() => {});
@@ -98,7 +102,7 @@ triggerReveal();
   };
   document.addEventListener('touchstart', onFirstTouch, { once: true });
   document.addEventListener('click', () => { _tryStartBgm(); }, { once: true });
-
+ 
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
       video.play().catch(() => {});
@@ -109,21 +113,21 @@ triggerReveal();
     }
   });
 })();
-
-
+ 
+ 
 /* ══════════════════════════════════
    4. bgm.js — 배경음악 제어
 ══════════════════════════════════ */
-
+ 
 const _bgm = document.getElementById('bgm');
 let _bgmWasPlaying = false;
-
+ 
 function _tryStartBgm() {
   if (!_bgm || !_bgm.paused) return;
   _bgm.volume = 0.16;
   _bgm.play().catch(() => {});
 }
-
+ 
 function toggleBgmFromBar() {
   if (!_bgm) return;
   const bar = document.getElementById('nowPlaying');
@@ -135,54 +139,54 @@ function toggleBgmFromBar() {
     bar.classList.add('paused');
   }
 }
-
-
+ 
+ 
 /* ══════════════════════════════════
    3. dday.js — D-Day 카운트다운 + 캘린더
 ══════════════════════════════════ */
-
+ 
 // 콘서트 날짜 (확정 후 여기만 수정)
 const CONCERT_DATE = new Date('2026-11-21T20:00:00+09:00');
-
+ 
 function updateDday() {
   const el = document.getElementById('ddayCounter');
   if (!el) return;
   const now = new Date();
   const diff = CONCERT_DATE - now;
-
+ 
   if (diff <= 0) {
     el.textContent = 'TODAY';
     return;
   }
-
+ 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   el.textContent = 'D-' + days;
 }
-
+ 
 updateDday();
 setInterval(updateDday, 60000);
-
+ 
 function addToCalendar() {
   const title = '찬양이 좋아서 모인 청년들 LIVE CONCERT';
   const start = '20261121T110000Z'; // UTC (KST 20:00)
   const end = '20261121T124000Z';   // UTC (KST 21:40)
   const location = '향상교회 3층, 기흥구 언동로 140';
   const details = '찬양이 좋아서 모인 청년들 LIVE CONCERT 2026';
-
+ 
   const gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
     + '&text=' + encodeURIComponent(title)
     + '&dates=' + start + '/' + end
     + '&location=' + encodeURIComponent(location)
     + '&details=' + encodeURIComponent(details);
-
+ 
   window.open(gcalUrl, '_blank');
 }
-
-
+ 
+ 
 /* ══════════════════════════════════
    4. lp-player.js — LP 플레이어 곡 전환
 ══════════════════════════════════ */
-
+ 
 const _lpTracks = [
   { num: '01', name: '주를 찾는 모든 자들이', url: 'https://www.youtube.com/results?search_query=주를+찾는+모든+자들이', color: '#c47a6e' },
   { num: '02', name: '친구야', url: 'https://www.youtube.com/results?search_query=친구야+찬양', color: '#7a9e8e' },
@@ -196,7 +200,7 @@ const _lpTracks = [
   { num: '10', name: '우린 물러서지 않으리', url: 'https://www.youtube.com/results?search_query=우린+물러서지+않으리', color: '#b5806e' }
 ];
 let _lpIndex = 0;
-
+ 
 function _updateLP() {
   const t = _lpTracks[_lpIndex];
   document.getElementById('lpLabel').textContent = t.num;
@@ -207,65 +211,65 @@ function _updateLP() {
   document.getElementById('lpDisc').style.setProperty('--lp-label-color', t.color);
   document.getElementById('lpYtLink').style.background = t.color;
 }
-
+ 
 function lpNext() {
   _lpIndex = (_lpIndex + 1) % _lpTracks.length;
   _updateLP();
 }
-
+ 
 function lpPrev() {
   _lpIndex = (_lpIndex - 1 + _lpTracks.length) % _lpTracks.length;
   _updateLP();
 }
-
-
+ 
+ 
 /* ══════════════════════════════════
    4. donate.js — 후원 모달
 ══════════════════════════════════ */
-
+ 
 function openDonate() {
   document.getElementById('donateBackdrop').classList.add('open');
   document.getElementById('donateModal').classList.add('open');
 }
-
+ 
 function closeDonate() {
   document.getElementById('donateBackdrop').classList.remove('open');
   document.getElementById('donateModal').classList.remove('open');
 }
-
+ 
 function copyAccount() {
   const account = document.getElementById('donateAccount').textContent;
   _copyToClipboard(account, () => {
     showToast('계좌번호가 복사되었습니다');
   });
 }
-
-
+ 
+ 
 /* ══════════════════════════════════
    5. share.js — 공유 바텀시트 + 공유 기능
 ══════════════════════════════════ */
-
+ 
 function openShare() {
   document.getElementById('modalBackdrop').classList.add('open');
   document.getElementById('shareSheet').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
+ 
 function closeShare() {
   document.getElementById('modalBackdrop').classList.remove('open');
   document.getElementById('shareSheet').classList.remove('open');
   document.body.style.overflow = '';
 }
-
+ 
 /* ── ESC 키로 모달 닫기 ── */
-
+ 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (document.getElementById('shareSheet').classList.contains('open')) closeShare();
     if (document.getElementById('donateModal').classList.contains('open')) closeDonate();
   }
 });
-
+ 
 /* ── Now Playing 키보드 지원 ── */
 document.addEventListener('DOMContentLoaded', () => {
   const np = document.getElementById('nowPlaying');
@@ -273,39 +277,39 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleBgmFromBar(); }
   });
 });
-
+ 
 /* ── Swipe Down to Close ── */
-
+ 
 let _touchStartY = 0;
-
+ 
 document.addEventListener('DOMContentLoaded', () => {
   const sheet = document.getElementById('shareSheet');
-
+ 
   sheet.addEventListener('touchstart', e => {
     _touchStartY = e.touches[0].clientY;
   }, { passive: true });
-
+ 
   sheet.addEventListener('touchend', e => {
     const dy = e.changedTouches[0].clientY - _touchStartY;
     if (dy > 60) closeShare();
   }, { passive: true });
 });
-
+ 
 /* ── Toast Notification ── */
-
+ 
 let _toastTimer = null;
-
+ 
 function showToast(msg) {
   const toast = document.getElementById('toast');
   toast.textContent = msg;
   toast.classList.add('show');
-
+ 
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
 }
-
+ 
 /* ── Share Actions ── */
-
+ 
 function shareKakao() {
   closeShare();
   const shareData = {
@@ -313,7 +317,7 @@ function shareKakao() {
     text: '찬양 콘서트에 함께해요!',
     url: window.location.href
   };
-
+ 
   if (navigator.share) {
     navigator.share(shareData).catch(() => {});
   } else {
@@ -322,23 +326,23 @@ function shareKakao() {
     });
   }
 }
-
+ 
 function shareInstagram() {
   closeShare();
   _copyToClipboard(window.location.href, () => {
     showToast('링크가 복사되었습니다. DM으로 공유해보세요');
   });
 }
-
+ 
 function copyLink(silent) {
   closeShare();
   _copyToClipboard(window.location.href, () => {
     if (!silent) showToast('링크가 복사되었습니다 ✓');
   });
 }
-
+ 
 /* ── Internal Clipboard Helper ── */
-
+ 
 function _copyToClipboard(text, callback) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(() => {
@@ -350,7 +354,7 @@ function _copyToClipboard(text, callback) {
     _fallbackCopy(text, callback);
   }
 }
-
+ 
 function _fallbackCopy(text, callback) {
   const ta = document.createElement('textarea');
   ta.value = text;
