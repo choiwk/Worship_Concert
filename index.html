@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=13" rel="stylesheet"/>
+<link href="src/css/style.css?v=14" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -90,7 +90,6 @@
 </div></section>
 <!-- Event Info -->
 <section class="sec-info">
-<div class="event-date reveal" id="eventDate"></div>
 <p class="dday-counter reveal" id="ddayCounter"></p>
 <div class="event-name reveal">
 <span class="event-name-main">찬양이 좋아서 모인 청년들</span>
@@ -494,7 +493,6 @@
 <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line>
 <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line>
 </svg>
-<span class="share-fab-label">공유</span>
 </button>
 <!-- ════════════════════════════════
      SHARE BOTTOM SHEET MODAL
@@ -575,8 +573,8 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=13" defer></script>
-<script src="src/js/app.js?v=13" defer></script>
+<script src="src/js/songs.js?v=14" defer></script>
+<script src="src/js/app.js?v=14" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

@@ -397,27 +397,13 @@ function concertBaseDate() {
    4. main-info.js — 메인 화면의 날짜·시간·장소 렌더
 ══════════════════════════════════ */
 
-function renderEventDate() {
-  const box = document.getElementById('eventDate');
-  if (!box) return;
-  box.innerHTML = '';
-
-  CONCERT.dates.forEach((d, i) => {
-    if (i > 0) box.appendChild(_el('span', 'event-date-or', '또는'));
-    const one = _el('span', 'event-date-one');
-    one.appendChild(_el('span', 'event-date-day', d.short));
-    one.appendChild(_el('span', 'event-date-dow', d.dow));
-    box.appendChild(one);
-  });
-}
-
 function renderDetailGrid() {
   const grid = document.getElementById('detailGrid');
   if (!grid) return;
   grid.innerHTML = '';
 
-  const card = (label, build, wide) => {
-    const c = _el('div', 'detail-card' + (wide ? ' full-width' : ''));
+  const card = (label, build, mod) => {
+    const c = _el('div', 'detail-card' + (mod ? ' ' + mod : ''));
     c.appendChild(_el('p', 'card-label', label));
     build(c);
     grid.appendChild(c);
@@ -431,7 +417,7 @@ function renderDetailGrid() {
       c.appendChild(v);
     });
     if (!CONCERT.confirmed) c.appendChild(_el('p', 'card-note card-note-block', '두 날짜 중 하나로 확정될 예정이에요'));
-  });
+  }, 'is-date');
 
   card('시간', c => {
     const v = _el('p', 'card-value');
@@ -448,7 +434,7 @@ function renderDetailGrid() {
     }
     c.appendChild(v);
     c.appendChild(_el('p', 'card-value card-sub', CONCERT.venue.address));
-  }, true);
+  }, 'full-width');
 }
 
 function renderFinaleDate() {
@@ -806,7 +792,6 @@ function _fallbackCopy(text, callback) {
    boot — 최초 렌더 및 라우팅 시작
 ══════════════════════════════════ */
 
-renderEventDate();
 renderDetailGrid();
 renderFinaleDate();
 renderSongList();

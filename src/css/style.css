@@ -349,32 +349,26 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 }
 
 /* 검은 원형 FAB은 이 사이트의 종이·손글씨 톤과 겉돌아서
-   종이 바탕에 클레이 테두리를 두른 알약 버튼으로 바꿨다.
-   라벨을 함께 보여 무슨 버튼인지 바로 읽히게 한다. */
+   종이 바탕에 클레이 테두리를 두른 원형 버튼으로 바꿨다. */
 .share-fab {
   position: fixed;
   bottom: calc(var(--tab-content-h) + env(safe-area-inset-bottom) + 14px);
   right: max(16px, env(safe-area-inset-right) + 16px);
-  min-height: 46px;
-  padding: 10px 16px 10px 14px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
-  gap: 7px;
+  justify-content: center;
   background: var(--paper);
   color: var(--clay);
   border: 1px solid var(--clay);
-  border-radius: 999px;
+  border-radius: 50%;
   cursor: pointer;
   z-index: 400;
   box-shadow: 0 4px 14px rgba(50, 44, 37, .13);
   transition: background .2s, color .2s, transform .12s;
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
-}
-
-.share-fab-label {
-  font-size: clamp(15px, 3.9vw, 17px);
-  line-height: 1;
 }
 
 .share-fab:hover {
@@ -395,7 +389,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   :root { --tab-content-h: 56px; }
   .tab-icon { width: 18px; height: 18px; }
   .tab-label { letter-spacing: 0.02em; }
-  .share-fab { padding: 9px 13px 9px 11px; right: 12px; }
+  .share-fab { width: 44px; height: 44px; right: 12px; }
   .share-fab svg { width: 16px; height: 16px; }
 }
 
@@ -741,39 +735,6 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
    (300/600 을 주면 브라우저가 가짜 볼드를 합성해 얇은 획이 뭉갠다)
    대신 text-stroke 로 획 자체를 아주 조금 두껍게 하고, 크기와 색으로 위계를 만든다. */
 
-/* ── 공연 날짜 — 아직 확정 전이라 후보 두 개를 나란히 ── */
-.event-date {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px clamp(8px, 2.6vw, 12px);
-  margin-bottom: 4px;
-}
-
-.event-date-one {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.event-date-day {
-  font-size: clamp(19px, 5.4vw, 24px);
-  color: var(--clay);
-  -webkit-text-stroke: 0.4px currentColor;
-  paint-order: stroke fill;
-}
-
-.event-date-dow {
-  font-size: clamp(14px, 3.7vw, 16px);
-  color: var(--clay);
-  opacity: .85;
-}
-
-.event-date-or {
-  font-size: clamp(14px, 3.7vw, 16px);
-  color: var(--ink-faint);
-}
-
 .dday-counter {
   font-size: clamp(14px, 3.8vw, 17px);
   color: var(--ink-faint);
@@ -837,6 +798,11 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .card-strong {
   -webkit-text-stroke: 0.4px currentColor;
   paint-order: stroke fill;
+}
+
+/* 공연 날짜는 붉은 계열로 한 번 더 눈에 띄게 */
+.detail-card.is-date .card-strong {
+  color: var(--clay);
 }
 
 .detail-card .card-value + .card-value,
