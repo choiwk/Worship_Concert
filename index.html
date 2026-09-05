@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css" rel="stylesheet"/>
+<link href="src/css/style.css?v=7" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -147,64 +147,8 @@
 <h2 class="ph-title">곡 리스트</h2>
 
 </div>
-<div class="song-overview">
-<div class="song-row reveal">
-<span class="song-num">01</span>
-<span class="song-title-text">주를 찾는 모든 자들이</span>
-<span class="song-arrow">→</span>
-</div>
-<div class="song-row reveal">
-<span class="song-num">02</span>
-<span class="song-title-text">친구야</span>
-<span class="song-arrow">→</span>
-</div>
-<div class="song-row reveal">
-<span class="song-num">03</span>
-<span class="song-title-text">주를 바라보며</span>
-<span class="song-arrow">→</span>
-</div>
-<div class="song-row reveal">
-<span class="song-num">04</span>
-<span class="song-title-text">모든 생명들아 소리쳐</span>
-<span class="song-arrow">→</span>
-</div>
-<div class="song-row reveal">
-<span class="song-num">05</span>
-<span class="song-title-text">그리운 예루살렘</span>
-<span class="song-arrow">→</span>
-</div>
-<div class="song-row reveal">
-<span class="song-num">06</span>
-<span class="song-title-text">아름다운 나라</span>
-<span class="song-arrow">→</span>
-</div>
-<div class="song-break">
-<div class="song-break-line">
-<span class="song-break-text"> 편지와 기도 </span>
-</div>
-</div>
-<div class="song-row reveal">
-<span class="song-num">07</span>
-<span class="song-title-text">다시 밤은 없겠고</span>
-<span class="song-arrow">→</span>
-</div>
-<div class="song-row reveal">
-<span class="song-num">08</span>
-<span class="song-title-text">함께 지어져가네</span>
-<span class="song-arrow">→</span>
-</div>
-<div class="song-row reveal">
-<span class="song-num">09</span>
-<span class="song-title-text">어둔날 다 지나고</span>
-<span class="song-arrow">→</span>
-</div>
-<div class="song-row reveal">
-<span class="song-num">10</span>
-<span class="song-title-text">우린 물러서지 않으리</span>
-<span class="song-arrow">→</span>
-</div>
-</div>
-<!-- Song Detail Cards with YouTube Links -->
+<!-- 곡 리스트 (src/js/songs.js 데이터로 렌더) -->
+<ul class="song-list" id="songList" aria-label="곡 리스트"></ul>
 <div class="song-detail-section">
 <span class="detail-section-label">곡 소개 및 미리듣기</span>
 <!-- LP 플레이어 -->
@@ -212,22 +156,29 @@
 <div class="lp-controls">
 <button class="lp-arrow lp-prev" onclick="lpPrev()" aria-label="이전 곡">←</button>
 <div class="lp-disc-wrap">
-<div class="lp-disc" id="lpDisc">
+<button class="lp-disc" id="lpDisc" aria-label="이 곡의 가사와 말씀 보기">
 <span class="lp-label" id="lpLabel">01</span>
-</div>
+</button>
 </div>
 <button class="lp-arrow lp-next" onclick="lpNext()" aria-label="다음 곡">→</button>
 </div>
-<p class="lp-track-name" id="lpTrackName">주를 찾는 모든 자들이</p>
-<p class="lp-track-count" id="lpTrackCount">1 / 10</p>
-<a class="lp-yt-btn" id="lpYtLink" href="https://www.youtube.com/results?search_query=주를+찾는+모든+자들이" rel="noopener" target="_blank">
-<svg fill="white" width="16" height="16"><use href="#icon-yt"/></svg>
+<button class="lp-track-name" id="lpTrackName" aria-label="이 곡의 가사와 말씀 보기"></button>
+<p class="lp-track-count" id="lpTrackCount"></p>
+<a class="lp-yt-btn" id="lpYtLink" href="#" rel="noopener noreferrer" target="_blank">
+<svg fill="white" width="16" height="16" aria-hidden="true"><use href="#icon-yt"/></svg>
 <span>YouTube에서 듣기</span>
+<span class="ext-mark" aria-hidden="true">→</span>
 </a>
 </div>
-</div>
 <div style="height:28px;"></div>
+</div><!-- /song-detail-section -->
 </div><!-- /page-songs -->
+<!-- ════════════════════════════════
+     곡 상세 (해시 라우팅 #/songs/NN)
+════════════════════════════════ -->
+<div class="page song-page" id="page-song">
+<article id="songDetail"></article>
+</div><!-- /page-song -->
 <!-- ════════════════════════════════
      PAGE 3 — ARTISTS
 ════════════════════════════════ -->
@@ -617,7 +568,8 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/app.js" defer></script>
+<script src="src/js/songs.js?v=7" defer></script>
+<script src="src/js/app.js?v=7" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

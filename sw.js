@@ -1,9 +1,10 @@
-const CACHE_NAME = 'worship-concert-v3';
+const CACHE_NAME = 'worship-concert-v7';
 const ASSETS = [
   './',
   './index.html',
-  './src/css/style.css',
-  './src/js/app.js',
+  './src/css/style.css?v=7',
+  './src/js/app.js?v=7',
+  './src/js/songs.js?v=7',
   './manifest.json',
   './public/fonts/Sarang-site.woff2',
   './public/audio/bgm.mp3',
@@ -43,8 +44,26 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// 요청 가로채기: 캐시 우선, 네트워크 폴백
+// 요청 가로채기
+//  · HTML: 네트워크 우선 — 새 배포의 ?v= 버전을 즉시 알아야 하므로
+//  · 나머지: 캐시 우선 (URL에 ?v= 가 붙어 있어 갱신 시 키가 바뀐다)
 self.addEventListener('fetch', (e) => {
+  const isHTML = e.request.mode === 'navigate' ||
+                 (e.request.headers.get('accept') || '').includes('text/html');
+
+  if (isHTML) {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+          return res;
+        })
+        .catch(() => caches.match(e.request).then(r => r || caches.match('./index.html')))
+    );
+    return;
+  }
+
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;

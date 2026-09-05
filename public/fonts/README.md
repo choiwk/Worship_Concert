@@ -24,12 +24,13 @@ CSS 스택은 `'Sarang', 'Sarang Full', ...` 순서다.
 원본 TTF에 아예 글리프가 없어서 다른 서체로 튀는 문자들:
 
 ```
-·  —  –  …  ‹  ›  ✓  ©  ®  °
+·  —  –  …  ‹  ›  ✓  ©  ®  °  ↗ ↑ ↓  (← → 외의 모든 화살표)
 ```
 
 가운뎃점·엠대시·홑화살괄호는 원래 이 사이트가 구분자로 쓰던 문자라
 각각 `.` `-` `←` `→` 로 바꿔 두었다. **새 문구를 넣을 때 이 문자들을 쓰지 말 것.**
-반대로 `♪ ♥ ★ ☆ → ← ※ “ ” ‘ ’` 와 ASCII 전체는 손글씨로 잘 나온다.
+외부 링크 표시의 ↗ 는 폰트에 있는 `→` 를 CSS에서 `rotate(-45deg)` 해서 만든다
+(`.ext-mark`). 반대로 `♪ ♥ ★ ☆ → ← ※ “ ” ‘ ’` 와 ASCII 전체는 손글씨로 잘 나온다.
 
 이모지(🎸🥁📷 등)도 이 폰트에 없다. 이모지를 쓰는 요소에는
 `.avatar-placeholder`처럼 이모지 폰트를 폴백에 명시해야
@@ -45,7 +46,7 @@ pip install fonttools brotli
 python3 - <<'PY'
 import io
 chars = set()
-for f in ['index.html', 'src/js/app.js', 'manifest.json']:
+for f in ['index.html', 'src/js/app.js', 'src/js/songs.js', 'manifest.json']:
     chars |= set(io.open(f, encoding='utf-8').read())
 for cp in range(0x20, 0x7F):
     chars.add(chr(cp))
@@ -61,7 +62,8 @@ pyftsubset public/fonts/NanumSonGeulSsi-SarangheAdeul.ttf \
 원본 TTF는 저장소에 없으므로(용량 문제로 `.gitignore`) 네이버 나눔글꼴에서
 「나눔손글씨 사랑해 아들」을 다시 받아 `public/fonts/`에 두고 실행한다.
 
-재생성 후에는 `sw.js`의 `CACHE_NAME` 버전을 올려야 기존 사용자에게 반영된다.
+재생성 후에는 `sw.js`의 `CACHE_NAME`, 그리고 `index.html`·`sw.js`의
+`?v=` 쿼리 버전을 함께 올려야 기존 사용자에게 반영된다 (셋은 항상 같은 숫자로 맞춘다).
 
 ## 조판할 때 주의할 점 (폰트 실측 기준)
 
