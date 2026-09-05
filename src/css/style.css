@@ -921,7 +921,9 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 /* ── 푸터 ────────────────────────────────────────────────── */
 .footer {
-  padding: clamp(22px, 6vw, 30px);
+  /* 공유 버튼이 화면 오른쪽 아래에 고정돼 있어, 그 높이만큼 아래를 비워
+     푸터 문구가 버튼에 가리지 않게 한다 */
+  padding: clamp(22px, 6vw, 30px) clamp(22px, 6vw, 30px) calc(clamp(22px, 6vw, 30px) + 46px);
   text-align: center;
   background: var(--paper-warm);
   border-top: 1px solid var(--line);
@@ -1284,7 +1286,13 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 ══════════════════════════════════ */
 
 .song-page {
-  padding: 0 clamp(20px, 6.5vw, 30px) clamp(40px, 12vw, 56px);
+  /* padding 단축 속성을 쓰면 .page 의 padding-bottom(탭바 높이만큼 확보한 값)이
+     통째로 덮여서 이전/다음 곡 버튼이 탭바 밑으로 숨는다.
+     좌우만 따로 주고, 하단은 탭바 + 공유 버튼(48px) 위로 여유를 둔다. */
+  padding-left: clamp(20px, 6.5vw, 30px);
+  padding-right: clamp(20px, 6.5vw, 30px);
+  padding-top: 0;
+  padding-bottom: calc(var(--tab-content-h) + env(safe-area-inset-bottom) + clamp(72px, 18vw, 96px));
   background: var(--paper);
 }
 
@@ -1979,11 +1987,11 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   display:block;
   width:100%;
   padding:clamp(16px,4.5vw,20px);
-  background:var(--brown);
-  color:var(--cream);
+  background:var(--clay);
+  color:#fdfbf6;
   border:none;
-  border-radius:3px;
-  font-size:clamp(15px, 3.4vw, 17px);
+  border-radius:14px;
+  font-size:clamp(16px, 4.2vw, 19px);
   letter-spacing: 0.02em;
   text-decoration:none;
   text-align:center;
@@ -1993,7 +2001,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 }
 
 .story-page .btn-primary:hover{
-  background:var(--red);
+  background:#8e4128;
 }
 
 .story-page .btn-secondary{
@@ -2001,10 +2009,10 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   width:100%;
   padding:clamp(14px,4vw,18px);
   background:transparent;
-  color:var(--brown-soft);
-  border:1px solid rgba(42,33,24,.2);
-  border-radius:3px;
-  font-size:clamp(15px, 3.4vw, 17px);
+  color:var(--ink-soft);
+  border:1px solid var(--line);
+  border-radius:14px;
+  font-size:clamp(15px, 4vw, 17px);
   letter-spacing: 0.02em;
   text-decoration:none;
   text-align:center;
@@ -2012,7 +2020,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 }
 
 .story-page footer{
-  padding:clamp(16px,4.5vw,20px);
+  padding:clamp(16px,4.5vw,20px) clamp(16px,4.5vw,20px) calc(clamp(16px,4.5vw,20px) + 46px);
   background:var(--cream2);
   text-align:center;
 }
