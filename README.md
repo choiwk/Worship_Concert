@@ -114,6 +114,27 @@ python3 -m http.server 8000
 곡을 고친 뒤에는 폰트 서브셋을 다시 만들고 캐시 버전을 올려야 한다 —
 [public/fonts/README.md](public/fonts/README.md) 참고.
 
+## 공연 날짜·시간·장소 수정하기
+
+[`src/js/app.js`](src/js/app.js) 상단의 `CONCERT` 객체 한 곳에만 있다.
+메인 화면의 날짜 블록, D-Day 카운터, 캘린더 추가, 스토리 마지막 문구가
+모두 이 값을 읽는다.
+
+```js
+const CONCERT = {
+  confirmed: false,          // 일정이 확정되면 true
+  dates: [ ... ],            // 후보가 여러 개면 나열, 첫 번째가 D-Day 기준
+  time:  { text, startUTC, endUTC },
+  venue: { name, address, note }
+};
+```
+
+일정이 확정되면 `dates` 를 하나만 남기고 `confirmed` 를 `true` 로 바꾸면
+"두 날짜 중 하나로 확정될 예정" 안내와 D-Day 의 "(○월 ○일 기준)" 표기가 사라진다.
+
+**주의**: `index.html` 의 구조화 데이터(JSON-LD)와 메타 태그(og/twitter),
+`manifest.json` 의 설명문은 정적이라 함께 손으로 고쳐야 한다.
+
 ## URL 구조
 
 정적 호스팅이라 서버 리라이트를 쓸 수 없어 해시 라우팅을 쓴다.

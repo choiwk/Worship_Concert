@@ -66,8 +66,9 @@ html {
   --muted:       var(--ink-soft);
   --light-muted: var(--ink-faint);
 
-  --tab-h:       60px;
-  --max-w:       480px;
+  --tab-h:         60px;
+  --tab-content-h: 60px;
+  --max-w:         480px;
 
   --space-xs:  8px;
   --space-sm:  16px;
@@ -133,7 +134,6 @@ body::before {
   padding: 8px 16px 6px;
   background: var(--cream);
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .now-playing.paused .np-bars span {
@@ -187,6 +187,38 @@ body::before {
 }
 
 
+/* ── 손글씨 한 벌로만 쓰기 위한 전역 보정 ──────────────────────────
+   이 서체는 굵기 400 하나, 이탤릭 없음. strong/em/b/i를 그대로 두면
+   브라우저가 가짜 볼드·오블리크를 합성해 얇은 획이 뭉개진다.
+   → 굵기·기울임 대신 색으로만 강조한다. */
+strong, b, em, i {
+  font-weight: 400;
+  font-style: normal;
+}
+
+strong, b { color: var(--clay); }
+
+/* 링크·버튼 공통 — 개별 규칙에 20번 흩어져 있던 선언을 한곳으로 모았다 */
+a, button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 키보드 포커스 링. 배경이 진해 대비가 부족한 몇 곳만 아래에서 따로 덮는다 */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 2px;
+}
+
+/* 버튼·입력 요소는 폰트를 상속하지 않으므로 명시해준다 */
+button, input, textarea, select, a {
+  font-family: inherit;
+  letter-spacing: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 { font-weight: 400; }
+
+
 /* ══════════════════════════════════
    2. animations.css — @keyframes + .reveal
 ══════════════════════════════════ */
@@ -235,10 +267,6 @@ body::before {
 /* ══════════════════════════════════
    3. layout.css — 페이지 시스템 + 탭바 + FAB
 ══════════════════════════════════ */
-
-:root {
-  --tab-content-h: 60px;
-}
 
 .page {
   display: none;
@@ -294,7 +322,6 @@ body::before {
   border: none;
   outline: none;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
   transition: color .2s;
   color: var(--muted);
   padding: 8px 2px;
@@ -321,34 +348,54 @@ body::before {
   white-space: nowrap;
 }
 
+/* 검은 원형 FAB은 이 사이트의 종이·손글씨 톤과 겉돌아서
+   종이 바탕에 클레이 테두리를 두른 알약 버튼으로 바꿨다.
+   라벨을 함께 보여 무슨 버튼인지 바로 읽히게 한다. */
 .share-fab {
   position: fixed;
   bottom: calc(var(--tab-content-h) + env(safe-area-inset-bottom) + 14px);
   right: max(16px, env(safe-area-inset-right) + 16px);
-  width: 44px; height: 44px;
-  background: var(--brown);
-  border: none;
-  border-radius: 50%;
+  min-height: 46px;
+  padding: 10px 16px 10px 14px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 7px;
+  background: var(--paper);
+  color: var(--clay);
+  border: 1px solid var(--clay);
+  border-radius: 999px;
   cursor: pointer;
   z-index: 400;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 4px 16px rgba(42, 33, 24, .22);
-  transition: background .2s;
+  box-shadow: 0 4px 14px rgba(50, 44, 37, .13);
+  transition: background .2s, color .2s, transform .12s;
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
 }
-.share-fab:active { background: var(--red); }
-.share-fab svg { width: 18px; height: 18px; }
+
+.share-fab-label {
+  font-size: clamp(15px, 3.9vw, 17px);
+  line-height: 1;
+}
+
+.share-fab:hover {
+  background: var(--clay-wash);
+}
+.share-fab:active {
+  background: var(--clay);
+  color: #fdfbf6;
+  transform: translate3d(0, 0, 0) scale(.97);
+}
+.share-fab:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+}
+.share-fab svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 @media (max-width: 359px) {
   :root { --tab-content-h: 56px; }
   .tab-icon { width: 18px; height: 18px; }
   .tab-label { letter-spacing: 0.02em; }
-  .share-fab { width: 40px; height: 40px; right: 12px; }
+  .share-fab { padding: 9px 13px 9px 11px; right: 12px; }
   .share-fab svg { width: 16px; height: 16px; }
 }
 
@@ -414,7 +461,6 @@ body::before {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
   transition: background .2s;
   min-width: 44px; min-height: 44px;
 }
@@ -439,7 +485,6 @@ body::before {
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
   flex: 1;
   max-width: 80px;
   min-width: 56px;
@@ -549,18 +594,19 @@ body::before {
 }
 
 .donate-copy-btn {
-  padding: 6px 14px;
-  background: var(--brown);
-  color: var(--cream);
+  min-height: 44px;
+  padding: 10px 16px;
+  background: var(--clay);
+  color: #fdfbf6;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-size: clamp(14px, 3vw, 16px);
   letter-spacing: 0.02em;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
   transition: background .2s;
 }
-.donate-copy-btn:active { background: var(--red); }
+.donate-copy-btn:active { background: #8e4128; }
+.donate-copy-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 .donate-note {
   font-size: clamp(13px, 2.8vw, 15px);
@@ -573,15 +619,15 @@ body::before {
 
 .donate-close-btn {
   width: 100%;
-  padding: clamp(12px, 3.5vw, 16px);
+  min-height: 48px;
+  padding: clamp(13px, 3.8vw, 17px);
   background: none;
-  border: 1px solid rgba(30, 26, 21, .2);
-  border-radius: 8px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
   font-size: clamp(15px, 3.2vw, 17px);
   letter-spacing: 0.02em;
   color: var(--brown);
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
   transition: background .2s;
 }
 .donate-close-btn:active { background: rgba(30, 26, 21, .05); }
@@ -691,10 +737,41 @@ body::before {
   position: relative;
 }
 
+/* 이 서체는 굵기가 400 하나뿐이라 font-weight 로는 강조가 안 된다.
+   (300/600 을 주면 브라우저가 가짜 볼드를 합성해 얇은 획이 뭉갠다)
+   대신 text-stroke 로 획 자체를 아주 조금 두껍게 하고, 크기와 색으로 위계를 만든다. */
+
+/* ── 공연 날짜 — 아직 확정 전이라 후보 두 개를 나란히 ── */
 .event-date {
-  font-size: clamp(15px, 4.2vw, 19px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px clamp(8px, 2.6vw, 12px);
+  margin-bottom: 4px;
+}
+
+.event-date-one {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.event-date-day {
+  font-size: clamp(19px, 5.4vw, 24px);
   color: var(--clay);
-  margin-bottom: 2px;
+  -webkit-text-stroke: 0.4px currentColor;
+  paint-order: stroke fill;
+}
+
+.event-date-dow {
+  font-size: clamp(14px, 3.7vw, 16px);
+  color: var(--clay);
+  opacity: .85;
+}
+
+.event-date-or {
+  font-size: clamp(14px, 3.7vw, 16px);
+  color: var(--ink-faint);
 }
 
 .dday-counter {
@@ -744,33 +821,52 @@ body::before {
 }
 
 .detail-card .card-label {
-  font-size: clamp(14px, 3.8vw, 17px);
+  font-size: clamp(14px, 3.8vw, 16px);
   color: var(--ink-faint);
   margin-bottom: 0;
   letter-spacing: 0.04em;
 }
 
 .detail-card .card-value {
-  font-size: clamp(15px, 4.2vw, 18px);
+  font-size: clamp(17px, 4.7vw, 20px);
   line-height: 1.7;
   color: var(--ink);
 }
 
-.detail-card .card-value + .card-value {
+/* 날짜·시간·장소의 '값' — 이 화면에서 가장 먼저 읽혀야 하는 정보 */
+.card-strong {
+  -webkit-text-stroke: 0.4px currentColor;
+  paint-order: stroke fill;
+}
+
+.detail-card .card-value + .card-value,
+.detail-card .card-note-block {
   grid-column: 2;          /* 라벨 칸을 건너뛰고 값 칸에 이어 붙는다 */
+  margin-top: 3px;
+}
+
+/* 주소처럼 값에 딸린 보조 줄 */
+.detail-card .card-sub {
   color: var(--ink-soft);
-  font-size: clamp(14px, 3.6vw, 16px);
-  margin-top: 2px;
+  font-size: clamp(14px, 3.7vw, 16px);
+  -webkit-text-stroke: 0;
 }
 
 .card-note {
   color: var(--ink-faint);
-  font-size: .88em;
+  font-size: .82em;
+  -webkit-text-stroke: 0;
+}
+
+.card-note-block {
+  font-size: clamp(13px, 3.4vw, 15px);
+  color: var(--ink-faint);
+  line-height: 1.6;
 }
 
 /* 형광펜으로 그은 듯한 강조 — 선이 아니라 배경으로 */
 .venue-highlight {
-  font-size: clamp(17px, 4.8vw, 21px);
+  font-size: clamp(19px, 5.2vw, 23px);
   color: var(--ink);
   background: linear-gradient(transparent 58%, var(--clay-wash) 58%);
   padding: 0 2px;
@@ -795,7 +891,6 @@ body::before {
   text-align: center;
   cursor: pointer;
   transition: background .25s, transform .15s;
-  -webkit-tap-highlight-color: transparent;
 }
 .btn-ticket:active { background: #94452b; transform: scale(.98); }
 
@@ -814,7 +909,6 @@ body::before {
   text-align: center;
   cursor: pointer;
   transition: border-color .25s, background .25s;
-  -webkit-tap-highlight-color: transparent;
 }
 .btn-secondary:active { background: var(--paper-warm); }
 
@@ -926,7 +1020,6 @@ body::before {
   position: relative;
   overflow: hidden;
   transition: background .18s, border-color .18s, transform .12s;
-  -webkit-tap-highlight-color: transparent;
 }
 
 /* 누르는 것임을 알리는 왼쪽 강조선 — 평소엔 숨어 있다 */
@@ -1073,7 +1166,6 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  -webkit-tap-highlight-color: transparent;
   transition: background .2s, border-color .2s;
   flex-shrink: 0;
 }
@@ -1093,7 +1185,6 @@ body::before {
   border: none;
   padding: 0;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
   border-radius: 50%;
   animation: spinLP 6s linear infinite;
   background:
@@ -1172,7 +1263,6 @@ body::before {
   text-decoration-color: var(--line);
   text-underline-offset: 5px;
   transition: color .2s, text-decoration-color .2s;
-  -webkit-tap-highlight-color: transparent;
 }
 .lp-track-name:hover { color: var(--clay); text-decoration-color: var(--clay); }
 .lp-disc:focus-visible,
@@ -1205,7 +1295,6 @@ body::before {
   letter-spacing: 0.02em;
   text-decoration: none;
   transition: background .2s, transform .15s;
-  -webkit-tap-highlight-color: transparent;
 }
 .lp-yt-btn:active { background: #8e4128; transform: scale(.96); }
 .lp-yt-btn svg { flex-shrink: 0; }
@@ -1257,7 +1346,6 @@ body::before {
   color: var(--ink-soft);
   text-decoration: none;
   transition: background .18s, color .18s;
-  -webkit-tap-highlight-color: transparent;
 }
 
 /* 화살표를 원형 아이콘으로 떼어 놓아 '뒤로가기'로 읽히게 한다 */
@@ -1283,7 +1371,6 @@ body::before {
   transform: translateX(-2px);
 }
 .song-back:active .song-back-icon { transform: translateX(-3px); }
-.song-back:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
 
 /* ── 머리말 ── */
 .song-head {
@@ -1334,7 +1421,6 @@ body::before {
   font-size: clamp(16px, 4.2vw, 18px);
   text-decoration: none;
   transition: background .2s, transform .12s;
-  -webkit-tap-highlight-color: transparent;
 }
 .song-yt:active { background: #8e4128; transform: scale(.985); }
 .song-yt:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
@@ -1408,10 +1494,8 @@ body::before {
   color: var(--ink-soft);
   text-decoration: none;
   transition: background .2s, border-color .2s;
-  -webkit-tap-highlight-color: transparent;
 }
 .song-word-link:hover { background: #fff; border-color: var(--clay); color: var(--clay); }
-.song-word-link:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
 
 /* ── 이전 / 다음 곡 ── */
 .song-nav {
@@ -1445,10 +1529,8 @@ body::before {
   border-radius: 12px;
   text-decoration: none;
   transition: background .18s;
-  -webkit-tap-highlight-color: transparent;
 }
 .song-nav-btn:hover { background: var(--clay-wash); }
-.song-nav-btn:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
 .song-nav-btn.next { text-align: right; margin-left: auto; }
 
 .song-nav-dir {
@@ -1530,11 +1612,9 @@ body::before {
   border-radius: 50%;
   color: var(--ink-soft);
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
   transition: background .18s;
 }
 .verse-close:hover { background: var(--paper-warm); }
-.verse-close:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
 
 .verse-note {
   font-size: clamp(13px, 3.3vw, 15px);
@@ -1587,7 +1667,6 @@ body::before {
   text-decoration: underline;
   text-decoration-color: var(--line);
   text-underline-offset: 5px;
-  -webkit-tap-highlight-color: transparent;
 }
 .verse-full:hover { color: var(--clay); text-decoration-color: var(--clay); }
 .verse-full:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; border-radius: 6px; }
@@ -1922,6 +2001,7 @@ body::before {
 }
 
 .finale-date{
+  white-space: pre-line;
   font-size:clamp(15px, 3.2vw, 17px);
   letter-spacing: 0.02em;
   color:var(--muted);
@@ -2008,24 +2088,6 @@ body {
   overflow-x: clip;
 }
 
-/* ── 손글씨 한 벌로만 쓰기 위한 전역 보정 ──────────────────────────
-   이 서체는 굵기 400 하나, 이탤릭 없음. strong/em/b/i를 그대로 두면
-   브라우저가 가짜 볼드·오블리크를 합성해 얇은 획이 뭉개진다.
-   → 굵기·기울임 대신 색으로만 강조한다. */
-strong, b, em, i {
-  font-weight: 400;
-  font-style: normal;
-}
-
-strong, b { color: var(--clay); }
-
-/* 버튼·입력 요소는 폰트를 상속하지 않으므로 명시해준다 */
-button, input, textarea, select, a {
-  font-family: inherit;
-  letter-spacing: inherit;
-}
-
-h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 /* 아바타의 이모지는 손글씨 폰트에 없다. 여기에 폴백을 명시해두지 않으면
    브라우저가 503KB짜리 'Sarang Full'까지 내려받은 뒤에야 시스템 이모지로

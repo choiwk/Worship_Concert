@@ -48,9 +48,8 @@ function route() {
   const r = parseHash();
   const prev = _prevRoute;
 
-  // 페이지가 바뀌면 열려 있던 말씀 팝업은 닫는다
-  const vm = document.getElementById('verseModal');
-  if (vm && vm.classList.contains('open')) closeVerse();
+  // 페이지가 바뀌면 열려 있던 오버레이는 모두 닫는다
+  _openOverlays.slice().forEach(closeOverlay);
 
   // 곡 리스트 → 곡 상세로 들어갈 때 리스트 스크롤 위치를 기억해 둔다
   if (prev && prev.tab === 'songs' && !prev.slug && r.tab === 'songs' && r.slug) {
@@ -363,17 +362,113 @@ function toggleBgmFromBar() {
 
 
 /* ══════════════════════════════════
-   3. dday.js — D-Day 카운트다운 + 캘린더
+   concert.js — 공연 정보 (단일 원천)
+
+   날짜·시간·장소가 여기 한 곳에만 있다. 메인 화면의 날짜 블록,
+   D-Day 카운터, 캘린더 추가, 스토리 마지막 문구가 모두 이 값을 읽는다.
+   일정이 확정되면 dates 를 하나만 남기고 confirmed 를 true 로 바꾸면 된다.
+
+   ※ index.html 의 구조화 데이터(JSON-LD)와 메타 태그는 정적이라
+     여기와 함께 손으로 맞춰야 한다.
 ══════════════════════════════════ */
 
-// 콘서트 날짜 (확정 후 여기만 수정)
-const CONCERT_DATE = new Date('2026-11-21T20:00:00+09:00');
+const CONCERT = {
+  // 아직 확정 전 — 두 후보 중 하나로 정해진다. 첫 번째가 이른 날짜.
+  confirmed: false,
+  dates: [
+    { iso: '2026-11-28', short: '2026. 11. 28.', ko: '2026년 11월 28일', dow: '토요일' },
+    { iso: '2026-12-19', short: '2026. 12. 19.', ko: '2026년 12월 19일', dow: '토요일' }
+  ],
+  time: {
+    text: '오후 8:00 ~ 9:40',
+    startUTC: 'T110000Z',   // KST 20:00
+    endUTC:   'T124000Z'    // KST 21:40
+  },
+  venue: { name: '향상교회 3층', address: '기흥구 언동로 140', note: '변동 가능' }
+};
+
+/** D-Day·캘린더의 기준이 되는 날짜 (확정 전에는 이른 후보) */
+function concertBaseDate() {
+  return CONCERT.dates[0];
+}
+
+
+/* ══════════════════════════════════
+   4. main-info.js — 메인 화면의 날짜·시간·장소 렌더
+══════════════════════════════════ */
+
+function renderEventDate() {
+  const box = document.getElementById('eventDate');
+  if (!box) return;
+  box.innerHTML = '';
+
+  CONCERT.dates.forEach((d, i) => {
+    if (i > 0) box.appendChild(_el('span', 'event-date-or', '또는'));
+    const one = _el('span', 'event-date-one');
+    one.appendChild(_el('span', 'event-date-day', d.short));
+    one.appendChild(_el('span', 'event-date-dow', d.dow));
+    box.appendChild(one);
+  });
+}
+
+function renderDetailGrid() {
+  const grid = document.getElementById('detailGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  const card = (label, build, wide) => {
+    const c = _el('div', 'detail-card' + (wide ? ' full-width' : ''));
+    c.appendChild(_el('p', 'card-label', label));
+    build(c);
+    grid.appendChild(c);
+  };
+
+  card('날짜', c => {
+    CONCERT.dates.forEach((d, i) => {
+      const v = _el('p', 'card-value');
+      if (i > 0) v.appendChild(_el('span', 'card-note', '또는 '));
+      v.appendChild(_el('span', 'card-strong', d.ko + ' ' + d.dow));
+      c.appendChild(v);
+    });
+    if (!CONCERT.confirmed) c.appendChild(_el('p', 'card-note card-note-block', '두 날짜 중 하나로 확정될 예정이에요'));
+  });
+
+  card('시간', c => {
+    const v = _el('p', 'card-value');
+    v.appendChild(_el('span', 'card-strong', CONCERT.time.text));
+    c.appendChild(v);
+  });
+
+  card('장소', c => {
+    const v = _el('p', 'card-value');
+    v.appendChild(_el('span', 'card-strong venue-highlight', CONCERT.venue.name));
+    if (CONCERT.venue.note) {
+      v.appendChild(document.createTextNode(' '));
+      v.appendChild(_el('span', 'card-note', '(' + CONCERT.venue.note + ')'));
+    }
+    c.appendChild(v);
+    c.appendChild(_el('p', 'card-value card-sub', CONCERT.venue.address));
+  }, true);
+}
+
+function renderFinaleDate() {
+  const el = document.getElementById('finaleDate');
+  if (!el) return;
+  el.textContent = CONCERT.dates.map(d => d.short).join(' 또는 ') + '\n' + CONCERT.venue.name;
+}
+
+
+/* ══════════════════════════════════
+   5. dday.js — D-Day 카운트다운 + 캘린더
+══════════════════════════════════ */
 
 function updateDday() {
   const el = document.getElementById('ddayCounter');
   if (!el) return;
-  const now = new Date();
-  const diff = CONCERT_DATE - now;
+
+  const base = concertBaseDate();
+  const target = new Date(base.iso + 'T20:00:00+09:00');
+  const diff = target - new Date();
 
   if (diff <= 0) {
     el.textContent = 'TODAY';
@@ -381,27 +476,103 @@ function updateDday() {
   }
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  el.textContent = 'D-' + days;
+  // 확정 전이므로 어느 날짜 기준인지 밝혀 준다
+  el.textContent = CONCERT.confirmed
+    ? 'D-' + days
+    : 'D-' + days + ' (' + base.ko.replace(/^\d+년 /, '') + ' 기준)';
 }
 
-updateDday();
-setInterval(updateDday, 60000);
-
 function addToCalendar() {
-  const title = '찬양이 좋아서 모인 청년들 LIVE CONCERT';
-  const start = '20261121T110000Z'; // UTC (KST 20:00)
-  const end = '20261121T124000Z';   // UTC (KST 21:40)
-  const location = '향상교회 3층, 기흥구 언동로 140';
-  const details = '찬양이 좋아서 모인 청년들 LIVE CONCERT 2026';
+  const base = concertBaseDate();
+  const stamp = base.iso.replace(/-/g, '');
+  const tentative = !CONCERT.confirmed;
 
-  const gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+  const title = '찬양이 좋아서 모인 청년들 LIVE CONCERT' + (tentative ? ' (일정 미확정)' : '');
+  const location = CONCERT.venue.name + ', ' + CONCERT.venue.address;
+  const details = tentative
+    ? '일정이 아직 확정되지 않았습니다. ' + CONCERT.dates.map(d => d.ko).join(' 또는 ') +
+      ' 중 하루로 정해질 예정이며, 이 일정은 ' + base.ko + ' 기준으로 등록됩니다.'
+    : '찬양이 좋아서 모인 청년들 LIVE CONCERT';
+
+  const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
     + '&text=' + encodeURIComponent(title)
-    + '&dates=' + start + '/' + end
+    + '&dates=' + stamp + CONCERT.time.startUTC + '/' + stamp + CONCERT.time.endUTC
     + '&location=' + encodeURIComponent(location)
     + '&details=' + encodeURIComponent(details);
 
-  window.open(gcalUrl, '_blank');
+  window.open(url, '_blank', 'noopener');
 }
+
+
+/* ══════════════════════════════════
+   overlay.js — 오버레이(공유 시트·후원 모달·말씀 팝업) 공통 동작
+
+   세 화면이 같은 일을 하고 있어 한곳으로 모았다.
+   여는 방식만 다르고 배경 표시·스크롤 잠금·ESC 닫기·포커스 처리는 동일하다.
+══════════════════════════════════ */
+
+/** 등록된 오버레이: 배경 id, 패널 id */
+const OVERLAYS = {
+  share:  { backdrop: 'modalBackdrop',  panel: 'shareSheet'  },
+  donate: { backdrop: 'donateBackdrop', panel: 'donateModal' },
+  verse:  { backdrop: 'verseBackdrop',  panel: 'verseModal'  }
+};
+
+let _openOverlays = [];   // 여러 개가 겹쳐도 스크롤 잠금이 어긋나지 않게 스택으로
+let _overlayOpener = null;
+
+function _isOverlayOpen(name) {
+  const o = OVERLAYS[name];
+  return !!o && document.getElementById(o.panel).classList.contains('open');
+}
+
+function openOverlay(name) {
+  const o = OVERLAYS[name];
+  if (!o || _isOverlayOpen(name)) return;
+
+  if (!_openOverlays.length) _overlayOpener = document.activeElement;
+  _openOverlays.push(name);
+
+  document.getElementById(o.backdrop).classList.add('open');
+  document.getElementById(o.panel).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeOverlay(name) {
+  const o = OVERLAYS[name];
+  if (!o) return;
+
+  document.getElementById(o.backdrop).classList.remove('open');
+  document.getElementById(o.panel).classList.remove('open');
+
+  _openOverlays = _openOverlays.filter(n => n !== name);
+  if (_openOverlays.length) return;          // 아직 다른 게 열려 있으면 유지
+
+  document.body.style.overflow = '';
+  if (_overlayOpener && _overlayOpener.focus) _overlayOpener.focus();
+  _overlayOpener = null;
+}
+
+/** 열려 있는 오버레이 안에 Tab 포커스를 가둔다 */
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Tab' || !_openOverlays.length) return;
+
+  const top = OVERLAYS[_openOverlays[_openOverlays.length - 1]];
+  const panel = document.getElementById(top.panel);
+  const items = [...panel.querySelectorAll('button, a[href]')]
+    .filter(el => el.offsetParent !== null && !el.hidden);
+  if (!items.length) return;
+
+  const first = items[0], last = items[items.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
+
+/** ESC 로 맨 위 오버레이부터 닫는다 */
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape' || !_openOverlays.length) return;
+  closeOverlay(_openOverlays[_openOverlays.length - 1]);
+});
 
 
 /* ══════════════════════════════════
@@ -412,14 +583,10 @@ function addToCalendar() {
    '전체 장 읽기' 링크는 팝업 안에 남겨 둔다.
 ══════════════════════════════════ */
 
-let _verseOpener = null;   // 팝업을 연 버튼 — 닫을 때 포커스를 되돌려 준다
-
 function openVerse(slug, partIndex) {
   const song = findSong(slug);
   const bible = song && song.parts[partIndex] && song.parts[partIndex].bible;
   if (!bible) return;
-
-  _verseOpener = document.activeElement;
 
   document.getElementById('verseRef').textContent = bible.ref;
   document.getElementById('verseVersion').textContent = bible.version;
@@ -443,35 +610,14 @@ function openVerse(slug, partIndex) {
   full.href = bible.url;
   full.setAttribute('aria-label', bible.ref + ' 전체 장 읽기 (새 탭에서 열림)');
 
-  document.getElementById('verseBackdrop').classList.add('open');
-  document.getElementById('verseModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
   body.scrollTop = 0;
+  openOverlay('verse');
 
   // visibility 전환이 시작된 뒤에야 포커스가 들어간다
   requestAnimationFrame(() => document.querySelector('.verse-close').focus());
 }
 
-function closeVerse() {
-  document.getElementById('verseBackdrop').classList.remove('open');
-  document.getElementById('verseModal').classList.remove('open');
-  document.body.style.overflow = '';
-  if (_verseOpener && _verseOpener.focus) _verseOpener.focus();
-  _verseOpener = null;
-}
-
-/* 팝업이 열려 있는 동안 포커스가 바깥으로 새지 않게 가둔다 */
-document.addEventListener('keydown', (e) => {
-  const modal = document.getElementById('verseModal');
-  if (!modal || !modal.classList.contains('open') || e.key !== 'Tab') return;
-
-  const items = modal.querySelectorAll('button, a[href]');
-  if (!items.length) return;
-  const first = items[0], last = items[items.length - 1];
-
-  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-});
+function closeVerse() { closeOverlay('verse'); }
 
 
 /* ══════════════════════════════════
@@ -536,15 +682,8 @@ function lpPrev() {
    4. donate.js — 후원 모달
 ══════════════════════════════════ */
 
-function openDonate() {
-  document.getElementById('donateBackdrop').classList.add('open');
-  document.getElementById('donateModal').classList.add('open');
-}
-
-function closeDonate() {
-  document.getElementById('donateBackdrop').classList.remove('open');
-  document.getElementById('donateModal').classList.remove('open');
-}
+function openDonate()  { openOverlay('donate'); }
+function closeDonate() { closeOverlay('donate'); }
 
 function copyAccount() {
   const account = document.getElementById('donateAccount').textContent;
@@ -558,27 +697,8 @@ function copyAccount() {
    5. share.js — 공유 바텀시트 + 공유 기능
 ══════════════════════════════════ */
 
-function openShare() {
-  document.getElementById('modalBackdrop').classList.add('open');
-  document.getElementById('shareSheet').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeShare() {
-  document.getElementById('modalBackdrop').classList.remove('open');
-  document.getElementById('shareSheet').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-/* ── ESC 키로 모달 닫기 ── */
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    if (document.getElementById('verseModal').classList.contains('open')) closeVerse();
-    if (document.getElementById('shareSheet').classList.contains('open')) closeShare();
-    if (document.getElementById('donateModal').classList.contains('open')) closeDonate();
-  }
-});
+function openShare()  { openOverlay('share'); }
+function closeShare() { closeOverlay('share'); }
 
 /* ── Now Playing 키보드 지원 ── */
 document.addEventListener('DOMContentLoaded', () => {
@@ -686,6 +806,11 @@ function _fallbackCopy(text, callback) {
    boot — 최초 렌더 및 라우팅 시작
 ══════════════════════════════════ */
 
+renderEventDate();
+renderDetailGrid();
+renderFinaleDate();
 renderSongList();
 _updateLP();
+updateDday();
+setInterval(updateDday, 60000);
 route();

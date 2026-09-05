@@ -8,7 +8,7 @@
 <title>찬양이 좋아서 모인 청년들 — LIVE CONCERT 2026</title>
 <!-- PWA / 모바일 앱 느낌 메타태그 -->
 <meta content="#f3f1ee" name="theme-color"/>
-<meta name="description" content="2026.11.21 SAT · 찬양이 좋아서 모인 청년들 LIVE CONCERT · 향상교회 3층"/>
+<meta name="description" content="2026.11.28 또는 2026.12.19 · 찬양이 좋아서 모인 청년들 LIVE CONCERT · 향상교회 3층"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="찬양 콘서트 2026" name="apple-mobile-web-app-title"/>
@@ -17,21 +17,21 @@
 <link rel="apple-touch-icon" href="public/icons/icon-192.png"/>
 <!-- OG 태그 -->
 <meta property="og:title" content="찬양이 좋아서 모인 청년들 — LIVE CONCERT 2026"/>
-<meta property="og:description" content="2026.11.21 SAT · 찬양 콘서트 · 함께해요"/>
+<meta property="og:description" content="2026.11.28 또는 12.19 · 찬양 콘서트 · 함께해요"/>
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="ko_KR"/>
 <!-- Twitter 카드 -->
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="찬양이 좋아서 모인 청년들 — LIVE CONCERT 2026"/>
-<meta name="twitter:description" content="2026.11.21 SAT · 찬양 콘서트 · 함께해요"/>
+<meta name="twitter:description" content="2026.11.28 또는 12.19 · 찬양 콘서트 · 함께해요"/>
 <!-- 구조화 데이터 (Event) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Event",
   "name": "찬양이 좋아서 모인 청년들 LIVE CONCERT 2026",
-  "startDate": "2026-11-21T20:00:00+09:00",
-  "endDate": "2026-11-21T21:40:00+09:00",
+  "startDate": "2026-11-28T20:00:00+09:00",
+  "endDate": "2026-11-28T21:40:00+09:00",
   "eventStatus": "https://schema.org/EventScheduled",
   "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
   "location": {
@@ -39,7 +39,7 @@
     "name": "향상교회 3층",
     "address": { "@type": "PostalAddress", "streetAddress": "기흥구 언동로 140", "addressLocality": "용인시", "addressCountry": "KR" }
   },
-  "description": "찬양이 좋아서 모인 청년들이 준비한 LIVE CONCERT",
+  "description": "찬양이 좋아서 모인 청년들이 준비한 LIVE CONCERT (일정 미확정 — 2026.11.28 또는 2026.12.19 예정)",
   "organizer": { "@type": "Organization", "name": "찬양이 좋아서 모인 청년들" }
 }
 </script>
@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=11" rel="stylesheet"/>
+<link href="src/css/style.css?v=13" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -90,29 +90,14 @@
 </div></section>
 <!-- Event Info -->
 <section class="sec-info">
-<p class="event-date reveal">2026. 11. 21. SAT</p>
+<div class="event-date reveal" id="eventDate"></div>
 <p class="dday-counter reveal" id="ddayCounter"></p>
 <div class="event-name reveal">
 <span class="event-name-main">찬양이 좋아서 모인 청년들</span>
 <span class="event-name-sub">LIVE CONCERT</span>
 </div>
-<div class="detail-grid reveal">
-<div class="detail-card">
-<p class="card-label">날짜</p>
-<p class="card-value">2026년 11월 21일 토요일 <span class="card-note">(일정 미정)</span></p>
-</div>
-<div class="detail-card">
-<p class="card-label">시간</p>
-<p class="card-value">오후 8:00 ~ 9:40</p>
-</div>
-<div class="detail-card full-width">
-<p class="card-label">장소</p>
-<p class="card-value">
-<span class="venue-highlight">향상교회 3층</span> <span class="card-note">(변동 가능)</span>
-        </p>
-<p class="card-value">기흥구 언동로 140</p>
-</div>
-</div>
+<!-- 날짜·시간·장소 (src/js/app.js 의 CONCERT 설정에서 렌더) -->
+<div class="detail-grid reveal" id="detailGrid"></div>
 <div class="ticket-cta reveal">
 <a class="btn-ticket" href="https://docs.google.com/forms/d/e/1FAIpQLScYEgEC8HKVn0-N3_Be30OrUZdydF5sLyx7sVFlAdy3X2GAUA/viewform?usp=publish-editor" rel="noopener" target="_blank">참여하기</a>
 <button class="btn-secondary" onclick="addToCalendar()">캘린더에 추가</button>
@@ -451,7 +436,7 @@
 </div><section class="finale">
 <div class="reveal">
 <h2 class="finale-title">세상 가운데<br/>찬양이 계속<br/><strong>울려 퍼지기를 바랍니다</strong></h2>
-<p class="finale-date">2026. 11. 21. SAT<br/>향상교회 3층</p>
+<p class="finale-date" id="finaleDate"></p>
 </div>
 <button class="btn-primary reveal" onclick="switchTab('main', document.querySelector('.tab-btn[data-tab=&quot;main&quot;]'))">공연 정보 보기</button>
 <button class="btn-secondary reveal d1" onclick="openDonate()">후원하기</button>
@@ -501,14 +486,15 @@
 <!-- ════════════════════════════════
      FLOATING BUTTONS (MUSIC + SHARE)
 ════════════════════════════════ -->
-<button aria-label="공유하기" class="share-fab" onclick="openShare()">
-<svg fill="none" stroke="#f5f0eb" stroke-width="1.8" viewbox="0 0 24 24">
+<button aria-label="이 페이지 공유하기" class="share-fab" onclick="openShare()">
+<svg fill="none" stroke="currentColor" stroke-width="1.7" viewbox="0 0 24 24" aria-hidden="true">
 <circle cx="18" cy="5" r="3"></circle>
 <circle cx="6" cy="12" r="3"></circle>
 <circle cx="18" cy="19" r="3"></circle>
 <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line>
 <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line>
 </svg>
+<span class="share-fab-label">공유</span>
 </button>
 <!-- ════════════════════════════════
      SHARE BOTTOM SHEET MODAL
@@ -589,8 +575,8 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=11" defer></script>
-<script src="src/js/app.js?v=11" defer></script>
+<script src="src/js/songs.js?v=13" defer></script>
+<script src="src/js/app.js?v=13" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
