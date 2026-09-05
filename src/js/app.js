@@ -340,7 +340,7 @@ function shareInstagram() {
 function copyLink(silent) {
   closeShare();
   _copyToClipboard(window.location.href, () => {
-    if (!silent) showToast('링크가 복사되었습니다 ✓');
+    if (!silent) showToast('링크가 복사되었습니다');
   });
 }
 

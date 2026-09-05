@@ -1,3 +1,6 @@
 .DS_Store
 *.code-workspace
 .claude/
+
+# 웹폰트 원본 TTF (배포에는 woff2만 사용)
+public/fonts/*.ttf

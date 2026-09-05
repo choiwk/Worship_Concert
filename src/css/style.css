@@ -5,6 +5,29 @@
 
 
 /* ══════════════════════════════════
+   0. 웹폰트 — 나눔손글씨 사랑해 아들 (사이트 전역 단일 서체)
+   · site  : 이 사이트에 실제로 쓰인 글자만 담은 서브셋 (preload)
+   · full  : KS X 1001 2350자. site에 없는 글자가 나올 때만 자동 다운로드
+   원본 TTF와 재생성 방법은 public/fonts/README.md 참고
+══════════════════════════════════ */
+
+@font-face {
+  font-family: 'Sarang';
+  src: url('../../public/fonts/Sarang-site.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sarang Full';
+  src: url('../../public/fonts/Sarang-full.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ══════════════════════════════════
    1. reset.css — CSS 변수 + 전역 리셋 + body + paper texture
 ══════════════════════════════════ */
 
@@ -20,13 +43,29 @@ html {
 }
 
 :root {
-  --cream:       #f3f1ee;
-  --cream-dark:  #eae7e2;
-  --brown:       #1e1a15;
-  --red:         #b5332a;
-  --gold:        #a08a6e;
-  --muted:       #8a7d70;
-  --light-muted: #a89e92;
+  /* ── 종이와 잉크 ──
+     손글씨 획이 em의 7% 정도로 얇다 → 본문 잉크를 충분히 진하게 잡아야
+     글자가 종이에 묻히지 않는다. 기존 골드 헤어라인은 획 굵기와 경쟁해서
+     글자를 흐리게 만들기 때문에 선 색을 한 단계 죽였다. */
+  --paper:       #f7f4ec;   /* 살짝 누런 편지지 */
+  --paper-warm:  #f0eade;   /* 카드·블록 바탕 */
+  --ink:         #322c25;   /* 본문 잉크 */
+  --ink-soft:    #5d544b;   /* 보조 텍스트 */
+  --ink-faint:   #6f665c;   /* 캡션·보조 라벨 (대비 4.5:1 확보) */
+  --clay:        #a54d30;   /* 강조 — 따뜻한 테라코타 */
+  --clay-wash:   #e6c9b6;   /* 형광펜처럼 깔아주는 강조 배경 */
+  --sage:        #7d8f78;   /* 보조 강조 */
+  --line:        #e2d9c9;   /* 아주 얇은 구분선 */
+
+  /* ── 구버전 변수 별칭 (아직 참조하는 규칙이 남아 있어 유지) ── */
+  --cream:       var(--paper);
+  --cream-dark:  var(--paper-warm);
+  --brown:       var(--ink);
+  --red:         var(--clay);
+  --gold:        var(--line);
+  --muted:       var(--ink-soft);
+  --light-muted: var(--ink-faint);
+
   --tab-h:       60px;
   --max-w:       480px;
 
@@ -49,9 +88,14 @@ html {
 }
 
 body {
-  font-family: 'Noto Serif KR', 'Cormorant Garamond', serif;
-  background: var(--cream);
-  color: var(--brown);
+  /* 사이트 전체 단일 서체 — 'Sarang'에 없는 글자만 'Sarang Full'로 폴백 */
+  font-family: 'Sarang', 'Sarang Full', 'Apple SD Gothic Neo', sans-serif;
+  /* 이 손글씨는 글자마다 위아래로 출렁인다(랑 -108~640).
+     행간을 넉넉히 주지 않으면 줄끼리 부딪혀 지저분해진다. */
+  line-height: 1.85;
+  letter-spacing: 0;
+  background: var(--paper);
+  color: var(--ink);
   max-width: var(--max-w);
   margin: 0 auto;
   overflow-x: hidden;
@@ -117,15 +161,20 @@ body::before {
 .np-bars span:nth-child(4) { height: 10px; animation: npBar4 1.0s ease-in-out infinite; }
 
 .np-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: clamp(11px, 3vw, 13px);
-  letter-spacing: .12em;
+  font-size: clamp(14px, 3.6vw, 16px);
+  letter-spacing: 0.02em;
   color: var(--muted);
 }
 
 .np-artist {
-  color: var(--gold);
+  color: var(--clay);
+}
+
+/* 곡명과 팀명 사이 구분자.
+   em dash(—)는 이 폰트에 글리프가 없어 다른 서체로 튀므로 하이픈을 쓴다 */
+.np-artist::before {
+  content: '- ';
+  color: var(--ink-faint);
 }
 
 /* 음악 미재생 시 숨김 */
@@ -179,7 +228,7 @@ body::before {
   @keyframes fadeUp  { from { opacity: 1; } to { opacity: 1; } }
   @keyframes fadeIn  { from { opacity: 1; } to { opacity: 1; } }
   @keyframes pageFade { from { opacity: 1; } to { opacity: 1; } }
-  .song-card-num { animation: none; }
+
 }
 
 
@@ -267,10 +316,8 @@ body::before {
 .tab-btn.active .tab-icon { transform: scale(1.1); }
 
 .tab-label {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(9px, 2.5vw, 11px);
-  letter-spacing: .12em;
-  text-transform: uppercase;
+  font-size: clamp(13px, 2.5vw, 14px);
+  letter-spacing: 0.02em;
   white-space: nowrap;
 }
 
@@ -300,7 +347,7 @@ body::before {
 @media (max-width: 359px) {
   :root { --tab-content-h: 56px; }
   .tab-icon { width: 18px; height: 18px; }
-  .tab-label { letter-spacing: .06em; }
+  .tab-label { letter-spacing: 0.02em; }
   .share-fab { width: 40px; height: 40px; right: 12px; }
   .share-fab svg { width: 16px; height: 16px; }
 }
@@ -353,10 +400,8 @@ body::before {
 }
 
 .sheet-title {
-  font-family: 'Noto Serif KR', serif;
   font-size: clamp(14px, 3.8vw, 16px);
-  font-weight: 400;
-  letter-spacing: .04em;
+  letter-spacing: 0.02em;
   color: var(--brown);
 }
 
@@ -416,11 +461,9 @@ body::before {
 .share-opt-icon.link   { background: var(--brown); }
 
 .share-opt-label {
-  font-family: 'Noto Serif KR', serif;
-  font-size: clamp(10px, 2.8vw, 12px);
-  font-weight: 300;
+  font-size: clamp(13px, 2.8vw, 15px);
   color: var(--muted);
-  letter-spacing: .03em;
+  letter-spacing: 0.02em;
   text-align: center;
   word-break: keep-all;
 }
@@ -432,9 +475,8 @@ body::before {
   transform: translateX(-50%) translateY(8px);
   background: var(--brown);
   color: var(--cream);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(12px, 3.2vw, 14px);
-  letter-spacing: .12em;
+  font-size: clamp(15px, 3.2vw, 17px);
+  letter-spacing: 0.02em;
   padding: 10px clamp(16px, 4.5vw, 24px);
   border-radius: 24px;
   opacity: 0;
@@ -485,11 +527,9 @@ body::before {
 }
 
 .donate-title {
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 400;
-  font-size: clamp(12px, 3.2vw, 14px);
+  font-size: clamp(15px, 3.2vw, 17px);
   color: var(--brown);
-  letter-spacing: .03em;
+  letter-spacing: 0.02em;
   line-height: 1.6;
   margin-bottom: clamp(20px, 6vw, 28px);
 }
@@ -503,10 +543,8 @@ body::before {
 }
 
 .donate-account-num {
-  font-family: 'Cormorant Garamond', serif;
   font-size: clamp(16px, 4.5vw, 20px);
-  font-weight: 600;
-  letter-spacing: .08em;
+  letter-spacing: 0.02em;
   color: var(--brown);
 }
 
@@ -516,10 +554,8 @@ body::before {
   color: var(--cream);
   border: none;
   border-radius: 6px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(11px, 3vw, 13px);
-  letter-spacing: .1em;
-  text-transform: uppercase;
+  font-size: clamp(14px, 3vw, 16px);
+  letter-spacing: 0.02em;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: background .2s;
@@ -527,12 +563,10 @@ body::before {
 .donate-copy-btn:active { background: var(--red); }
 
 .donate-note {
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 300;
-  font-size: clamp(10px, 2.8vw, 12px);
+  font-size: clamp(13px, 2.8vw, 15px);
   color: var(--muted);
   line-height: 1.7;
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
   word-break: keep-all;
   margin-bottom: clamp(20px, 6vw, 28px);
 }
@@ -543,10 +577,8 @@ body::before {
   background: none;
   border: 1px solid rgba(30, 26, 21, .2);
   border-radius: 8px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(12px, 3.2vw, 14px);
-  letter-spacing: .18em;
-  text-transform: uppercase;
+  font-size: clamp(15px, 3.2vw, 17px);
+  letter-spacing: 0.02em;
   color: var(--brown);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -557,68 +589,64 @@ body::before {
 
 /* ══════════════════════════════════
    5. pages/main.css — Page 1 메인 페이지
+   디자인 방향: 「따뜻한 손편지」
+   · 가운데 정렬 + 골드 헤어라인 + 대문자 라틴 = 청첩장 문법 → 전부 제거
+   · 본문은 왼쪽 정렬(편지는 왼쪽부터 쓴다), 히어로만 표지처럼 가운데
+   · 테두리 상자 대신 여백과 배경 톤으로 구획을 나눈다
 ══════════════════════════════════ */
 
+/* ── 편지 표지 ───────────────────────────────────────────── */
 .sec-title {
-  min-height: 45vw;
+  min-height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(28px, 8vw, 44px) clamp(20px, 6vw, 28px) clamp(36px, 10vw, 52px);
-  background: var(--cream);
+  padding: clamp(30px, 9vw, 48px) clamp(20px, 6vw, 28px) clamp(26px, 8vw, 38px);
+  background: var(--paper);
   position: relative;
   text-align: center;
-}
-
-.sec-title::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 40px; height: 1px;
-  background: var(--gold);
-  opacity: .4;
 }
 
 .title-main {
   animation: fadeUp 1s ease .2s both;
 }
 
-.title-main .line-ko {
+.title-main .line-hand {
   display: block;
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 300;
-  font-size: clamp(24px, 7vw, 34px);
-  color: var(--brown);
-  letter-spacing: .04em;
-  line-height: 1.7;
+  font-size: clamp(28px, 10.2vw, 46px);
+  color: var(--ink);
+  letter-spacing: 0;
+  line-height: 1.35;
+  white-space: nowrap;
 }
 
-.title-main .line-ko.accent {
-  font-weight: 600;
-  color: var(--red);
+.title-main .line-hand-sub {
+  display: block;
+  font-size: clamp(15px, 4.8vw, 23px);
+  color: var(--clay);
+  line-height: 1.5;
+  margin-top: 10px;
 }
 
+/* 라틴 소문자 x-height가 0.40em으로 낮아 같은 크기에서 한글보다 작아 보인다
+   → 한 단계 키워서 눈에 보이는 크기를 맞춘다 */
 .title-main .line-en {
   display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 400;
-  font-size: clamp(11px, 3vw, 14px);
-  letter-spacing: .28em;
-  color: var(--red);
-  text-transform: uppercase;
-  opacity: .7;
+  font-size: clamp(13px, 3.6vw, 16px);
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
 }
 
 .title-main .line-en.top-label {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
+/* ── 영상 ────────────────────────────────────────────────── */
 .sec-media {
   width: 100%;
   position: relative;
-  background: #ddd5c8;
+  background: var(--paper-warm);
   overflow: hidden;
 }
 
@@ -636,22 +664,13 @@ body::before {
   display: block;
 }
 
-#main-video::-webkit-media-controls {
+#main-video::-webkit-media-controls,
+#main-video::-webkit-media-controls-panel {
   display: none !important;
 }
 #main-video::-webkit-media-controls-start-playback-button {
   display: none !important;
   -webkit-appearance: none;
-}
-#main-video::-webkit-media-controls-panel {
-  display: none !important;
-}
-
-.media-wrapper iframe {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  border: none;
 }
 
 .media-wrapper::after {
@@ -659,222 +678,199 @@ body::before {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 80px;
-  background: linear-gradient(to top, var(--cream), transparent);
+  background: linear-gradient(to top, var(--paper), transparent);
   pointer-events: none;
   z-index: 2;
 }
 
+/* ── 공연 정보 ───────────────────────────────────────────── */
 .sec-info {
-  padding: clamp(32px, 10vw, 48px) clamp(16px, 5.5vw, 28px) clamp(36px, 10vw, 52px);
-  text-align: center;
-  background: var(--cream);
+  padding: clamp(30px, 9vw, 46px) clamp(22px, 7vw, 32px) clamp(36px, 10vw, 52px);
+  text-align: left;
+  background: var(--paper);
   position: relative;
 }
 
-.sec-info::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 1px; height: 40px;
-  background: var(--gold);
-  opacity: .6;
+.event-date {
+  font-size: clamp(15px, 4.2vw, 19px);
+  color: var(--clay);
+  margin-bottom: 2px;
 }
 
-.event-date {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 400;
-  font-size: clamp(13px, 3.8vw, 17px);
-  letter-spacing: .18em;
-  color: var(--red);
-  margin-bottom: clamp(18px, 6vw, 28px);
+.dday-counter {
+  font-size: clamp(14px, 3.8vw, 17px);
+  color: var(--ink-faint);
+  margin-bottom: clamp(16px, 5vw, 24px);
 }
 
 .event-name {
-  color: var(--brown);
+  color: var(--ink);
+  display: block;
+  margin-bottom: clamp(22px, 7vw, 32px);
 }
 
 .event-name-main {
   display: block;
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 300;
-  font-size: clamp(18px, 5vw, 24px);
-  letter-spacing: .04em;
-  line-height: 1.6;
+  font-size: clamp(20px, 5.6vw, 26px);
+  line-height: 1.5;
 }
 
 .event-name-sub {
   display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 400;
-  font-size: clamp(12px, 3.4vw, 16px);
-  letter-spacing: .28em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-top: 6px;
+  font-size: clamp(14px, 3.8vw, 17px);
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
 }
 
+/* 테두리 상자 대신 손으로 적어 내려간 목록 */
 .detail-grid {
-  margin-top: clamp(24px, 8vw, 40px);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(10px, 3vw, 16px);
+  margin-top: 0;
+  display: block;
+  border-top: 1px solid var(--line);
 }
 
 .detail-card {
-  background: rgba(255, 255, 255, .55);
-  border: 1px solid rgba(196, 168, 130, .3);
-  border-radius: 4px;
-  padding: clamp(12px, 3.8vw, 18px) clamp(8px, 2.5vw, 12px);
-  text-align: center;
+  display: grid;
+  grid-template-columns: clamp(56px, 17vw, 74px) 1fr;
+  align-items: baseline;
+  gap: clamp(10px, 3vw, 16px);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: clamp(13px, 4vw, 18px) 0;
+  text-align: left;
 }
 
 .detail-card .card-label {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(9px, 2.4vw, 11px);
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: var(--light-muted);
-  margin-bottom: 8px;
-}
-
-.venue-highlight {
-  font-size: clamp(17px, 5vw, 22px);
-  font-weight: 600;
-  color: var(--brown);
+  font-size: clamp(14px, 3.8vw, 17px);
+  color: var(--ink-faint);
+  margin-bottom: 0;
+  letter-spacing: 0.04em;
 }
 
 .detail-card .card-value {
-  font-family: 'Noto Serif KR', serif;
-  font-size: clamp(11px, 3vw, 14px);
-  line-height: 1.6;
+  font-size: clamp(15px, 4.2vw, 18px);
+  line-height: 1.7;
+  color: var(--ink);
 }
 
-.detail-card.full-width { grid-column: 1 / -1; }
+.detail-card .card-value + .card-value {
+  grid-column: 2;          /* 라벨 칸을 건너뛰고 값 칸에 이어 붙는다 */
+  color: var(--ink-soft);
+  font-size: clamp(14px, 3.6vw, 16px);
+  margin-top: 2px;
+}
 
-.ticket-cta { margin-top: clamp(24px, 8vw, 40px); }
+.card-note {
+  color: var(--ink-faint);
+  font-size: .88em;
+}
+
+/* 형광펜으로 그은 듯한 강조 — 선이 아니라 배경으로 */
+.venue-highlight {
+  font-size: clamp(17px, 4.8vw, 21px);
+  color: var(--ink);
+  background: linear-gradient(transparent 58%, var(--clay-wash) 58%);
+  padding: 0 2px;
+}
+
+.detail-card.full-width { grid-column: auto; }
+
+/* ── 버튼 ────────────────────────────────────────────────── */
+.ticket-cta { margin-top: clamp(26px, 8vw, 38px); }
 
 .btn-ticket {
   display: block;
   width: 100%;
-  padding: clamp(14px, 4vw, 18px);
-  background: var(--brown);
-  color: var(--cream);
+  padding: clamp(15px, 4.4vw, 19px);
+  background: var(--clay);
+  color: #fdfbf6;
   border: none;
-  border-radius: 3px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(12px, 3.4vw, 14px);
-  letter-spacing: .24em;
-  text-transform: uppercase;
+  border-radius: 14px;
+  font-size: clamp(16px, 4.4vw, 19px);
+  letter-spacing: 0.02em;
   text-decoration: none;
   text-align: center;
   cursor: pointer;
-  transition: background .3s, transform .15s;
+  transition: background .25s, transform .15s;
   -webkit-tap-highlight-color: transparent;
 }
-.btn-ticket:active { background: var(--red); transform: scale(.98); }
+.btn-ticket:active { background: #94452b; transform: scale(.98); }
 
 .btn-secondary {
   display: block;
   width: 100%;
   margin-top: 10px;
-  padding: clamp(12px, 3.5vw, 16px);
+  padding: clamp(13px, 4vw, 17px);
   background: transparent;
-  color: var(--brown);
-  border: 1px solid rgba(42, 33, 24, .35);
-  border-radius: 3px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(11px, 3.2vw, 13px);
-  letter-spacing: .20em;
-  text-transform: uppercase;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-size: clamp(15px, 4vw, 17px);
+  letter-spacing: 0.02em;
   text-decoration: none;
   text-align: center;
   cursor: pointer;
-  transition: border-color .3s, background .3s;
+  transition: border-color .25s, background .25s;
   -webkit-tap-highlight-color: transparent;
 }
-.btn-secondary:active { background: rgba(42, 33, 24, .06); }
+.btn-secondary:active { background: var(--paper-warm); }
 
+/* ── 말씀 — 이 페이지의 마지막 목소리 ─────────────────────── */
 .sec-message {
-  padding: clamp(36px, 12vw, 56px) clamp(20px, 7vw, 36px) clamp(56px, 16vw, 80px);
-  text-align: center;
-  background: var(--cream-dark);
+  padding: clamp(40px, 13vw, 60px) clamp(24px, 7.5vw, 36px) clamp(48px, 14vw, 68px);
+  text-align: left;
+  background: var(--paper-warm);
   position: relative;
   overflow: hidden;
 }
 
-.sec-message::before {
-  content: '\201C';
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(100px, 28vw, 140px);
-  color: rgba(192, 57, 43, .08);
-  position: absolute;
-  top: -10px; left: 12px;
-  line-height: 1;
-  pointer-events: none;
+.message-lead {
+  font-size: clamp(24px, 7.4vw, 34px);
+  color: var(--clay);
+  line-height: 1.4;
+  margin-bottom: clamp(18px, 5.5vw, 26px);
 }
 
 .message-text {
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 300;
-  font-size: clamp(14px, 4vw, 17px);
-  line-height: 2.2;
-  color: #3d3028;
-  letter-spacing: .04em;
+  font-size: clamp(15px, 4.3vw, 18px);
+  line-height: 2.05;
+  color: var(--ink);
   word-break: keep-all;
   position: relative;
   z-index: 1;
 }
 
+.message-text + .message-text { margin-top: 1.1em; }
+
+.message-text em {
+  font-style: normal;
+  color: var(--ink);
+  background: linear-gradient(transparent 60%, var(--clay-wash) 60%);
+}
+
 .message-ref {
-  margin-top: clamp(18px, 6vw, 28px);
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: clamp(11px, 3vw, 14px);
-  letter-spacing: .15em;
-  color: var(--red);
+  margin-top: clamp(20px, 6vw, 30px);
+  font-size: clamp(14px, 3.8vw, 17px);
+  color: var(--ink-faint);
   position: relative;
   z-index: 1;
 }
 
-.ornament {
-  display: block;
-  text-align: center;
-  color: var(--gold);
-  font-size: 18px;
-  letter-spacing: 8px;
-  margin: clamp(18px, 6vw, 28px) 0 0;
-  opacity: .7;
-  position: relative;
-  z-index: 1;
-}
-
+/* ── 푸터 ────────────────────────────────────────────────── */
 .footer {
-  padding: clamp(18px, 5vw, 28px);
+  padding: clamp(22px, 6vw, 30px);
   text-align: center;
-  background: var(--brown);
+  background: var(--paper-warm);
+  border-top: 1px solid var(--line);
 }
 
 .footer-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(10px, 2.6vw, 12px);
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: rgba(245, 240, 235, .35);
+  font-size: clamp(13px, 3.4vw, 15px);
+  color: var(--ink-faint);
 }
-
-/* ── D-Day Counter ── */
-.dday-counter {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(13px, 3.5vw, 16px);
-  font-weight: 400;
-  letter-spacing: .15em;
-  color: var(--brown);
-  margin-bottom: clamp(12px, 4vw, 18px);
-  opacity: .7;
-}
-
-
 
 /* ══════════════════════════════════
    6. pages/songs.css — Page 2 곡 리스트
@@ -887,32 +883,18 @@ body::before {
   position: relative;
 }
 
-.page-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 40px; height: 1px;
-  background: var(--gold);
-  opacity: .5;
-}
-
 .page-header .ph-label {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(9px, 2.5vw, 11px);
-  letter-spacing: .3em;
-  text-transform: uppercase;
+  font-size: clamp(13px, 2.5vw, 14px);
+  letter-spacing: 0.02em;
   color: var(--light-muted);
   margin-bottom: 10px;
   display: block;
 }
 
 .page-header .ph-title {
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 300;
   font-size: clamp(20px, 5.5vw, 26px);
   color: var(--brown);
-  letter-spacing: .05em;
+  letter-spacing: 0.02em;
 }
 
 .song-overview {
@@ -940,29 +922,24 @@ body::before {
 .song-num {
   flex-shrink: 0;
   width: clamp(24px, 7vw, 30px);
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
   font-size: clamp(16px, 4.5vw, 20px);
-  font-weight: 600;
   color: var(--red);
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
   text-align: center;
 }
 
 .song-title-text {
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 300;
   font-size: clamp(14px, 4vw, 17px);
   color: var(--brown);
-  letter-spacing: .03em;
+  letter-spacing: 0.02em;
   line-height: 1.4;
   flex: 1;
 }
 
 .song-row .song-arrow {
-  font-size: 14px;
-  color: var(--gold);
-  opacity: .5;
+  font-size: 15px;
+  color: var(--ink-faint);
+  opacity: .8;
   flex-shrink: 0;
 }
 
@@ -981,10 +958,8 @@ body::before {
 }
 
 .song-break-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: clamp(11px, 3vw, 13px);
-  letter-spacing: .15em;
+  font-size: clamp(14px, 3vw, 16px);
+  letter-spacing: 0.02em;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -995,10 +970,8 @@ body::before {
 }
 
 .detail-section-label {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(9px, 2.4vw, 11px);
-  letter-spacing: .26em;
-  text-transform: uppercase;
+  font-size: clamp(13px, 2.4vw, 14px);
+  letter-spacing: 0.02em;
   color: var(--light-muted);
   margin-bottom: 20px;
   text-align: center;
@@ -1006,9 +979,8 @@ body::before {
 }
 .detail-section-label::before {
   content: ''; display: block;
-  width: 1px; height: 28px;
-  background: var(--gold); opacity: .5;
-  margin: 0 auto 16px;
+  height: 16px;
+  margin: 0 auto;
 }
 
 /* ── LP Player ── */
@@ -1035,7 +1007,6 @@ body::before {
   border: 1px solid rgba(196, 168, 130, .35);
   border-radius: 50%;
   background: none;
-  font-family: 'Cormorant Garamond', serif;
   font-size: 22px;
   color: var(--brown);
   cursor: pointer;
@@ -1047,8 +1018,8 @@ body::before {
   flex-shrink: 0;
 }
 .lp-arrow:active {
-  background: rgba(42, 33, 24, .08);
-  border-color: var(--gold);
+  background: var(--paper-warm);
+  border-color: var(--line);
 }
 
 .lp-disc-wrap {
@@ -1112,22 +1083,17 @@ body::before {
 .lp-label {
   position: relative;
   z-index: 2;
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
   font-size: clamp(18px, 5vw, 24px);
-  font-weight: 400;
   color: rgba(255,255,255,.92);
-  letter-spacing: .03em;
+  letter-spacing: 0.02em;
   animation: spinLP 6s linear infinite reverse;
 }
 
 /* 곡명 */
 .lp-track-name {
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 400;
   font-size: clamp(16px, 4.5vw, 20px);
   color: var(--brown);
-  letter-spacing: .03em;
+  letter-spacing: 0.02em;
   margin-bottom: 6px;
   min-height: 1.5em;
   transition: opacity .25s;
@@ -1135,9 +1101,8 @@ body::before {
 
 /* 트랙 카운터 */
 .lp-track-count {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(11px, 3vw, 13px);
-  letter-spacing: .15em;
+  font-size: clamp(14px, 3vw, 16px);
+  letter-spacing: 0.02em;
   color: var(--muted);
   margin-bottom: clamp(14px, 4vw, 20px);
 }
@@ -1151,10 +1116,8 @@ body::before {
   background: var(--red);
   color: #fff;
   border-radius: 24px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(11px, 3vw, 13px);
-  letter-spacing: .12em;
-  text-transform: uppercase;
+  font-size: clamp(14px, 3vw, 16px);
+  letter-spacing: 0.02em;
   text-decoration: none;
   transition: background .2s, transform .15s;
   -webkit-tap-highlight-color: transparent;
@@ -1183,10 +1146,8 @@ body::before {
 .artist-section-block:last-child { padding-bottom: 12px; }
 
 .artist-group-label {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(9px, 2.4vw, 11px);
-  letter-spacing: .26em;
-  text-transform: uppercase;
+  font-size: clamp(13px, 2.4vw, 14px);
+  letter-spacing: 0.02em;
   color: var(--light-muted);
   text-align: center;
   margin-bottom: clamp(16px, 5vw, 24px);
@@ -1223,8 +1184,8 @@ body::before {
   width: clamp(58px, 16vw, 76px);
   height: clamp(58px, 16vw, 76px);
   border-radius: 50%;
-  background: linear-gradient(135deg, #c9bfb0, #a8977f);
-  border: 2px solid rgba(196, 168, 130, .4);
+  background: var(--paper-warm);
+  border: 1px solid var(--line);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -1236,28 +1197,22 @@ body::before {
   object-fit: cover;
 }
 .artist-avatar .avatar-placeholder {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
   font-size: clamp(18px, 5vw, 24px);
-  color: rgba(245, 240, 235, .5);
+  color: var(--ink-faint);
 }
 
 .artist-card-name {
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 400;
-  font-size: clamp(11px, 3vw, 14px);
+  font-size: clamp(14px, 3vw, 17px);
   color: var(--brown);
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
   line-height: 1.3;
   word-break: keep-all;
 }
 
 .artist-card-role {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(9px, 2.4vw, 11px);
-  letter-spacing: .12em;
+  font-size: clamp(13px, 2.4vw, 14px);
+  letter-spacing: 0.02em;
   color: var(--muted);
-  text-transform: uppercase;
   margin-top: 1px;
 }
 
@@ -1278,11 +1233,11 @@ body::before {
     font-size: 16px;
   }
   .artist-card-name {
-    font-size: 11px;
+    font-size: 14px;
   }
   .artist-card-role {
-    font-size: 9px;
-    letter-spacing: .08em;
+    font-size: 13px;
+    letter-spacing: 0.02em;
   }
 }
 
@@ -1290,13 +1245,14 @@ body::before {
    8. pages/story.css — Page 4 스토리
 ══════════════════════════════════ */
 
+/* 스토리 페이지가 예전 팔레트를 지역 변수로 덮어쓰고 있어
+   전역 팔레트가 이 페이지에만 적용되지 않았다 → 전역 값에 맞춘다. */
 .story-page{
-  --cream:#faf7f3;
-  --cream2:#f2ece4;
-  --brown-soft:#4a3a2d;
-  --gold:#b8956a;
-  --muted:#8a7060;
-  --line:rgba(180,150,110,.18);
+  --cream:var(--paper);
+  --cream2:var(--paper-warm);
+  --brown-soft:var(--ink);
+  --gold:var(--line);
+  --muted:var(--ink-soft);
 }
 
 .prog{
@@ -1305,7 +1261,7 @@ body::before {
   left:0;
   height:2px;
   width:0;
-  background:linear-gradient(to right,var(--gold),var(--red));
+  background:linear-gradient(to right,var(--clay-wash),var(--clay));
   z-index:999;
 }
 
@@ -1316,41 +1272,30 @@ body::before {
 }
 
 .open-eyebrow{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;
-  font-size:clamp(11px,3vw,13px);
-  letter-spacing:.26em;
-  text-transform:uppercase;
-  color:var(--gold);
+  font-size:clamp(14px, 3vw, 16px);
+  letter-spacing: 0.02em;
+  color:var(--clay);
   margin-bottom:20px;
 }
 
 .open-title{
-  font-family:'Noto Serif KR',serif;
-  font-weight:300;
   font-size:clamp(30px,8.5vw,42px);
   line-height:1.7;
-  letter-spacing:.06em;
+  letter-spacing: 0.02em;
   color:var(--brown);
 }
 
 .open-title strong{
   color:var(--red);
-  font-weight:600;
 }
 
 .open-divider{
-  width:32px;
-  height:1px;
-  background:var(--gold);
-  margin:28px auto;
-  opacity:.5;
+  height:clamp(18px,5vw,26px);
 }
 
 .open-sub{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(12px,3.4vw,15px);
-  letter-spacing:.18em;
+  font-size:clamp(15px, 3.4vw, 18px);
+  letter-spacing: 0.02em;
   color:var(--muted);
   line-height:2;
 }
@@ -1382,22 +1327,17 @@ body::before {
 }
 
 .ch-label{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;
-  font-size:clamp(10px,2.6vw,11px);
-  letter-spacing:.28em;
-  text-transform:uppercase;
-  color:var(--gold);
+  font-size:clamp(13px, 2.6vw, 14px);
+  letter-spacing: 0.02em;
+  color:var(--ink-faint);
   margin-bottom:12px;
 }
 
 .scene-headline{
-  font-family:'Noto Serif KR',serif;
-  font-weight:300;
   font-size:clamp(19px,5.2vw,24px);
   line-height:1.85;
   color:var(--brown);
-  letter-spacing:.04em;
+  letter-spacing: 0.02em;
   word-break:keep-all;
   margin-bottom:14px;
 }
@@ -1408,12 +1348,10 @@ body::before {
 }
 
 .scene-body{
-  font-family:'Noto Serif KR',serif;
-  font-weight:300;
   font-size:clamp(13px,3.4vw,15px);
   line-height:2.2;
   color:var(--muted);
-  letter-spacing:.03em;
+  letter-spacing: 0.02em;
   word-break:keep-all;
 }
 
@@ -1461,49 +1399,43 @@ body::before {
 }
 
 .quote-wrap{
-  padding:clamp(48px,14vw,64px) clamp(28px,8vw,40px);
-  background:var(--brown);
-  text-align:center;
+  padding:clamp(52px,15vw,72px) clamp(26px,7.5vw,38px) clamp(56px,16vw,76px);
+  background:var(--paper-warm);
+  text-align:left;
   position:relative;
   overflow:hidden;
 }
 
-.quote-deco{
-  position:absolute;
-  top:-30px;
-  left:12px;
-  font-family:'Cormorant Garamond',serif;
-  font-size:180px;
-  color:rgba(184,149,106,.07);
-  line-height:1;
-  pointer-events:none;
+.quote-lead{
+  font-size:clamp(24px,7.4vw,34px);
+  color:var(--clay);
+  line-height:1.4;
+  margin-bottom:clamp(18px,5.5vw,26px);
+  position:relative;
+  z-index:1;
 }
 
 .quote-text{
-  font-family:'Noto Serif KR',serif;
-  font-weight:300;
-  font-size:clamp(14px,4vw,17px);
-  line-height:2.2;
-  color:rgba(250,247,243,.9);
-  letter-spacing:.04em;
+  font-size:clamp(15px,4.3vw,18px);
+  line-height:2.05;
+  color:var(--ink);
+  letter-spacing: 0.02em;
   word-break:keep-all;
   position:relative;
   z-index:1;
 }
 
-.quote-text strong{
-  font-size:inherit;
-  font-weight:400;
-  color:var(--gold);
+.quote-text em{
+  font-style:normal;
+  color:var(--ink);
+  background:linear-gradient(transparent 60%, var(--clay-wash) 60%);
 }
 
 .quote-ref{
-  margin-top:28px;
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;
-  font-size:clamp(11px,3vw,13px);
-  letter-spacing:.2em;
-  color:rgba(184,149,106,.65);
+  margin-top:clamp(20px,6vw,30px);
+  font-size:clamp(14px, 3vw, 16px);
+  letter-spacing: 0.02em;
+  color:var(--ink-faint);
   position:relative;
   z-index:1;
 }
@@ -1515,12 +1447,10 @@ body::before {
 }
 
 .finale-title{
-  font-family:'Noto Serif KR',serif;
-  font-weight:300;
   font-size:clamp(18px,5vw,22px);
   line-height:2;
   color:var(--brown);
-  letter-spacing:.04em;
+  letter-spacing: 0.02em;
   word-break:keep-all;
   margin-bottom:8px;
 }
@@ -1530,9 +1460,8 @@ body::before {
 }
 
 .finale-date{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(12px,3.2vw,14px);
-  letter-spacing:.2em;
+  font-size:clamp(15px, 3.2vw, 17px);
+  letter-spacing: 0.02em;
   color:var(--muted);
   margin-bottom:clamp(36px,10vw,48px);
   line-height:2;
@@ -1546,10 +1475,8 @@ body::before {
   color:var(--cream);
   border:none;
   border-radius:3px;
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(12px,3.4vw,14px);
-  letter-spacing:.26em;
-  text-transform:uppercase;
+  font-size:clamp(15px, 3.4vw, 17px);
+  letter-spacing: 0.02em;
   text-decoration:none;
   text-align:center;
   cursor:pointer;
@@ -1569,10 +1496,8 @@ body::before {
   color:var(--brown-soft);
   border:1px solid rgba(42,33,24,.2);
   border-radius:3px;
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(12px,3.4vw,14px);
-  letter-spacing:.26em;
-  text-transform:uppercase;
+  font-size:clamp(15px, 3.4vw, 17px);
+  letter-spacing: 0.02em;
   text-decoration:none;
   text-align:center;
   cursor:pointer;
@@ -1585,10 +1510,8 @@ body::before {
 }
 
 .story-page footer p{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(10px,2.4vw,11px);
-  letter-spacing:.18em;
-  text-transform:uppercase;
+  font-size:clamp(13px, 2.4vw, 14px);
+  letter-spacing: 0.02em;
   color:var(--muted);
   opacity:.5;
 }
@@ -1621,6 +1544,33 @@ select {
 html,
 body {
   overflow-x: clip;
+}
+
+/* ── 손글씨 한 벌로만 쓰기 위한 전역 보정 ──────────────────────────
+   이 서체는 굵기 400 하나, 이탤릭 없음. strong/em/b/i를 그대로 두면
+   브라우저가 가짜 볼드·오블리크를 합성해 얇은 획이 뭉개진다.
+   → 굵기·기울임 대신 색으로만 강조한다. */
+strong, b, em, i {
+  font-weight: 400;
+  font-style: normal;
+}
+
+strong, b { color: var(--clay); }
+
+/* 버튼·입력 요소는 폰트를 상속하지 않으므로 명시해준다 */
+button, input, textarea, select, a {
+  font-family: inherit;
+  letter-spacing: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 { font-weight: 400; }
+
+/* 아바타의 이모지는 손글씨 폰트에 없다. 여기에 폴백을 명시해두지 않으면
+   브라우저가 503KB짜리 'Sarang Full'까지 내려받은 뒤에야 시스템 이모지로
+   넘어간다 → 이모지 폰트를 폴백 순서 앞에 끼워 넣어 그 다운로드를 막는다. */
+.avatar-placeholder {
+  font-family: 'Sarang', 'Apple Color Emoji', 'Segoe UI Emoji',
+               'Noto Color Emoji', sans-serif;
 }
 
 .card-value,
@@ -1657,7 +1607,7 @@ body {
   }
 
   .tab-label {
-    font-size: 8px;
+    font-size: 13px;
     letter-spacing: 0.02em;
     transform: scale(0.96);
     transform-origin: center;
@@ -1669,22 +1619,23 @@ body {
     padding-bottom: 30px;
   }
 
-  .title-main .line-ko {
-    font-size: 20px;
-    line-height: 1.6;
-    letter-spacing: 0.02em;
+  .title-main .line-hand {
+    font-size: 34px;
+    line-height: 1.3;
+    letter-spacing: 0;
   }
 
-  .title-main .line-en {
-    font-size: 10px;
-    letter-spacing: 0.14em;
+  .title-main .line-hand-sub {
+    font-size: 14px;
     margin-top: 8px;
   }
 
-  .title-deco,
-  .title-deco-bottom {
-    font-size: 16px;
+  .title-main .line-en {
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    margin-top: 8px;
   }
+
 
   .media-wrapper {
     aspect-ratio: 4 / 5.4;
@@ -1704,7 +1655,7 @@ body {
   }
 
   .detail-card .card-value {
-    font-size: 12px;
+    font-size: 15px;
     line-height: 1.65;
   }
 
@@ -1716,8 +1667,8 @@ body {
   .btn-secondary,
   .story-page .btn-primary,
   .story-page .btn-secondary {
-    letter-spacing: 0.14em;
-    font-size: 12px;
+    letter-spacing: 0.02em;
+    font-size: 15px;
     padding-left: 14px;
     padding-right: 14px;
   }
@@ -1729,17 +1680,14 @@ body {
   .message-text {
     font-size: 13px;
     line-height: 2;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
   }
 
   .message-ref {
-    font-size: 12px;
-    letter-spacing: 0.08em;
+    font-size: 15px;
+    letter-spacing: 0.02em;
   }
 
-  .ornament {
-    letter-spacing: 5px;
-  }
 
   .page-header {
     padding-top: 30px;
@@ -1764,14 +1712,6 @@ body {
     padding: 12px 12px;
   }
 
-  .song-card-name {
-    font-size: 12px;
-  }
-
-  .song-card-sub {
-    font-size: 9px;
-    letter-spacing: 0.08em;
-  }
 
   .song-break-text {
     white-space: normal;
@@ -1794,7 +1734,7 @@ body {
   }
 
   .artist-card-name {
-    font-size: 12px;
+    font-size: 15px;
   }
 
   .story-page .opening {
@@ -1808,8 +1748,8 @@ body {
   }
 
   .story-page .open-sub {
-    font-size: 11px;
-    letter-spacing: 0.12em;
+    font-size: 14px;
+    letter-spacing: 0.02em;
     line-height: 1.8;
   }
 
@@ -1875,7 +1815,7 @@ body {
   }
 
   .share-opt-label {
-    font-size: 10px;
+    font-size: 13px;
   }
 
   .toast {
@@ -1888,8 +1828,8 @@ body {
 /* 2) 소형 기기: 360px ~ 389px */
 @media (min-width: 360px) and (max-width: 389px) {
   .tab-label {
-    font-size: 9px;
-    letter-spacing: 0.05em;
+    font-size: 13px;
+    letter-spacing: 0.02em;
   }
 
   .detail-grid {
@@ -1912,7 +1852,7 @@ body {
 /* 3) 일반 모바일: 390px ~ 429px */
 @media (min-width: 390px) and (max-width: 429px) {
   .tab-label {
-    letter-spacing: 0.08em;
+    letter-spacing: 0.02em;
   }
 
   .detail-grid {

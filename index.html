@@ -48,6 +48,8 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=IM+Fell+English:ital@0;1&amp;display=swap" as="style"/>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=IM+Fell+English:ital@0;1&amp;display=swap" rel="stylesheet"/>
+<!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
+<link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
 <link href="src/css/style.css" rel="stylesheet"/>
 </head>
@@ -65,7 +67,7 @@
 <div class="np-bars" id="npBars">
 <span></span><span></span><span></span><span></span>
 </div>
-<p class="np-text">나를 부르신 주 — <span class="np-artist">WELOVE</span></p>
+<p class="np-text">우리가 서로 사랑하자 <span class="np-artist">Wecclesia</span></p>
 </div>
 <!-- ════════════════════════════════
      PAGE 1 — MAIN
@@ -74,10 +76,9 @@
 <!-- Title -->
 <section class="sec-title">
 <div class="title-main">
-<span class="line-en top-label">Live Concert · 2026</span>
-<span class="line-ko accent">찬양이</span>
-<span class="line-ko">좋아서 모인</span>
-<span class="line-ko">청년들</span>
+<span class="line-en top-label">Live Concert 2026</span>
+<span class="line-hand">찬양이 좋아서 모인 청년들</span>
+<span class="line-hand-sub">우리가 서로 사랑하자!</span>
 </div>
 </section>
 <!-- Media Visual -->
@@ -89,7 +90,7 @@
 </div></section>
 <!-- Event Info -->
 <section class="sec-info">
-<p class="event-date reveal">2026 . 11 . 21 . SAT</p>
+<p class="event-date reveal">2026. 11. 21. SAT</p>
 <p class="dday-counter reveal" id="ddayCounter"></p>
 <div class="event-name reveal">
 <span class="event-name-main">찬양이 좋아서 모인 청년들</span>
@@ -97,17 +98,17 @@
 </div>
 <div class="detail-grid reveal">
 <div class="detail-card">
-<p class="card-label">Date</p>
-<p class="card-value">2026년 (미정)<br/>토요일</p>
+<p class="card-label">날짜</p>
+<p class="card-value">2026년 11월 21일 토요일 <span class="card-note">(일정 미정)</span></p>
 </div>
 <div class="detail-card">
-<p class="card-label">Time</p>
-<p class="card-value">오후 8:00 ~ <br/>9:40</p>
+<p class="card-label">시간</p>
+<p class="card-value">오후 8:00 ~ 9:40</p>
 </div>
 <div class="detail-card full-width">
-<p class="card-label">Venue</p>
+<p class="card-label">장소</p>
 <p class="card-value">
-<span class="venue-highlight">향상교회 3층</span> (변동사항)
+<span class="venue-highlight">향상교회 3층</span> <span class="card-note">(변동 가능)</span>
         </p>
 <p class="card-value">기흥구 언동로 140</p>
 </div>
@@ -119,23 +120,22 @@
 </section>
 <!-- Message -->
 <section class="sec-message reveal">
+<p class="message-lead">우리가 서로 사랑하자</p>
 <p class="message-text">
-      그의 안에서 건물마다 서로 연결하여<br/>
-      주 안에서 성전이 되어가고
+      사랑하는 자들아 우리가 서로 사랑하자<br/>
+      사랑은 하나님께 속한 것이니<br/>
+      사랑하는 자마다 하나님으로부터 나서<br/>
+      하나님을 알고
     </p>
 <p class="message-text">
-      너희도 성령 안에서 하나님이 거하실<br/>
-      처소가 되기 위하여
+      사랑하지 아니하는 자는<br/>
+      하나님을 알지 못하나니<br/>
+      이는 <em>하나님은 사랑이심이라</em>
     </p>
-<p class="message-text">
-      그리스도 예수 안에서<br/>
-<br/>
-      “함께 지어져 가느니라”
-    </p>
-<p class="message-ref">에베소서 2:21</p>
+<p class="message-ref">요한1서 4장 7-8절</p>
 </section>
 <footer class="footer">
-<p class="footer-text">찬양이 좋아서 모인 청년들 © 2026</p>
+<p class="footer-text">찬양이 좋아서 모인 청년들, 2026</p>
 </footer>
 </div><!-- /page-main -->
 <!-- ════════════════════════════════
@@ -151,32 +151,32 @@
 <div class="song-row reveal">
 <span class="song-num">01</span>
 <span class="song-title-text">주를 찾는 모든 자들이</span>
-<span class="song-arrow">›</span>
+<span class="song-arrow">→</span>
 </div>
 <div class="song-row reveal">
 <span class="song-num">02</span>
 <span class="song-title-text">친구야</span>
-<span class="song-arrow">›</span>
+<span class="song-arrow">→</span>
 </div>
 <div class="song-row reveal">
 <span class="song-num">03</span>
 <span class="song-title-text">주를 바라보며</span>
-<span class="song-arrow">›</span>
+<span class="song-arrow">→</span>
 </div>
 <div class="song-row reveal">
 <span class="song-num">04</span>
 <span class="song-title-text">모든 생명들아 소리쳐</span>
-<span class="song-arrow">›</span>
+<span class="song-arrow">→</span>
 </div>
 <div class="song-row reveal">
 <span class="song-num">05</span>
 <span class="song-title-text">그리운 예루살렘</span>
-<span class="song-arrow">›</span>
+<span class="song-arrow">→</span>
 </div>
 <div class="song-row reveal">
 <span class="song-num">06</span>
 <span class="song-title-text">아름다운 나라</span>
-<span class="song-arrow">›</span>
+<span class="song-arrow">→</span>
 </div>
 <div class="song-break">
 <div class="song-break-line">
@@ -186,22 +186,22 @@
 <div class="song-row reveal">
 <span class="song-num">07</span>
 <span class="song-title-text">다시 밤은 없겠고</span>
-<span class="song-arrow">›</span>
+<span class="song-arrow">→</span>
 </div>
 <div class="song-row reveal">
 <span class="song-num">08</span>
 <span class="song-title-text">함께 지어져가네</span>
-<span class="song-arrow">›</span>
+<span class="song-arrow">→</span>
 </div>
 <div class="song-row reveal">
 <span class="song-num">09</span>
 <span class="song-title-text">어둔날 다 지나고</span>
-<span class="song-arrow">›</span>
+<span class="song-arrow">→</span>
 </div>
 <div class="song-row reveal">
 <span class="song-num">10</span>
 <span class="song-title-text">우린 물러서지 않으리</span>
-<span class="song-arrow">›</span>
+<span class="song-arrow">→</span>
 </div>
 </div>
 <!-- Song Detail Cards with YouTube Links -->
@@ -210,13 +210,13 @@
 <!-- LP 플레이어 -->
 <div class="lp-player" id="lpPlayer">
 <div class="lp-controls">
-<button class="lp-arrow lp-prev" onclick="lpPrev()" aria-label="이전 곡">‹</button>
+<button class="lp-arrow lp-prev" onclick="lpPrev()" aria-label="이전 곡">←</button>
 <div class="lp-disc-wrap">
 <div class="lp-disc" id="lpDisc">
 <span class="lp-label" id="lpLabel">01</span>
 </div>
 </div>
-<button class="lp-arrow lp-next" onclick="lpNext()" aria-label="다음 곡">›</button>
+<button class="lp-arrow lp-next" onclick="lpNext()" aria-label="다음 곡">→</button>
 </div>
 <p class="lp-track-name" id="lpTrackName">주를 찾는 모든 자들이</p>
 <p class="lp-track-count" id="lpTrackCount">1 / 10</p>
@@ -394,7 +394,7 @@
 </div>
 </div>
 </div><div class="page story-page" id="page-story"><div class="prog" id="storyProg"></div><header class="opening reveal">
-<p class="open-eyebrow">Our Story · 2023 — 2026</p>
+<p class="open-eyebrow">Our Story  2023 - 2026</p>
 <h1 class="open-title"><strong>찬양이</strong><br/>좋아서<br/>모인 청년들</h1>
 <div class="open-divider"></div>
 <p class="open-sub">왜 우리가 여기 모였는지의 이야기</p>
@@ -403,7 +403,7 @@
 <img alt="악기 세팅" loading="lazy" src="public/images/story-01.jpg" style="aspect-ratio:4/3"/>
 </div>
 <div class="scene-text reveal">
-<p class="ch-label">01 · 준비</p>
+<p class="ch-label">01. 준비</p>
 <h2 class="scene-headline">지금 우리는 너무 빠르게<br/>변하는 시대를 살아가고 있습니다</h2>
 <p class="scene-body">세상은 점점 더 빠르게 움직이고,<br/>우리의 시선은 자연스럽게<br/>눈에 보이는 것들로 향합니다.</p>
 </div>
@@ -412,12 +412,12 @@
 <img alt="혼자 앉아있는 장면" loading="lazy" src="public/images/story-02.jpg" style="aspect-ratio:2/3"/>
 </div>
 <div class="scene-text reveal">
-<p class="ch-label">02 · 고민</p>
+<p class="ch-label">02. 고민</p>
 <h2 class="scene-headline">그러다 문득<br/>이런 생각이 들었습니다</h2>
 <p class="scene-body">이렇게 바쁜 세상 속에서<br/>우리는 하나님을<br/>너무 쉽게 잊고 살아가고 있는 것은 아닐까.</p>
 </div>
 </section><div class="divider reveal"></div><div class="text-block reveal">
-<p class="ch-label">03 · 결심</p>
+<p class="ch-label">03. 결심</p>
 <h2 class="scene-headline">특히 청년들이<br/>하나님을 향한 <em>찬양</em>을<br/>점점 잃어버리게 되는 것은 아닐까</h2>
 <p class="scene-body">그래서 우리는 시작했습니다.<br/>조명을 직접 구하고, 악기를 날랐습니다.<br/>아무것도 없었지만, 마음은 있었습니다.</p>
 </div><section class="scene" style="margin-top:3px">
@@ -434,7 +434,7 @@
 <img alt="리허설 / 소규모 공연" loading="lazy" src="public/images/story-05.jpg" style="aspect-ratio:4/3"/>
 </div>
 <div class="scene-text reveal">
-<p class="ch-label">04 · 작은 시작</p>
+<p class="ch-label">04. 작은 시작</p>
 
 </div>
 </section><div class="divider reveal"></div><section class="scene">
@@ -442,7 +442,7 @@
 <img alt="첫 찬양" loading="lazy" src="public/images/story-06.jpg" style="aspect-ratio:3/2"/>
 </div>
 <div class="scene-text reveal">
-<p class="ch-label">05 · 찬양이 시작됨</p>
+<p class="ch-label">05. 찬양이 시작됨</p>
 
 </div>
 </section><div class="divider reveal"></div><section class="scene">
@@ -453,7 +453,7 @@
 <img alt="함께 모여 찬양" loading="lazy" src="public/images/story-08.jpg" style="aspect-ratio:4/3"/>
 </div>
 <div class="scene-text reveal">
-<p class="ch-label">06 · 함께</p>
+<p class="ch-label">06. 함께</p>
 
 </div>
 </section><div class="divider reveal"></div><section class="scene">
@@ -463,7 +463,7 @@
 <img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG" style="aspect-ratio:3/2"/>
 </div>
 <div class="scene-text reveal">
-<p class="ch-label">07 · 공동체</p>
+<p class="ch-label">07. 공동체</p>
 <h2 class="scene-headline">우리는 믿습니다</h2>
 <p class="scene-body">이 작은 시작이 다시 하나님을 바라보는 시간이 되고,<br/>찬양하는 청년들이 더 많아지는 시작이 되기를.</p>
 </div>
@@ -479,32 +479,32 @@
 <img alt="핸드폰 불빛 찬양" loading="lazy" src="public/images/story-12.jpg" style="aspect-ratio:3/2"/>
 </div>
 <div class="scene-text reveal">
-<p class="ch-label">08 · 더 큰 울림</p>
+<p class="ch-label">08. 더 큰 울림</p>
 <h2 class="scene-headline">우리의 찬양이<br/>세상 가운데<br/>울려 퍼지기를<br/>바랍니다</h2>
 </div>
 </section><div class="scene-img-wrap reveal" style="margin-top:3px">
 <img alt="기타와 게시판" loading="lazy" src="public/images/story-13.jpg" style="aspect-ratio:4/3;width:100%;display:block;object-fit:cover;filter:brightness(.92) saturate(.9)"/>
 </div><div class="quote-wrap">
-<div class="quote-deco">"</div>
+<p class="quote-lead reveal">우리가 서로 사랑하자</p>
 <p class="quote-text reveal">
-  그의 안에서 건물마다 서로 연결하여<br/>
-  주 안에서 성전이 되어가고 <br/>
-  너희도 성령 안에서 하나님이 거하실<br/>
-  처소가 되기 위하여<br/>
-  그리스도 예수 안에서<br/>
+  사랑하는 자들아 우리가 서로 사랑하자<br/>
+  사랑은 하나님께 속한 것이니<br/>
+  사랑하는 자마다 하나님으로부터 나서<br/>
+  하나님을 알고<br/>
   <br/>
-  “함께 지어져 가느니라”<br/>
-  에베소서 2:21
+  사랑하지 아니하는 자는<br/>
+  하나님을 알지 못하나니<br/>
+  이는 <em>하나님은 사랑이심이라</em>
 </p>
-<p class="quote-ref reveal d2">— 찬양이 좋아서 모인 청년들</p>
+<p class="quote-ref reveal d2">요한1서 4장 7-8절</p>
 </div><section class="finale">
 <div class="reveal">
 <h2 class="finale-title">세상 가운데<br/>찬양이 계속<br/><strong>울려 퍼지기를 바랍니다</strong></h2>
-<p class="finale-date">2026 · 11 · 21 · SAT<br/>향상교회 3층</p>
+<p class="finale-date">2026. 11. 21. SAT<br/>향상교회 3층</p>
 </div>
 <button class="btn-primary reveal" onclick="switchTab('main', document.querySelector('.tab-btn[data-tab=&quot;main&quot;]'))">공연 정보 보기</button>
 <button class="btn-secondary reveal d1" onclick="openDonate()">후원하기</button>
-</section><footer><p>찬양이 좋아서 모인 청년들 © 2026</p></footer></div><!-- /page-artists -->
+</section><footer><p>찬양이 좋아서 모인 청년들, 2026</p></footer></div><!-- /page-artists -->
 <!-- ════════════════════════════════
      BOTTOM TAB BAR
 ════════════════════════════════ -->
