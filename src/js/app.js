@@ -48,6 +48,10 @@ function route() {
   const r = parseHash();
   const prev = _prevRoute;
 
+  // 페이지가 바뀌면 열려 있던 말씀 팝업은 닫는다
+  const vm = document.getElementById('verseModal');
+  if (vm && vm.classList.contains('open')) closeVerse();
+
   // 곡 리스트 → 곡 상세로 들어갈 때 리스트 스크롤 위치를 기억해 둔다
   if (prev && prev.tab === 'songs' && !prev.slug && r.tab === 'songs' && r.slug) {
     _songListScroll = _scroller().scrollTop;
@@ -164,10 +168,14 @@ function renderSongDetail(slug) {
   wrap.innerHTML = '';
   wrap.className = song.tag === '기도' ? 'is-prayer' : '';
 
-  /* 목록으로 돌아가기 */
+  /* 목록으로 돌아가기 — 화살표를 원형 아이콘으로 분리해 뒤로가기임을 분명히 한다 */
   const back = _el('a', 'song-back');
   back.href = '#/songs';
-  back.appendChild(_el('span', null, '← 곡 리스트'));
+  back.setAttribute('aria-label', '곡 리스트로 돌아가기');
+  const backIcon = _el('span', 'song-back-icon', '←');
+  backIcon.setAttribute('aria-hidden', 'true');
+  back.appendChild(backIcon);
+  back.appendChild(_el('span', 'song-back-label', '곡 리스트'));
   wrap.appendChild(back);
 
   /* 머리말 */
@@ -210,8 +218,13 @@ function renderSongDetail(slug) {
       const word = _el('aside', 'song-word');
       word.appendChild(_el('p', 'song-word-label', '이 곡과 함께 묵상할 말씀'));
       word.appendChild(_el('p', 'song-word-ref', part.bible.ref));
-      word.appendChild(_extLink(part.bible.url, '말씀 보기', 'song-word-link',
-                                part.bible.ref + ' 본문 보기'));
+
+      const btn = _el('button', 'song-word-link', '말씀 보기');
+      btn.type = 'button';
+      btn.setAttribute('aria-label', part.bible.ref + ' 본문 보기');
+      btn.setAttribute('aria-haspopup', 'dialog');
+      btn.onclick = () => openVerse(song.slug, i);
+      word.appendChild(btn);
       sec.appendChild(word);
     }
     wrap.appendChild(sec);
@@ -392,6 +405,76 @@ function addToCalendar() {
 
 
 /* ══════════════════════════════════
+   verse.js — 말씀 팝업
+
+   본문을 사이트에 담아두고 팝업으로 보여준다. 외부 사이트로 나가지 않으므로
+   오프라인·인앱 브라우저에서도 열린다. 전문을 보고 싶은 사람을 위해
+   '전체 장 읽기' 링크는 팝업 안에 남겨 둔다.
+══════════════════════════════════ */
+
+let _verseOpener = null;   // 팝업을 연 버튼 — 닫을 때 포커스를 되돌려 준다
+
+function openVerse(slug, partIndex) {
+  const song = findSong(slug);
+  const bible = song && song.parts[partIndex] && song.parts[partIndex].bible;
+  if (!bible) return;
+
+  _verseOpener = document.activeElement;
+
+  document.getElementById('verseRef').textContent = bible.ref;
+  document.getElementById('verseVersion').textContent = bible.version;
+
+  const note = document.getElementById('verseNote');
+  note.textContent = bible.note || '';
+  note.hidden = !bible.note;
+
+  const body = document.getElementById('verseBody');
+  body.innerHTML = '';
+  bible.verses.forEach(v => {
+    const p = _el('p', 'verse-line');
+    const n = _el('span', 'verse-num', String(v[0]));
+    n.setAttribute('aria-hidden', 'true');
+    p.appendChild(n);
+    p.appendChild(_el('span', 'verse-text', v[1]));
+    body.appendChild(p);
+  });
+
+  const full = document.getElementById('verseFull');
+  full.href = bible.url;
+  full.setAttribute('aria-label', bible.ref + ' 전체 장 읽기 (새 탭에서 열림)');
+
+  document.getElementById('verseBackdrop').classList.add('open');
+  document.getElementById('verseModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  body.scrollTop = 0;
+
+  // visibility 전환이 시작된 뒤에야 포커스가 들어간다
+  requestAnimationFrame(() => document.querySelector('.verse-close').focus());
+}
+
+function closeVerse() {
+  document.getElementById('verseBackdrop').classList.remove('open');
+  document.getElementById('verseModal').classList.remove('open');
+  document.body.style.overflow = '';
+  if (_verseOpener && _verseOpener.focus) _verseOpener.focus();
+  _verseOpener = null;
+}
+
+/* 팝업이 열려 있는 동안 포커스가 바깥으로 새지 않게 가둔다 */
+document.addEventListener('keydown', (e) => {
+  const modal = document.getElementById('verseModal');
+  if (!modal || !modal.classList.contains('open') || e.key !== 'Tab') return;
+
+  const items = modal.querySelectorAll('button, a[href]');
+  if (!items.length) return;
+  const first = items[0], last = items[items.length - 1];
+
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
+
+
+/* ══════════════════════════════════
    lp-player.js — 곡 소개 및 미리듣기
 
    곡 리스트와 같은 SONGS 배열을 읽는다. 곡을 추가하면 여기도 함께 늘어난다.
@@ -491,6 +574,7 @@ function closeShare() {
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
+    if (document.getElementById('verseModal').classList.contains('open')) closeVerse();
     if (document.getElementById('shareSheet').classList.contains('open')) closeShare();
     if (document.getElementById('donateModal').classList.contains('open')) closeDonate();
   }

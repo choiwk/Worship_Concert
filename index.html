@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=7" rel="stylesheet"/>
+<link href="src/css/style.css?v=11" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -565,11 +565,32 @@
 <p class="donate-note">후원해주신 금액은 찬양이 좋아서 모인 청년들팀의 운영자금으로 사용됩니다.</p>
 <button class="donate-close-btn" onclick="closeDonate()">닫기</button>
 </div>
+<!-- ════════════════════════════════
+     말씀 팝업 (곡 상세의 '말씀 보기')
+════════════════════════════════ -->
+<div class="modal-backdrop" id="verseBackdrop" onclick="closeVerse()"></div>
+<div class="verse-modal" id="verseModal" role="dialog" aria-modal="true" aria-labelledby="verseRef">
+<div class="verse-head">
+<p class="verse-ref" id="verseRef"></p>
+<button class="verse-close" onclick="closeVerse()" aria-label="말씀 창 닫기">
+<svg fill="none" height="14" stroke="currentColor" stroke-width="1.8" viewbox="0 0 14 14" width="14" aria-hidden="true">
+<line x1="1" x2="13" y1="1" y2="13"></line>
+<line x1="13" x2="1" y1="1" y2="13"></line>
+</svg>
+</button>
+</div>
+<p class="verse-note" id="verseNote"></p>
+<div class="verse-body" id="verseBody"></div>
+<p class="verse-version" id="verseVersion"></p>
+<a class="verse-full" id="verseFull" rel="noopener noreferrer" target="_blank">
+<span>전체 장 읽기</span><span class="ext-mark" aria-hidden="true">→</span>
+</a>
+</div>
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=7" defer></script>
-<script src="src/js/app.js?v=7" defer></script>
+<script src="src/js/songs.js?v=11" defer></script>
+<script src="src/js/app.js?v=11" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
