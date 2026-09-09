@@ -57,6 +57,14 @@ html {
   --sage:        #7d8f78;   /* 보조 강조 */
   --line:        #e2d9c9;   /* 아주 얇은 구분선 */
 
+  /* ── 글자 굵기 ──
+     이 서체는 굵기가 400 하나뿐이다. font-weight 를 올리면 브라우저가
+     가짜 볼드를 합성해 얇은 획(em 의 약 7%)이 뭉개진다.
+     대신 획 자체를 균일하게 두껍게 하는 text-stroke 로 굵기를 만든다.
+     작은 글씨에 굵은 획을 주면 글자 속 빈 공간이 메워지므로 한 단계 얇게 잡는다. */
+  --stroke-sm:   0.60px;    /* 작은 글씨 — 라벨·캡션·보조 정보 */
+  --stroke-md:   0.70px;    /* 본문·강조 — 가사·말씀·버튼·제목 */
+
   /* ── 구버전 변수 별칭 (아직 참조하는 규칙이 남아 있어 유지) ── */
   --cream:       var(--paper);
   --cream-dark:  var(--paper-warm);
@@ -201,6 +209,33 @@ strong, b { color: var(--clay); }
 /* 링크·버튼 공통 — 개별 규칙에 20번 흩어져 있던 선언을 한곳으로 모았다 */
 a, button {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* 전역 굵기 기본값. 본문·강조는 아래 목록에서 한 단계 더 올린다.
+   stroke 를 fill 뒤에 깔아야 글자 속이 메워지지 않고 획만 두꺼워진다. */
+body {
+  -webkit-text-stroke-width: var(--stroke-sm);
+  -webkit-text-stroke-color: currentColor;
+  paint-order: stroke fill;
+}
+
+/* 본문·강조 — 읽는 대상이 되는 텍스트와 누르는 대상 */
+.line-hand, .line-hand-sub,
+.event-name-main, .card-strong, .detail-card .card-value, .detail-card .card-sub,
+.venue-highlight, .message-lead, .message-text,
+.btn-ticket, .btn-secondary, .share-fab,
+.ph-title, .song-title-text, .song-num, .song-word-link,
+.lp-track-name, .lp-yt-btn, .lp-label,
+.song-back, .song-head-title, .song-part-label, .song-lyrics,
+.song-yt, .song-word-ref, .song-nav-title, .verse-full,
+.verse-ref, .verse-line,
+.artist-card-name,
+.open-title, .open-sub, .scene-headline, .scene-body,
+.quote-lead, .quote-text, .finale-title, .finale-date,
+.story-page .btn-primary, .story-page .btn-secondary,
+.donate-title, .donate-account-num, .donate-copy-btn, .donate-close-btn,
+.sheet-title, .share-opt-label, .toast {
+  -webkit-text-stroke-width: var(--stroke-md);
 }
 
 /* 키보드 포커스 링. 배경이 진해 대비가 부족한 몇 곳만 아래에서 따로 덮는다 */
@@ -731,10 +766,6 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   position: relative;
 }
 
-/* 이 서체는 굵기가 400 하나뿐이라 font-weight 로는 강조가 안 된다.
-   (300/600 을 주면 브라우저가 가짜 볼드를 합성해 얇은 획이 뭉갠다)
-   대신 text-stroke 로 획 자체를 아주 조금 두껍게 하고, 크기와 색으로 위계를 만든다. */
-
 .dday-counter {
   font-size: clamp(14px, 3.8vw, 17px);
   color: var(--ink-faint);
@@ -796,8 +827,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 /* 날짜·시간·장소의 '값' — 이 화면에서 가장 먼저 읽혀야 하는 정보 */
 .card-strong {
-  -webkit-text-stroke: 0.4px currentColor;
-  paint-order: stroke fill;
+  -webkit-text-stroke-width: var(--stroke-md);
 }
 
 /* 공연 날짜는 붉은 계열로 한 번 더 눈에 띄게 */
@@ -811,17 +841,15 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   margin-top: 3px;
 }
 
-/* 주소처럼 값에 딸린 보조 줄 */
+/* 주소처럼 값에 딸린 보조 줄 — 작지만 정보라서 본문 굵기를 준다 */
 .detail-card .card-sub {
   color: var(--ink-soft);
   font-size: clamp(14px, 3.7vw, 16px);
-  -webkit-text-stroke: 0;
 }
 
 .card-note {
   color: var(--ink-faint);
   font-size: .82em;
-  -webkit-text-stroke: 0;
 }
 
 .card-note-block {
