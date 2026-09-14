@@ -193,7 +193,7 @@ const SONGS = [
     slug: '05',
     title: '주 예수 나의 산 소망',
     tag: null,
-    youtube: null,
+    youtube: 'https://youtu.be/8Xeeij0hAB4?si=fMUlD37mZBU86mfI',
     parts: [
       {
         lyrics: `닿을 수 없고 오를 수 없네
@@ -274,7 +274,7 @@ const SONGS = [
     slug: '07',
     title: '주님의 선하심',
     tag: null,
-    youtube: null,
+    youtube: 'https://youtu.be/ErqijpGQmO4?si=SwmgSPSmYlqGi2Tp',
     parts: [
       {
         lyrics: `사랑해요 신실하신 나의 주님
@@ -307,7 +307,7 @@ const SONGS = [
     slug: '08',
     title: '우리 살아가는 모든 날들이',
     tag: null,
-    youtube: null,
+    youtube: 'https://youtu.be/LumqOmVvOos?si=jV9PfBLMkq1JYvbF',
     parts: [
       {
         lyrics: `우리 살아가는 모든 날들이
@@ -397,7 +397,7 @@ const SONGS = [
     title: '달리기',
     artist: '웨이홈',
     tag: null,
-    youtube: null,
+    youtube: 'https://youtu.be/4C3ySqA2A3U?si=aO_j2tVtH4fde2kk',
     parts: [
       {
         lyrics: `다시 숨을 고르고 거칠은 이 길을 달리기
