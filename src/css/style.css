@@ -1016,6 +1016,14 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   display: block;
 }
 
+.page-header .ph-hint {
+  font-size: clamp(14px, 3.6vw, 16px);
+  color: var(--ink-faint);
+  margin-top: 8px;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
 .page-header .ph-title {
   font-size: clamp(20px, 5.5vw, 26px);
   color: var(--brown);
@@ -1040,8 +1048,8 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   display: flex;
   align-items: center;
   gap: clamp(11px, 3.2vw, 15px);
-  /* 모바일 터치 타깃 — 세로 60px 확보 */
-  min-height: 60px;
+  /* 모바일 터치 타깃 — 두 줄이 되어 세로 68px */
+  min-height: 68px;
   padding: clamp(13px, 3.6vw, 16px) clamp(14px, 4vw, 18px);
   background: rgba(255, 255, 255, .55);
   border: 1px solid transparent;
@@ -1096,10 +1104,45 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   flex: 1;
   min-width: 0;
   display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* 제목과 배지는 한 줄에 */
+.song-head-row {
+  display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 4px 8px;
 }
+
+/* 곡 안에 무엇이 들어 있는지 — 화살표만으로는 알 수 없던 부분 */
+.song-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.song-meta-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: clamp(13px, 3.3vw, 14px);
+  color: var(--ink-faint);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.song-meta-tag svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: var(--clay);
+  opacity: .75;
+}
+
+.song-row:hover .song-meta-tag svg,
+.song-row:focus-visible .song-meta-tag svg { opacity: 1; }
 
 .song-title-text {
   font-size: clamp(15px, 4.2vw, 18px);

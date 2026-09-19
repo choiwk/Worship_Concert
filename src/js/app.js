@@ -137,14 +137,27 @@ function renderSongList() {
 
     const a = _el('a', 'song-row' + (song.tag === '대표곡' ? ' is-featured' : ''));
     a.href = '#/songs/' + song.slug;
+    const hasVerse = song.parts.some(p => p.bible);
     a.setAttribute('aria-label',
-      song.no + '번 ' + song.title + (song.tag ? ', ' + song.tag : '') + ' — 가사와 말씀 보기');
+      song.no + '번 ' + song.title + (song.tag ? ', ' + song.tag : '') +
+      ' — 가사' + (hasVerse ? '와 말씀' : '') + ' 보기');
 
     a.appendChild(_el('span', 'song-num', song.no));
 
     const mid = _el('span', 'song-main');
-    mid.appendChild(_el('span', 'song-title-text', song.title));
-    if (song.tag) mid.appendChild(_el('span', 'song-badge tag-' + (song.tag === '대표곡' ? 'lead' : 'pray'), song.tag));
+
+    const head = _el('span', 'song-head-row');
+    head.appendChild(_el('span', 'song-title-text', song.title));
+    if (song.tag) head.appendChild(_el('span', 'song-badge tag-' + (song.tag === '대표곡' ? 'lead' : 'pray'), song.tag));
+    mid.appendChild(head);
+
+    // 안에 무엇이 들어 있는지 미리 알려준다.
+    // 말씀은 12곡 중 일부에만 있어서 장식이 아니라 실제 정보가 된다.
+    const meta = _el('span', 'song-meta');
+    meta.appendChild(_metaTag('icon-lyrics', '가사'));
+    if (song.parts.some(p => p.bible)) meta.appendChild(_metaTag('icon-verse', '말씀'));
+    mid.appendChild(meta);
+
     a.appendChild(mid);
 
     const arrow = _el('span', 'song-arrow', '→');
@@ -155,6 +168,15 @@ function renderSongList() {
     ul.appendChild(li);
   });
 }
+
+/** 곡 줄에 붙는 '가사'·'말씀' 표시 */
+function _metaTag(iconId, label) {
+  const tag = _el('span', 'song-meta-tag');
+  tag.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#' + iconId + '"/></svg>';
+  tag.appendChild(_el('span', null, label));
+  return tag;
+}
+
 
 /* ── 곡 상세 ───────────────────────────────────────────── */
 
