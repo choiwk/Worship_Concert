@@ -121,12 +121,16 @@ python3 -m http.server 8000
 
 ```js
 { name: '박성은', role: '보컬', icon: '♪',
-  instagram: 'seongeun_id',                          // @ 없이
+  instagram: 'https://www.instagram.com/아이디',        // 전체 주소
   photo: 'public/images/members/park-seongeun.jpg' }  // 없으면 icon 이 나온다
 ```
 
-- `instagram` 을 넣으면 카드 전체가 그 계정으로 가는 링크가 되고
-  아바타 오른쪽 아래에 인스타 배지가 붙는다 (새 탭에서 열림)
+- `instagram` 을 넣으면 카드를 눌렀을 때 **아래에서 시트가 올라와**
+  사진·이름·파트와 '인스타그램에서 보기' 버튼을 보여준다
+  (아바타 오른쪽 아래에 인스타 배지도 붙는다)
+- **인스타 페이지 자체를 사이트 안에 띄울 수는 없다.** instagram.com 이
+  `x-frame-options: DENY` 를 보내 어떤 사이트에서도 iframe 삽입을 막는다.
+  그래서 시트에서 버튼을 누르면 인스타 앱/새 탭으로 넘어간다
 - `photo` 가 없거나 경로가 잘못돼도 조용히 `icon` 으로 되돌아간다
 - 프로필 사진은 **인스타에서 자동으로 가져올 수 없다.** 한 번 내려받아
   `public/images/members/` 에 두고 쓴다 — 자세한 이유와 방법은

@@ -1723,19 +1723,22 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   text-align: center;
 }
 
-/* 인스타 계정이 연결된 멤버 — 카드 전체가 링크 */
-a.artist-card {
-  text-decoration: none;
+/* 인스타가 연결된 멤버 — 카드를 누르면 시트가 올라온다 */
+button.artist-card {
+  background: none;
+  border: none;
+  font: inherit;
   color: inherit;
+  cursor: pointer;
   border-radius: 14px;
   padding: 6px 2px 8px;
   margin: -6px -2px -8px;
   transition: background .18s;
 }
-a.artist-card:hover { background: var(--paper-warm); }
-a.artist-card:hover .artist-avatar { border-color: var(--clay); }
-a.artist-card:active { background: var(--clay-wash); }
-a.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+button.artist-card:hover { background: var(--paper-warm); }
+button.artist-card:hover .artist-avatar { border-color: var(--clay); }
+button.artist-card:active { background: var(--clay-wash); }
+button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
 
 .artist-avatar {
   width: clamp(58px, 16vw, 76px);
@@ -1823,6 +1826,99 @@ a.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offset: 2p
     letter-spacing: 0.02em;
   }
 }
+
+/* ── 멤버 시트 (아래에서 위로 올라온다) ─────────────────── */
+
+.member-sheet {
+  position: fixed;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  width: 100%;
+  max-width: var(--max-w);
+  background: var(--paper);
+  border-radius: 20px 20px 0 0;
+  border-top: 1px solid var(--line);
+  padding: 0 clamp(22px, 6.5vw, 30px) calc(26px + env(safe-area-inset-bottom));
+  z-index: 900;
+  transition: transform .38s cubic-bezier(.32, 0, .18, 1);
+  box-shadow: 0 -10px 34px rgba(50, 44, 37, .14);
+}
+.member-sheet.open { transform: translateX(-50%) translateY(0); }
+
+.member-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 44px; height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background .18s;
+}
+.member-close:hover { background: var(--paper-warm); }
+
+.member-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 6px;
+}
+
+.member-avatar {
+  width: clamp(104px, 30vw, 128px);
+  height: clamp(104px, 30vw, 128px);
+  border-radius: 50%;
+  background: var(--paper-warm);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: clamp(14px, 4vw, 18px);
+}
+.member-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.member-avatar .avatar-placeholder { font-size: clamp(34px, 9vw, 42px); }
+
+.member-name {
+  font-size: clamp(24px, 6.4vw, 28px);
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.member-role {
+  font-size: clamp(15px, 3.9vw, 17px);
+  color: var(--ink-faint);
+  margin-top: 2px;
+  margin-bottom: clamp(20px, 6vw, 26px);
+}
+
+.member-ig-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 20px;
+  background: var(--clay);
+  color: #fdfbf6;
+  border-radius: 14px;
+  font-size: clamp(16px, 4.2vw, 18px);
+  text-decoration: none;
+  transition: background .2s, transform .12s;
+}
+.member-ig-btn:active { background: #8e4128; transform: scale(.985); }
+.member-ig-btn svg { width: 19px; height: 19px; fill: currentColor; flex-shrink: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .member-sheet { transition: transform .01s; }
+}
+
 
 /* ══════════════════════════════════
    8. pages/story.css — Page 4 스토리

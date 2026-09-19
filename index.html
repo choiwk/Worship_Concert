@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=23" rel="stylesheet"/>
+<link href="src/css/style.css?v=24" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -384,6 +384,29 @@
 </div>
 </div>
 </div>
+<!-- ════════════════════════════════
+     멤버 시트 — 카드를 누르면 아래에서 올라온다
+════════════════════════════════ -->
+<div class="modal-backdrop" id="memberBackdrop" onclick="closeMember()"></div>
+<div class="member-sheet" id="memberSheet" role="dialog" aria-modal="true" aria-labelledby="memberName">
+<div class="sheet-handle"></div>
+<button class="member-close" onclick="closeMember()" aria-label="닫기">
+<svg fill="none" height="14" stroke="currentColor" stroke-width="1.8" viewbox="0 0 14 14" width="14" aria-hidden="true">
+<line x1="1" x2="13" y1="1" y2="13"></line>
+<line x1="13" x2="1" y1="1" y2="13"></line>
+</svg>
+</button>
+<div class="member-body">
+<div class="member-avatar" id="memberAvatar"></div>
+<p class="member-name" id="memberName"></p>
+<p class="member-role" id="memberRole"></p>
+<a class="member-ig-btn" id="memberIgBtn" rel="noopener noreferrer" target="_blank">
+<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-ig"/></svg>
+<span>인스타그램에서 보기</span>
+<span class="ext-mark" aria-hidden="true">→</span>
+</a>
+</div>
+</div>
 <!-- Donate Modal -->
 <div class="modal-backdrop" id="donateBackdrop" onclick="closeDonate()"></div>
 <div class="donate-modal" id="donateModal" role="dialog" aria-modal="true" aria-label="후원하기">
@@ -419,9 +442,9 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=23" defer></script>
-<script src="src/js/members.js?v=23" defer></script>
-<script src="src/js/app.js?v=23" defer></script>
+<script src="src/js/songs.js?v=24" defer></script>
+<script src="src/js/members.js?v=24" defer></script>
+<script src="src/js/app.js?v=24" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

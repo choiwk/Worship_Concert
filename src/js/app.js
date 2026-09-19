@@ -456,22 +456,21 @@ function renderMembers() {
   if (!wrap || typeof MEMBERS === 'undefined') return;
   wrap.innerHTML = '';
 
-  MEMBERS.forEach(section => {
+  MEMBERS.forEach((section, gi) => {
     const block = _el('div', 'artist-section-block');
     block.appendChild(_el('h3', 'artist-group-label', section.group));
 
     const grid = _el('div', 'artist-grid');
-    section.people.forEach(person => {
-      // 인스타 아이디가 있으면 카드 전체가 링크가 된다
+    section.people.forEach((person, pi) => {
+      // 인스타 주소가 있으면 카드를 눌러 아래에서 올라오는 시트를 연다
       const linked = !!person.instagram;
-      const card = _el(linked ? 'a' : 'div', 'artist-card reveal' + (linked ? ' is-linked' : ''));
+      const card = _el(linked ? 'button' : 'div', 'artist-card reveal' + (linked ? ' is-linked' : ''));
       if (linked) {
-        card.href = 'https://www.instagram.com/' + person.instagram + '/';
-        card.target = '_blank';
-        card.rel = 'noopener noreferrer';
+        card.type = 'button';
+        card.setAttribute('aria-haspopup', 'dialog');
         card.setAttribute('aria-label',
-          person.name + (person.role ? ' ' + person.role : '') +
-          ' 인스타그램 @' + person.instagram + ' (새 탭에서 열림)');
+          person.name + (person.role ? ' ' + person.role : '') + ' 인스타그램 보기');
+        card.onclick = () => openMember(gi, pi);
       }
 
       const avatar = _el('div', 'artist-avatar');
@@ -505,6 +504,38 @@ function renderMembers() {
     wrap.appendChild(block);
   });
 }
+
+/** 멤버 카드를 누르면 아래에서 올라오는 시트 */
+function openMember(groupIndex, personIndex) {
+  const section = MEMBERS[groupIndex];
+  const person = section && section.people[personIndex];
+  if (!person) return;
+
+  const avatar = document.getElementById('memberAvatar');
+  avatar.innerHTML = '';
+  if (person.photo) {
+    const img = _el('img');
+    img.src = person.photo;
+    img.alt = '';
+    img.onerror = () => { img.remove(); avatar.appendChild(_avatarIcon(person)); };
+    avatar.appendChild(img);
+  } else {
+    avatar.appendChild(_avatarIcon(person));
+  }
+
+  document.getElementById('memberName').textContent = person.name;
+  const role = document.getElementById('memberRole');
+  role.textContent = person.role || section.group;
+
+  const btn = document.getElementById('memberIgBtn');
+  btn.href = person.instagram;
+  btn.setAttribute('aria-label', person.name + ' 인스타그램에서 보기 (새 탭에서 열림)');
+
+  openOverlay('member');
+  requestAnimationFrame(() => document.querySelector('.member-close').focus());
+}
+
+function closeMember() { closeOverlay('member'); }
 
 function _avatarIcon(person) {
   const icon = _el('span', 'avatar-placeholder', person.icon || '♪');
@@ -580,7 +611,8 @@ function addToCalendar() {
 const OVERLAYS = {
   share:  { backdrop: 'modalBackdrop',  panel: 'shareSheet'  },
   donate: { backdrop: 'donateBackdrop', panel: 'donateModal' },
-  verse:  { backdrop: 'verseBackdrop',  panel: 'verseModal'  }
+  verse:  { backdrop: 'verseBackdrop',  panel: 'verseModal'  },
+  member: { backdrop: 'memberBackdrop', panel: 'memberSheet'  }
 };
 
 let _openOverlays = [];   // 여러 개가 겹쳐도 스크롤 잠금이 어긋나지 않게 스택으로
@@ -773,12 +805,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-/* ── Swipe Down to Close ── */
+/* ── 아래로 쓸어내려 닫기 (바닥에서 올라오는 시트 공통) ── */
 
 let _touchStartY = 0;
 
-document.addEventListener('DOMContentLoaded', () => {
-  const sheet = document.getElementById('shareSheet');
+['shareSheet', 'memberSheet'].forEach(id => {
+  const sheet = document.getElementById(id);
+  if (!sheet) return;
 
   sheet.addEventListener('touchstart', e => {
     _touchStartY = e.touches[0].clientY;
@@ -786,7 +819,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   sheet.addEventListener('touchend', e => {
     const dy = e.changedTouches[0].clientY - _touchStartY;
-    if (dy > 60) closeShare();
+    if (dy > 60) closeOverlay(id === 'shareSheet' ? 'share' : 'member');
   }, { passive: true });
 });
 
