@@ -114,6 +114,25 @@ python3 -m http.server 8000
 곡을 고친 뒤에는 폰트 서브셋을 다시 만들고 캐시 버전을 올려야 한다 —
 [public/fonts/README.md](public/fonts/README.md) 참고.
 
+## 멤버 수정하기
+
+[`src/js/members.js`](src/js/members.js) 의 `MEMBERS` 배열 한 곳에 있다.
+'맴버소개' 화면이 이 배열을 읽어 그린다.
+
+```js
+{ name: '박성은', role: '보컬', icon: '♪',
+  instagram: 'seongeun_id',                          // @ 없이
+  photo: 'public/images/members/park-seongeun.jpg' }  // 없으면 icon 이 나온다
+```
+
+- `instagram` 을 넣으면 카드 전체가 그 계정으로 가는 링크가 되고
+  아바타 오른쪽 아래에 인스타 배지가 붙는다 (새 탭에서 열림)
+- `photo` 가 없거나 경로가 잘못돼도 조용히 `icon` 으로 되돌아간다
+- 프로필 사진은 **인스타에서 자동으로 가져올 수 없다.** 한 번 내려받아
+  `public/images/members/` 에 두고 쓴다 — 자세한 이유와 방법은
+  [public/images/members/README.md](public/images/members/README.md)
+- 개인 계정을 공개 페이지에 거는 것이므로 본인 동의를 받고 넣을 것
+
 ## 공연 날짜·시간·장소 수정하기
 
 [`src/js/app.js`](src/js/app.js) 상단의 `CONCERT` 객체 한 곳에만 있다.

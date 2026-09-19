@@ -462,12 +462,37 @@ function renderMembers() {
 
     const grid = _el('div', 'artist-grid');
     section.people.forEach(person => {
-      const card = _el('div', 'artist-card reveal');
+      // 인스타 아이디가 있으면 카드 전체가 링크가 된다
+      const linked = !!person.instagram;
+      const card = _el(linked ? 'a' : 'div', 'artist-card reveal' + (linked ? ' is-linked' : ''));
+      if (linked) {
+        card.href = 'https://www.instagram.com/' + person.instagram + '/';
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+        card.setAttribute('aria-label',
+          person.name + (person.role ? ' ' + person.role : '') +
+          ' 인스타그램 @' + person.instagram + ' (새 탭에서 열림)');
+      }
 
       const avatar = _el('div', 'artist-avatar');
-      const icon = _el('span', 'avatar-placeholder', person.icon || '♪');
-      icon.setAttribute('aria-hidden', 'true');
-      avatar.appendChild(icon);
+      if (person.photo) {
+        const img = _el('img');
+        img.src = person.photo;
+        img.alt = '';                 // 이름이 바로 아래 있으므로 중복 읽기 방지
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        // 사진을 못 불러오면 조용히 기호로 되돌린다
+        img.onerror = () => { img.remove(); avatar.appendChild(_avatarIcon(person)); };
+        avatar.appendChild(img);
+      } else {
+        avatar.appendChild(_avatarIcon(person));
+      }
+
+      if (linked) {
+        const badge = _el('span', 'artist-ig');
+        badge.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-ig"/></svg>';
+        avatar.appendChild(badge);
+      }
       card.appendChild(avatar);
 
       card.appendChild(_el('p', 'artist-card-name', person.name));
@@ -479,6 +504,12 @@ function renderMembers() {
     block.appendChild(grid);
     wrap.appendChild(block);
   });
+}
+
+function _avatarIcon(person) {
+  const icon = _el('span', 'avatar-placeholder', person.icon || '♪');
+  icon.setAttribute('aria-hidden', 'true');
+  return icon;
 }
 
 
