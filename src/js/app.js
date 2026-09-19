@@ -373,10 +373,9 @@ function toggleBgmFromBar() {
 ══════════════════════════════════ */
 
 const CONCERT = {
-  // 아직 확정 전 — 두 후보 중 하나로 정해진다. 첫 번째가 이른 날짜.
-  confirmed: false,
+  // 날짜 확정 완료
+  confirmed: true,
   dates: [
-    { iso: '2026-11-28', short: '2026. 11. 28.', ko: '2026년 11월 28일', dow: '토요일' },
     { iso: '2026-12-19', short: '2026. 12. 19.', ko: '2026년 12월 19일', dow: '토요일' }
   ],
   time: {
@@ -384,12 +383,23 @@ const CONCERT = {
     startUTC: 'T110000Z',   // KST 20:00
     endUTC:   'T124000Z'    // KST 21:40
   },
-  venue: { name: '향상교회 3층', address: '기흥구 언동로 140', note: '변동 가능' }
+  // 장소는 아직 두 곳 중 하나로 정해지는 중.
+  // 확정되면 venues 를 하나만 남기고 venueConfirmed 를 true 로 바꾸면 된다.
+  venueConfirmed: false,
+  venues: [
+    { name: '향상교회 3층', address: '기흥구 언동로 140' },
+    { name: '은혜샘물교회 6층 체육관' }
+  ]
 };
 
-/** D-Day·캘린더의 기준이 되는 날짜 (확정 전에는 이른 후보) */
+/** D-Day·캘린더·구조화 데이터의 기준 날짜 */
 function concertBaseDate() {
   return CONCERT.dates[0];
+}
+
+/** 대표 장소 (캘린더 등 한 곳만 적어야 할 때) */
+function concertBaseVenue() {
+  return CONCERT.venues[0];
 }
 
 
@@ -426,21 +436,57 @@ function renderDetailGrid() {
   });
 
   card('장소', c => {
-    const v = _el('p', 'card-value');
-    v.appendChild(_el('span', 'card-strong venue-highlight', CONCERT.venue.name));
-    if (CONCERT.venue.note) {
-      v.appendChild(document.createTextNode(' '));
-      v.appendChild(_el('span', 'card-note', '(' + CONCERT.venue.note + ')'));
+    CONCERT.venues.forEach((place, i) => {
+      const v = _el('p', 'card-value');
+      if (i > 0) v.appendChild(_el('span', 'card-note', '또는 '));
+      v.appendChild(_el('span', 'card-strong venue-highlight', place.name));
+      c.appendChild(v);
+      if (place.address) c.appendChild(_el('p', 'card-value card-sub', place.address));
+    });
+    if (!CONCERT.venueConfirmed) {
+      c.appendChild(_el('p', 'card-note card-note-block', '두 장소 중 하나로 확정될 예정이에요'));
     }
-    c.appendChild(v);
-    c.appendChild(_el('p', 'card-value card-sub', CONCERT.venue.address));
   }, 'full-width');
 }
+
+/* ── 멤버 소개 (src/js/members.js 데이터로 렌더) ── */
+
+function renderMembers() {
+  const wrap = document.getElementById('memberList');
+  if (!wrap || typeof MEMBERS === 'undefined') return;
+  wrap.innerHTML = '';
+
+  MEMBERS.forEach(section => {
+    const block = _el('div', 'artist-section-block');
+    block.appendChild(_el('h3', 'artist-group-label', section.group));
+
+    const grid = _el('div', 'artist-grid');
+    section.people.forEach(person => {
+      const card = _el('div', 'artist-card reveal');
+
+      const avatar = _el('div', 'artist-avatar');
+      const icon = _el('span', 'avatar-placeholder', person.icon || '♪');
+      icon.setAttribute('aria-hidden', 'true');
+      avatar.appendChild(icon);
+      card.appendChild(avatar);
+
+      card.appendChild(_el('p', 'artist-card-name', person.name));
+      if (person.role) card.appendChild(_el('p', 'artist-card-role', person.role));
+
+      grid.appendChild(card);
+    });
+
+    block.appendChild(grid);
+    wrap.appendChild(block);
+  });
+}
+
 
 function renderFinaleDate() {
   const el = document.getElementById('finaleDate');
   if (!el) return;
-  el.textContent = CONCERT.dates.map(d => d.short).join(' 또는 ') + '\n' + CONCERT.venue.name;
+  el.textContent = CONCERT.dates.map(d => d.short).join(' 또는 ') + '\n' +
+                   CONCERT.venues.map(v => v.name).join(' 또는 ');
 }
 
 
@@ -470,15 +516,17 @@ function updateDday() {
 
 function addToCalendar() {
   const base = concertBaseDate();
+  const venue = concertBaseVenue();
   const stamp = base.iso.replace(/-/g, '');
-  const tentative = !CONCERT.confirmed;
 
-  const title = '찬양이 좋아서 모인 청년들 LIVE CONCERT' + (tentative ? ' (일정 미확정)' : '');
-  const location = CONCERT.venue.name + ', ' + CONCERT.venue.address;
-  const details = tentative
-    ? '일정이 아직 확정되지 않았습니다. ' + CONCERT.dates.map(d => d.ko).join(' 또는 ') +
-      ' 중 하루로 정해질 예정이며, 이 일정은 ' + base.ko + ' 기준으로 등록됩니다.'
-    : '찬양이 좋아서 모인 청년들 LIVE CONCERT';
+  const title = '찬양이 좋아서 모인 청년들 LIVE CONCERT';
+  const location = venue.name + (venue.address ? ', ' + venue.address : '');
+  // 장소가 아직 미확정이면 캘린더 설명에 남겨 둔다
+  const details = CONCERT.venueConfirmed
+    ? '찬양이 좋아서 모인 청년들 LIVE CONCERT'
+    : '찬양이 좋아서 모인 청년들 LIVE CONCERT\n\n장소는 ' +
+      CONCERT.venues.map(v => v.name).join(' 또는 ') +
+      ' 중 한 곳으로 정해질 예정이며, 이 일정은 ' + venue.name + ' 기준으로 등록됩니다.';
 
   const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
     + '&text=' + encodeURIComponent(title)
@@ -794,6 +842,7 @@ function _fallbackCopy(text, callback) {
 
 renderDetailGrid();
 renderFinaleDate();
+renderMembers();
 renderSongList();
 _updateLP();
 updateDday();
