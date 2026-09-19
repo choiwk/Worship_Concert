@@ -549,10 +549,9 @@ function openMember(groupIndex, personIndex) {
   const role = document.getElementById('memberRole');
   role.textContent = person.role || section.group;
 
-  // 소개 — 없으면 영역째 감춘다
-  const bio = document.getElementById('memberBio');
-  bio.textContent = person.bio || '';
-  bio.hidden = !person.bio;
+  // 한마디 — 없으면 영역째 감춘다
+  document.getElementById('memberBio').textContent = person.bio || '';
+  document.getElementById('memberSay').hidden = !person.bio;
 
   // 좋아하는 말씀 — 본문과 출처가 모두 있어야 보여준다
   const verse = person.verse;

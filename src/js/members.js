@@ -16,8 +16,9 @@
                   아래에서 시트가 올라오고, 아바타에 배지가 붙는다.
                   공유 링크의 ?stkn=... 같은 추적 파라미터는 떼고 넣는다.
        photo      프로필 사진 경로 (public/images/members/*.jpg)
-       bio        한 줄 소개. 없으면 그 영역을 그리지 않는다.
-       verse      좋아하는 말씀 { text, ref }. text 가 없으면 그리지 않는다.
+       bio        '한마디' 로 보여줄 문장. 없으면 그 영역을 그리지 않는다.
+       verse      '말씀' { text, ref }. text 가 없으면 그리지 않는다.
+                  본문은 사이트 전체와 같은 개역한글(KRV)로 맞춘다.
 
    ── 프로필 사진에 대하여 ───────────────────────────────
    인스타 프로필 사진은 자동으로 가져올 수 없다.
@@ -59,8 +60,11 @@ const MEMBERS = [
       { name: '최원근', role: '드럼',          icon: '🥁',
         instagram: 'https://www.instagram.com/wonkeun_e',
         photo: 'public/images/members/choi-wonkeun.jpg',
-        bio: null,
-        verse: { text: null, ref: null } }
+        bio: '하나님은 어디서든지 우리를 찾으십니다.',
+        verse: {
+          text: '우리가 선을 행하되 낙심하지 말찌니 피곤하지 아니하면 때가 이르매 거두리라',
+          ref: '갈라디아서 6장 9절'
+        } }
     ]
   },
   {
