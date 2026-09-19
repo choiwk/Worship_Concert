@@ -15,9 +15,9 @@
        instagram  인스타 주소(전체 URL). 넣으면 카드를 눌렀을 때
                   아래에서 시트가 올라오고, 아바타에 배지가 붙는다.
                   공유 링크의 ?stkn=... 같은 추적 파라미터는 떼고 넣는다.
-       igId       인스타 아이디(@ 없이). 안 적으면 위 주소에서 자동으로 뽑는다.
-                  주소와 표시용 아이디가 달라야 할 때만 따로 적는다.
        photo      프로필 사진 경로 (public/images/members/*.jpg)
+       bio        한 줄 소개. 없으면 그 영역을 그리지 않는다.
+       verse      좋아하는 말씀 { text, ref }. text 가 없으면 그리지 않는다.
 
    ── 프로필 사진에 대하여 ───────────────────────────────
    인스타 프로필 사진은 자동으로 가져올 수 없다.
@@ -58,7 +58,9 @@ const MEMBERS = [
       { name: '이기은', role: '일렉',          icon: '🎸', instagram: null, photo: null },
       { name: '최원근', role: '드럼',          icon: '🥁',
         instagram: 'https://www.instagram.com/wonkeun_e',
-        photo: 'public/images/members/choi-wonkeun.jpg' }
+        photo: 'public/images/members/choi-wonkeun.jpg',
+        bio: null,
+        verse: { text: null, ref: null } }
     ]
   },
   {

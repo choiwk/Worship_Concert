@@ -122,7 +122,9 @@ python3 -m http.server 8000
 ```js
 { name: '박성은', role: '보컬', icon: '♪',
   instagram: 'https://www.instagram.com/아이디',        // 전체 주소
-  photo: 'public/images/members/park-seongeun.jpg' }  // 없으면 icon 이 나온다
+  photo: 'public/images/members/park-seongeun.jpg',   // 없으면 icon 이 나온다
+  bio: '한 줄 소개',                                    // 없으면 영역을 안 그린다
+  verse: { text: '좋아하는 말씀 본문', ref: '요한1서 4장 7절' } }
 ```
 
 - `instagram` 을 넣으면 카드를 눌렀을 때 **아래에서 시트가 올라와**

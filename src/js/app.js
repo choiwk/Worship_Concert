@@ -379,9 +379,9 @@ const CONCERT = {
     { iso: '2026-12-19', short: '2026. 12. 19.', ko: '2026년 12월 19일', dow: '토요일' }
   ],
   time: {
-    text: '오후 8:00 ~ 9:40',
+    text: '오후 8:00 ~ 9:30',
     startUTC: 'T110000Z',   // KST 20:00
-    endUTC:   'T124000Z'    // KST 21:40
+    endUTC:   'T123000Z'    // KST 21:30
   },
   // 장소는 아직 두 곳 중 하나로 정해지는 중.
   // 확정되면 venues 를 하나만 남기고 venueConfirmed 를 true 로 바꾸면 된다.
@@ -527,20 +527,26 @@ function openMember(groupIndex, personIndex) {
   const role = document.getElementById('memberRole');
   role.textContent = person.role || section.group;
 
-  // 아이디는 데이터에 적어 두었으면 그것을, 없으면 주소에서 뽑아 쓴다
-  const handle = person.igId || _igHandle(person.instagram);
-  const handleEl = document.getElementById('memberHandle');
-  handleEl.textContent = handle ? '@' + handle : '';
-  handleEl.hidden = !handle;
+  // 소개 — 없으면 영역째 감춘다
+  const bio = document.getElementById('memberBio');
+  bio.textContent = person.bio || '';
+  bio.hidden = !person.bio;
 
-  // 어디로 가는지 주소를 그대로 보여준다 (프로토콜은 빼고 읽기 좋게)
-  const urlEl = document.getElementById('memberUrl');
-  urlEl.textContent = person.instagram.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  // 좋아하는 말씀 — 본문과 출처가 모두 있어야 보여준다
+  const verse = person.verse;
+  const verseBox = document.getElementById('memberVerse');
+  const hasVerse = !!(verse && verse.text);
+  verseBox.hidden = !hasVerse;
+  if (hasVerse) {
+    document.getElementById('memberVerseText').textContent = verse.text;
+    const refEl = document.getElementById('memberVerseRef');
+    refEl.textContent = verse.ref || '';
+    refEl.hidden = !verse.ref;
+  }
 
   const btn = document.getElementById('memberIgBtn');
   btn.href = person.instagram;
-  btn.setAttribute('aria-label',
-    person.name + ' 인스타그램' + (handle ? ' @' + handle : '') + ' 방문하기 (새 탭에서 열림)');
+  btn.setAttribute('aria-label', person.name + ' 인스타그램 프로필 방문 (새 탭에서 열림)');
 
   openOverlay('member');
   requestAnimationFrame(() => document.querySelector('.member-close').focus());
@@ -548,16 +554,6 @@ function openMember(groupIndex, personIndex) {
 
 function closeMember() { closeOverlay('member'); }
 
-/** 인스타 주소에서 아이디만 뽑는다. 주소 형태가 달라도 깨지지 않게 감싼다. */
-function _igHandle(url) {
-  if (!url) return '';
-  try {
-    const path = new URL(url).pathname.replace(/^\/+|\/+$/g, '');
-    return path.split('/')[0] || '';
-  } catch (e) {
-    return '';
-  }
-}
 
 function _avatarIcon(person) {
   const icon = _el('span', 'avatar-placeholder', person.icon || '♪');
@@ -654,7 +650,7 @@ function openOverlay(name) {
 
   document.getElementById(o.backdrop).classList.add('open');
   document.getElementById(o.panel).classList.add('open');
-  document.body.style.overflow = 'hidden';
+  _lockScroll();
 }
 
 function closeOverlay(name) {
@@ -672,10 +668,40 @@ function closeOverlay(name) {
   _openOverlays = _openOverlays.filter(n => n !== name);
   if (_openOverlays.length) return;          // 아직 다른 게 열려 있으면 유지
 
-  document.body.style.overflow = '';
+  _unlockScroll();
   if (_overlayOpener && _overlayOpener.focus) _overlayOpener.focus();
   _overlayOpener = null;
 }
+
+/* ── 뒤 배경 스크롤 잠그기 ──────────────────────────────────────
+   overflow: hidden 만으로는 iOS 사파리에서 손가락 스크롤이 막히지 않는다.
+   그래서 배경 스크롤 위치를 고정해 두고, 패널 바깥에서 일어난
+   touchmove 는 아예 막는다. 닫을 때 원래 위치로 되돌린다. */
+
+let _scrollLockY = 0;
+
+function _lockScroll() {
+  if (document.documentElement.classList.contains('is-locked')) return;
+  _scrollLockY = window.scrollY || document.documentElement.scrollTop || 0;
+  document.body.style.top = (-_scrollLockY) + 'px';
+  document.documentElement.classList.add('is-locked');
+}
+
+function _unlockScroll() {
+  if (!document.documentElement.classList.contains('is-locked')) return;
+  document.documentElement.classList.remove('is-locked');
+  document.body.style.top = '';
+  window.scrollTo(0, _scrollLockY);
+}
+
+/* 패널 안에서의 스크롤(말씀 본문 등)과 시트 끌기는 살리고,
+   그 바깥에서의 스크롤만 막는다 */
+document.addEventListener('touchmove', (e) => {
+  if (!_openOverlays.length) return;
+  const top = OVERLAYS[_openOverlays[_openOverlays.length - 1]];
+  const panel = document.getElementById(top.panel);
+  if (panel && !panel.contains(e.target)) e.preventDefault();
+}, { passive: false });
 
 /** 열려 있는 오버레이 안에 Tab 포커스를 가둔다 */
 document.addEventListener('keydown', (e) => {
