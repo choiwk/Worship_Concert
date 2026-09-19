@@ -1832,10 +1832,10 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 
 @media (max-width: 340px) {
   .artist-grid {
-    gap: 12px 6px;
+    gap: 12px 5px;
   }
   .artist-avatar {
-    width: 52px; height: 52px;
+    width: 50px; height: 50px;
   }
   .artist-avatar .avatar-placeholder {
     font-size: 16px;
@@ -1866,6 +1866,15 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   box-shadow: 0 -10px 34px rgba(50, 44, 37, .14);
 }
 .member-sheet.open { transform: translateX(-50%) translateY(0); }
+
+/* 끌어내릴 때 글자가 잡혀 선택되지 않도록 */
+.member-sheet, .share-sheet {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-y;
+}
+/* 핸들을 조금 키워 잡기 쉽게 */
+.member-sheet .sheet-handle { cursor: grab; }
 
 .member-close {
   position: absolute;
@@ -1919,13 +1928,21 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 }
 
 .member-handle {
-  font-size: clamp(15px, 3.9vw, 17px);
+  font-size: clamp(16px, 4.2vw, 18px);
   color: var(--clay);
   margin-top: 8px;
-  margin-bottom: clamp(20px, 6vw, 26px);
   word-break: break-all;
 }
 .member-handle[hidden] { display: none; }
+
+/* 어디로 이동하는지 주소를 그대로 보여준다 */
+.member-url {
+  font-size: clamp(13px, 3.4vw, 15px);
+  color: var(--ink-faint);
+  margin-top: 3px;
+  margin-bottom: clamp(20px, 6vw, 26px);
+  word-break: break-all;
+}
 
 .member-ig-btn {
   display: flex;
@@ -2406,8 +2423,7 @@ body {
 
 
   .artist-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px 10px;
+    gap: 16px 8px;
   }
 
   .artist-group-label::before,
@@ -2527,10 +2543,6 @@ body {
     grid-column: auto;
   }
 
-  .artist-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .story-page .double-img {
     grid-template-columns: 1fr;
   }
@@ -2577,10 +2589,6 @@ body {
 
   .detail-grid {
     gap: 16px;
-  }
-
-  .artist-grid {
-    grid-template-columns: repeat(3, 1fr);
   }
 
   .story-page .double-img {

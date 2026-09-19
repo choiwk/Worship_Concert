@@ -527,11 +527,15 @@ function openMember(groupIndex, personIndex) {
   const role = document.getElementById('memberRole');
   role.textContent = person.role || section.group;
 
-  // 주소에서 아이디를 뽑아 보여준다 (데이터를 두 번 적지 않기 위해)
-  const handle = _igHandle(person.instagram);
+  // 아이디는 데이터에 적어 두었으면 그것을, 없으면 주소에서 뽑아 쓴다
+  const handle = person.igId || _igHandle(person.instagram);
   const handleEl = document.getElementById('memberHandle');
   handleEl.textContent = handle ? '@' + handle : '';
   handleEl.hidden = !handle;
+
+  // 어디로 가는지 주소를 그대로 보여준다 (프로토콜은 빼고 읽기 좋게)
+  const urlEl = document.getElementById('memberUrl');
+  urlEl.textContent = person.instagram.replace(/^https?:\/\//, '').replace(/\/$/, '');
 
   const btn = document.getElementById('memberIgBtn');
   btn.href = person.instagram;
@@ -657,8 +661,13 @@ function closeOverlay(name) {
   const o = OVERLAYS[name];
   if (!o) return;
 
+  const panel = document.getElementById(o.panel);
+  // 끌어내리던 중이었다면 인라인 transform 을 걷어내 CSS 애니메이션에 맡긴다
+  panel.style.transform = '';
+  panel.style.transition = '';
+
   document.getElementById(o.backdrop).classList.remove('open');
-  document.getElementById(o.panel).classList.remove('open');
+  panel.classList.remove('open');
 
   _openOverlays = _openOverlays.filter(n => n !== name);
   if (_openOverlays.length) return;          // 아직 다른 게 열려 있으면 유지
@@ -823,23 +832,56 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-/* ── 아래로 쓸어내려 닫기 (바닥에서 올라오는 시트 공통) ── */
+/* ── 아래로 끌어내려 닫기 (바닥에서 올라오는 시트 공통) ──────────
+   손가락을 따라 시트가 같이 내려오고, 충분히 내렸거나 빠르게 튕기면 닫힌다.
+   덜 내렸으면 제자리로 돌아간다. iOS 시트와 같은 감각을 맞춘 것. */
 
-let _touchStartY = 0;
+const DRAG_SHEETS = { shareSheet: 'share', memberSheet: 'member' };
+const DRAG_CLOSE_PX = 90;     // 이만큼 내리면 닫는다
+const DRAG_FLICK_V  = 0.5;    // px/ms — 짧게 내려도 빠르면 닫는다
 
-['shareSheet', 'memberSheet'].forEach(id => {
+Object.keys(DRAG_SHEETS).forEach(id => {
   const sheet = document.getElementById(id);
   if (!sheet) return;
 
+  let startY = 0, lastY = 0, startT = 0, dragging = false;
+
+  const setY = y => { sheet.style.transform = 'translateX(-50%) translateY(' + y + 'px)'; };
+  const reset = () => { sheet.style.transition = ''; sheet.style.transform = ''; };
+
   sheet.addEventListener('touchstart', e => {
-    _touchStartY = e.touches[0].clientY;
+    if (!sheet.classList.contains('open')) return;
+    dragging = true;
+    startY = lastY = e.touches[0].clientY;
+    startT = Date.now();
+    sheet.style.transition = 'none';     // 끄는 동안에는 애니메이션을 끈다
   }, { passive: true });
 
-  sheet.addEventListener('touchend', e => {
-    const dy = e.changedTouches[0].clientY - _touchStartY;
-    if (dy > 60) closeOverlay(id === 'shareSheet' ? 'share' : 'member');
+  sheet.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    lastY = e.touches[0].clientY;
+    const dy = lastY - startY;
+    if (dy > 0) setY(dy);                // 위로는 끌리지 않게 아래로만
   }, { passive: true });
+
+  sheet.addEventListener('touchend', () => {
+    if (!dragging) return;
+    dragging = false;
+    const dy = lastY - startY;
+    const v = dy / Math.max(1, Date.now() - startT);
+
+    sheet.style.transition = '';
+    if (dy > DRAG_CLOSE_PX || v > DRAG_FLICK_V) {
+      sheet.style.transform = '';         // 닫기 애니메이션은 .open 제거가 처리
+      closeOverlay(DRAG_SHEETS[id]);
+    } else {
+      reset();                            // 제자리로
+    }
+  }, { passive: true });
+
+  sheet.addEventListener('touchcancel', () => { dragging = false; reset(); }, { passive: true });
 });
+
 
 /* ── Toast Notification ── */
 
