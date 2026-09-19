@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=29" rel="stylesheet"/>
+<link href="src/css/style.css?v=31" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -73,7 +73,7 @@
      NOW PLAYING BAR (모든 페이지 상단)
 ════════════════════════════════ -->
 <div class="now-playing" id="nowPlaying" onclick="toggleBgmFromBar()" role="button" aria-label="배경음악 재생/정지" tabindex="0">
-<div class="np-bars" id="npBars">
+<div class="np-bars">
 <span></span><span></span><span></span><span></span>
 </div>
 <p class="np-text">우리가 서로 사랑하자 <span class="np-artist">Wecclesia</span></p>
@@ -145,7 +145,7 @@
 <div class="song-detail-section">
 <span class="detail-section-label">곡 소개 및 미리듣기</span>
 <!-- LP 플레이어 -->
-<div class="lp-player" id="lpPlayer">
+<div class="lp-player">
 <div class="lp-controls">
 <button class="lp-arrow lp-prev" onclick="lpPrev()" aria-label="이전 곡">←</button>
 <div class="lp-disc-wrap">
@@ -460,9 +460,9 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=29" defer></script>
-<script src="src/js/members.js?v=29" defer></script>
-<script src="src/js/app.js?v=29" defer></script>
+<script src="src/js/songs.js?v=31" defer></script>
+<script src="src/js/members.js?v=31" defer></script>
+<script src="src/js/app.js?v=31" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

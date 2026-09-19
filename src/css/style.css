@@ -54,7 +54,6 @@ html {
   --ink-faint:   #6f665c;   /* 캡션·보조 라벨 (대비 4.5:1 확보) */
   --clay:        #a54d30;   /* 강조 — 따뜻한 테라코타 */
   --clay-wash:   #e6c9b6;   /* 형광펜처럼 깔아주는 강조 배경 */
-  --sage:        #7d8f78;   /* 보조 강조 */
   --line:        #e2d9c9;   /* 아주 얇은 구분선 */
 
   /* ── 글자 굵기 ──
@@ -65,35 +64,13 @@ html {
   --stroke-sm:   0.40px;    /* 작은 글씨 — 라벨·캡션·보조 정보 */
   --stroke-md:   0.50px;    /* 본문·강조 — 가사·말씀·버튼·제목 */
 
-  /* ── 구버전 변수 별칭 (아직 참조하는 규칙이 남아 있어 유지) ── */
-  --cream:       var(--paper);
-  --cream-dark:  var(--paper-warm);
-  --brown:       var(--ink);
-  --red:         var(--clay);
-  --gold:        var(--line);
-  --muted:       var(--ink-soft);
-  --light-muted: var(--ink-faint);
-
   --tab-h:         60px;
   --tab-content-h: 60px;
   --max-w:         480px;
-
-  --space-xs:  8px;
-  --space-sm:  16px;
-  --space-md:  24px;
-  --space-lg:  36px;
-  --space-xl:  52px;
 }
 
 @media (max-width: 359px) {
-  :root {
-    --space-xs:  6px;
-    --space-sm:  12px;
-    --space-md:  18px;
-    --space-lg:  28px;
-    --space-xl:  40px;
-    --tab-h:     56px;
-  }
+  :root { --tab-h: 56px; }
 }
 
 body {
@@ -103,6 +80,11 @@ body {
      행간을 넉넉히 주지 않으면 줄끼리 부딪혀 지저분해진다. */
   line-height: 1.85;
   letter-spacing: 0;
+  /* 굵기 기본값. 본문·강조는 아래 목록에서 한 단계 올린다.
+     stroke 를 fill 뒤에 깔아야 글자 속이 메워지지 않고 획만 두꺼워진다. */
+  -webkit-text-stroke-width: var(--stroke-sm);
+  -webkit-text-stroke-color: currentColor;
+  paint-order: stroke fill;
   background: var(--paper);
   color: var(--ink);
   max-width: var(--max-w);
@@ -140,7 +122,7 @@ body::before {
   justify-content: center;
   gap: 10px;
   padding: 8px 16px 6px;
-  background: var(--cream);
+  background: var(--paper);
   cursor: pointer;
 }
 
@@ -159,7 +141,7 @@ body::before {
 .np-bars span {
   display: block;
   width: 2px;
-  background: var(--red);
+  background: var(--clay);
   border-radius: 1px;
   opacity: .6;
 }
@@ -171,7 +153,7 @@ body::before {
 .np-text {
   font-size: clamp(14px, 3.6vw, 16px);
   letter-spacing: 0.02em;
-  color: var(--muted);
+  color: var(--ink-soft);
 }
 
 .np-artist {
@@ -222,14 +204,6 @@ html.is-locked body {
   right: 0;
   width: auto;
   overflow: hidden;
-}
-
-/* 전역 굵기 기본값. 본문·강조는 아래 목록에서 한 단계 더 올린다.
-   stroke 를 fill 뒤에 깔아야 글자 속이 메워지지 않고 획만 두꺼워진다. */
-body {
-  -webkit-text-stroke-width: var(--stroke-sm);
-  -webkit-text-stroke-color: currentColor;
-  paint-order: stroke fill;
 }
 
 /* 본문·강조 — 읽는 대상이 되는 텍스트와 누르는 대상 */
@@ -337,7 +311,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   width: 100%;
   max-width: var(--max-w);
   height: calc(var(--tab-content-h) + env(safe-area-inset-bottom));
-  background: var(--cream);
+  background: var(--paper);
   display: flex;
   align-items: flex-start;
   z-index: 500;
@@ -371,13 +345,13 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   outline: none;
   cursor: pointer;
   transition: color .2s;
-  color: var(--muted);
+  color: var(--ink-soft);
   padding: 8px 2px;
   position: relative;
   min-width: 44px;
 }
 
-.tab-btn.active { color: var(--red); }
+.tab-btn.active { color: var(--clay); }
 
 .tab-btn::after {
   display: none;
@@ -434,7 +408,6 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .share-fab svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 @media (max-width: 359px) {
-  :root { --tab-content-h: 56px; }
   .tab-icon { width: 18px; height: 18px; }
   .tab-label { letter-spacing: 0.02em; }
   .share-fab { width: 44px; height: 44px; right: 12px; }
@@ -465,7 +438,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   transform: translateX(-50%) translateY(100%);
   width: 100%;
   max-width: var(--max-w);
-  background: var(--cream);
+  background: var(--paper);
   border-radius: 20px 20px 0 0;
   padding: 0 0 calc(28px + env(safe-area-inset-bottom));
   z-index: 900;
@@ -491,7 +464,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .sheet-title {
   font-size: clamp(14px, 3.8vw, 16px);
   letter-spacing: 0.02em;
-  color: var(--brown);
+  color: var(--ink);
 }
 
 .sheet-close {
@@ -545,11 +518,11 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 .share-opt-icon.kakao  { background: #FEE500; }
 .share-opt-icon.insta  { background: linear-gradient(135deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D); }
-.share-opt-icon.link   { background: var(--brown); }
+.share-opt-icon.link   { background: var(--ink); }
 
 .share-opt-label {
   font-size: clamp(13px, 2.8vw, 15px);
-  color: var(--muted);
+  color: var(--ink-soft);
   letter-spacing: 0.02em;
   text-align: center;
   word-break: keep-all;
@@ -560,8 +533,8 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 72px);
   left: 50%;
   transform: translateX(-50%) translateY(8px);
-  background: var(--brown);
-  color: var(--cream);
+  background: var(--ink);
+  color: var(--paper);
   font-size: clamp(15px, 3.2vw, 17px);
   letter-spacing: 0.02em;
   padding: 10px clamp(16px, 4.5vw, 24px);
@@ -597,7 +570,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   transform: translate(-50%, -50%) scale(.92);
   width: calc(100% - 48px);
   max-width: 360px;
-  background: var(--cream);
+  background: var(--paper);
   border-radius: 16px;
   padding: clamp(28px, 8vw, 36px) clamp(24px, 7vw, 32px);
   text-align: center;
@@ -615,7 +588,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 .donate-title {
   font-size: clamp(15px, 3.2vw, 17px);
-  color: var(--brown);
+  color: var(--ink);
   letter-spacing: 0.02em;
   line-height: 1.6;
   margin-bottom: clamp(20px, 6vw, 28px);
@@ -654,7 +627,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .donate-account-num {
   font-size: clamp(16px, 4.5vw, 20px);
   letter-spacing: 0.02em;
-  color: var(--brown);
+  color: var(--ink);
 }
 
 .donate-copy-btn {
@@ -674,7 +647,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 .donate-note {
   font-size: clamp(13px, 2.8vw, 15px);
-  color: var(--muted);
+  color: var(--ink-soft);
   line-height: 1.7;
   letter-spacing: 0.02em;
   word-break: keep-all;
@@ -690,7 +663,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   border-radius: 14px;
   font-size: clamp(15px, 3.2vw, 17px);
   letter-spacing: 0.02em;
-  color: var(--brown);
+  color: var(--ink);
   cursor: pointer;
   transition: background .2s;
 }
@@ -1004,14 +977,14 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .page-header {
   padding: clamp(24px, 7vw, 36px) clamp(18px, 5.5vw, 28px) clamp(20px, 6vw, 28px);
   text-align: center;
-  background: var(--cream);
+  background: var(--paper);
   position: relative;
 }
 
 .page-header .ph-label {
   font-size: clamp(13px, 2.5vw, 14px);
   letter-spacing: 0.02em;
-  color: var(--light-muted);
+  color: var(--ink-faint);
   margin-bottom: 10px;
   display: block;
 }
@@ -1026,7 +999,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 .page-header .ph-title {
   font-size: clamp(20px, 5.5vw, 26px);
-  color: var(--brown);
+  color: var(--ink);
   letter-spacing: 0.02em;
 }
 
@@ -1193,13 +1166,13 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 .song-detail-section {
   padding: clamp(28px, 8vw, 40px) clamp(16px, 5.5vw, 28px) 0;
-  background: var(--cream);
+  background: var(--paper);
 }
 
 .detail-section-label {
   font-size: clamp(13px, 2.4vw, 14px);
   letter-spacing: 0.02em;
-  color: var(--light-muted);
+  color: var(--ink-faint);
   margin-bottom: 20px;
   text-align: center;
   display: block;
@@ -1235,7 +1208,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   border-radius: 50%;
   background: none;
   font-size: 22px;
-  color: var(--brown);
+  color: var(--ink);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1261,6 +1234,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   cursor: pointer;
   border-radius: 50%;
   animation: spinLP 6s linear infinite;
+  --lp-label-color: #c47a6e;     /* 곡마다 JS 가 바꾼다 */
   background:
     radial-gradient(circle, transparent 17%, rgba(60,50,40,.12) 17.5%, transparent 18%),
     radial-gradient(circle, transparent 24%, rgba(60,50,40,.07) 24.5%, transparent 25%),
@@ -1280,10 +1254,6 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   box-shadow:
     0 6px 24px rgba(0, 0, 0, .35),
     inset 0 0 3px rgba(255,255,255,.03);
-}
-/* 라벨 (곡마다 색상 변경) */
-.lp-disc {
-  --lp-label-color: #c47a6e;
 }
 .lp-disc::before {
   content: '';
@@ -1351,7 +1321,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .lp-track-count {
   font-size: clamp(14px, 3vw, 16px);
   letter-spacing: 0.02em;
-  color: var(--muted);
+  color: var(--ink-soft);
   margin-bottom: clamp(14px, 4vw, 20px);
 }
 
@@ -1769,7 +1739,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .artist-group-label {
   font-size: clamp(13px, 2.4vw, 14px);
   letter-spacing: 0.02em;
-  color: var(--light-muted);
+  color: var(--ink-faint);
   text-align: center;
   margin-bottom: clamp(16px, 5vw, 24px);
   display: block;
@@ -1867,7 +1837,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 
 .artist-card-name {
   font-size: clamp(14px, 3vw, 17px);
-  color: var(--brown);
+  color: var(--ink);
   letter-spacing: 0.02em;
   line-height: 1.3;
   word-break: keep-all;
@@ -1876,15 +1846,10 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 .artist-card-role {
   font-size: clamp(13px, 2.4vw, 14px);
   letter-spacing: 0.02em;
-  color: var(--muted);
+  color: var(--ink-soft);
   margin-top: 1px;
 }
 
-.artist-section-divider {
-  height: 1px;
-  background: rgba(196, 168, 130, .2);
-  margin: clamp(24px, 7vw, 36px) clamp(14px, 4vw, 20px) 0;
-}
 
 @media (max-width: 340px) {
   .artist-grid {
@@ -1984,8 +1949,6 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 }
 
 /* 버튼 앞 여백 — 소개·말씀이 없을 때도 답답하지 않게 */
-.member-ig-btn { margin-top: clamp(20px, 6vw, 26px); }
-
 /* 한마디 — 말씀 블록보다 가볍게, 배경 없이 */
 .member-say {
   width: 100%;
@@ -2039,6 +2002,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 .member-verse-ref[hidden] { display: none; }
 
 .member-ig-btn {
+  margin-top: clamp(20px, 6vw, 26px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2065,16 +2029,6 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
    8. pages/story.css — Page 4 스토리
 ══════════════════════════════════ */
 
-/* 스토리 페이지가 예전 팔레트를 지역 변수로 덮어쓰고 있어
-   전역 팔레트가 이 페이지에만 적용되지 않았다 → 전역 값에 맞춘다. */
-.story-page{
-  --cream:var(--paper);
-  --cream2:var(--paper-warm);
-  --brown-soft:var(--ink);
-  --gold:var(--line);
-  --muted:var(--ink-soft);
-}
-
 .prog{
   position:fixed;
   top:0;
@@ -2087,7 +2041,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 
 .opening{
   padding:clamp(64px,18vw,88px) clamp(28px,8vw,40px) clamp(48px,14vw,64px);
-  background:var(--cream);
+  background:var(--paper);
   text-align:center;
 }
 
@@ -2102,11 +2056,11 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   font-size:clamp(30px,8.5vw,42px);
   line-height:1.7;
   letter-spacing: 0.02em;
-  color:var(--brown);
+  color:var(--ink);
 }
 
 .open-title strong{
-  color:var(--red);
+  color:var(--clay);
 }
 
 .open-divider{
@@ -2116,7 +2070,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 .open-sub{
   font-size:clamp(15px, 3.4vw, 18px);
   letter-spacing: 0.02em;
-  color:var(--muted);
+  color:var(--ink-soft);
   line-height:2;
 }
 
@@ -2156,7 +2110,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 .scene-headline{
   font-size:clamp(19px,5.2vw,24px);
   line-height:1.85;
-  color:var(--brown);
+  color:var(--ink);
   letter-spacing: 0.02em;
   word-break:keep-all;
   margin-bottom:14px;
@@ -2164,13 +2118,13 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 
 .scene-headline em{
   font-style:normal;
-  color:var(--red);
+  color:var(--clay);
 }
 
 .scene-body{
   font-size:clamp(13px,3.4vw,15px);
   line-height:2.2;
-  color:var(--muted);
+  color:var(--ink-soft);
   letter-spacing: 0.02em;
   word-break:keep-all;
 }
@@ -2179,7 +2133,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:3px;
-  background:var(--cream2);
+  background:var(--paper-warm);
 }
 
 .double-img-item{
@@ -2197,7 +2151,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 
 .text-block{
   padding:clamp(40px,12vw,56px) clamp(28px,8vw,40px);
-  background:var(--cream2);
+  background:var(--paper-warm);
 }
 
 .text-block .ch-label{
@@ -2205,11 +2159,11 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 }
 
 .text-block .scene-headline{
-  color:var(--brown);
+  color:var(--ink);
 }
 
 .text-block .scene-body{
-  color:var(--muted);
+  color:var(--ink-soft);
 }
 
 .story-page .divider{
@@ -2262,28 +2216,28 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 
 .finale{
   padding:clamp(52px,15vw,72px) clamp(28px,8vw,40px) clamp(64px,18vw,84px);
-  background:var(--cream);
+  background:var(--paper);
   text-align:center;
 }
 
 .finale-title{
   font-size:clamp(18px,5vw,22px);
   line-height:2;
-  color:var(--brown);
+  color:var(--ink);
   letter-spacing: 0.02em;
   word-break:keep-all;
   margin-bottom:8px;
 }
 
 .finale-title strong{
-  color:var(--red);
+  color:var(--clay);
 }
 
 .finale-date{
   white-space: pre-line;
   font-size:clamp(15px, 3.2vw, 17px);
   letter-spacing: 0.02em;
-  color:var(--muted);
+  color:var(--ink-soft);
   margin-bottom:clamp(36px,10vw,48px);
   line-height:2;
 }
@@ -2326,20 +2280,19 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 
 .story-page footer{
   padding:clamp(16px,4.5vw,20px) clamp(16px,4.5vw,20px) calc(clamp(16px,4.5vw,20px) + 46px);
-  background:var(--cream2);
+  background:var(--paper-warm);
   text-align:center;
 }
 
 .story-page footer p{
   font-size:clamp(13px, 2.4vw, 14px);
   letter-spacing: 0.02em;
-  color:var(--muted);
+  color:var(--ink-soft);
   opacity:.5;
 }
 
 .d1{transition-delay:.08s}
 .d2{transition-delay:.18s}
-.d3{transition-delay:.28s}
 
 
 /* ══════════════════════════════════
@@ -2510,11 +2463,6 @@ body {
     line-height: 1.45;
   }
 
-  .song-card-inner {
-    gap: 10px;
-    padding: 12px 12px;
-  }
-
 
   .artist-grid {
     gap: 16px 8px;
@@ -2583,11 +2531,6 @@ body {
     line-height: 2;
   }
 
-  .story-page .quote-deco {
-    font-size: 110px;
-    top: -18px;
-    left: 6px;
-  }
 
   .story-page .finale-title {
     font-size: 17px;
@@ -2702,9 +2645,6 @@ body {
     padding-bottom: 24px;
   }
 
-  .title-main .line-ko {
-    line-height: 1.45;
-  }
 
   .media-wrapper {
     aspect-ratio: 16 / 9;
@@ -2734,24 +2674,12 @@ body {
   }
 }
 
-/* 6) 4탭 구조 전용 보정 */
-.tab-bar--four .tab-btn,
-.tab-bar[data-count="4"] .tab-btn {
-  min-width: 0;
-}
-
-.tab-bar--four .tab-label,
-.tab-bar[data-count="4"] .tab-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 /* 7) 인터랙션/접근성 안정화 */
 @media (hover: none) {
   .story-page .scene-img-wrap:hover img,
   .story-page .btn-primary:hover {
     transform: none;
-    background: var(--brown);
+    background: var(--ink);
   }
 }
 
