@@ -527,15 +527,33 @@ function openMember(groupIndex, personIndex) {
   const role = document.getElementById('memberRole');
   role.textContent = person.role || section.group;
 
+  // 주소에서 아이디를 뽑아 보여준다 (데이터를 두 번 적지 않기 위해)
+  const handle = _igHandle(person.instagram);
+  const handleEl = document.getElementById('memberHandle');
+  handleEl.textContent = handle ? '@' + handle : '';
+  handleEl.hidden = !handle;
+
   const btn = document.getElementById('memberIgBtn');
   btn.href = person.instagram;
-  btn.setAttribute('aria-label', person.name + ' 인스타그램에서 보기 (새 탭에서 열림)');
+  btn.setAttribute('aria-label',
+    person.name + ' 인스타그램' + (handle ? ' @' + handle : '') + ' 방문하기 (새 탭에서 열림)');
 
   openOverlay('member');
   requestAnimationFrame(() => document.querySelector('.member-close').focus());
 }
 
 function closeMember() { closeOverlay('member'); }
+
+/** 인스타 주소에서 아이디만 뽑는다. 주소 형태가 달라도 깨지지 않게 감싼다. */
+function _igHandle(url) {
+  if (!url) return '';
+  try {
+    const path = new URL(url).pathname.replace(/^\/+|\/+$/g, '');
+    return path.split('/')[0] || '';
+  } catch (e) {
+    return '';
+  }
+}
 
 function _avatarIcon(person) {
   const icon = _el('span', 'avatar-placeholder', person.icon || '♪');

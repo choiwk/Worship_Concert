@@ -608,13 +608,35 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   margin-bottom: clamp(20px, 6vw, 28px);
 }
 
+.donate-label {
+  font-size: clamp(14px, 3.6vw, 16px);
+  color: var(--ink-faint);
+  margin-bottom: 6px;
+}
+
+/* 은행 + 계좌번호 + 복사 버튼을 한 줄로.
+   좁은 화면에서는 자연스럽게 줄이 나뉜다 */
 .donate-account {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  margin-bottom: 6px;
+}
+
+.donate-bank {
+  font-size: clamp(16px, 4.2vw, 18px);
+  color: var(--ink-soft);
+}
+
+.donate-holder {
+  font-size: clamp(15px, 3.9vw, 17px);
+  color: var(--ink-soft);
   margin-bottom: clamp(14px, 4vw, 20px);
 }
+
+.donate-holder-name { color: var(--ink); }
 
 .donate-account-num {
   font-size: clamp(16px, 4.5vw, 20px);
@@ -1894,8 +1916,16 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   font-size: clamp(15px, 3.9vw, 17px);
   color: var(--ink-faint);
   margin-top: 2px;
-  margin-bottom: clamp(20px, 6vw, 26px);
 }
+
+.member-handle {
+  font-size: clamp(15px, 3.9vw, 17px);
+  color: var(--clay);
+  margin-top: 8px;
+  margin-bottom: clamp(20px, 6vw, 26px);
+  word-break: break-all;
+}
+.member-handle[hidden] { display: none; }
 
 .member-ig-btn {
   display: flex;

@@ -56,7 +56,7 @@ const MEMBERS = [
       { name: '이기은', role: '일렉',          icon: '🎸', instagram: null, photo: null },
       { name: '최원근', role: '드럼',          icon: '🥁',
         instagram: 'https://www.instagram.com/wonkeun_e',
-        photo: null }
+        photo: 'public/images/members/choi-wonkeun.jpg' }
     ]
   },
   {
