@@ -135,7 +135,7 @@ function renderSongList() {
   SONGS.forEach(song => {
     const li = _el('li', 'song-item');
 
-    const a = _el('a', 'song-row' + (song.tag === '대표곡' ? ' is-featured' : ''));
+    const a = _el('a', 'song-row' + (isLeadSong(song) ? ' is-featured' : ''));
     a.href = '#/songs/' + song.slug;
     const hasVerse = song.parts.some(p => p.bible);
     a.setAttribute('aria-label',
@@ -148,7 +148,7 @@ function renderSongList() {
 
     const head = _el('span', 'song-head-row');
     head.appendChild(_el('span', 'song-title-text', song.title));
-    if (song.tag) head.appendChild(_el('span', 'song-badge tag-' + (song.tag === '대표곡' ? 'lead' : 'pray'), song.tag));
+    if (song.tag) head.appendChild(_el('span', 'song-badge tag-' + tagKind(song.tag), song.tag));
     mid.appendChild(head);
 
     // 안에 무엇이 들어 있는지 미리 알려준다.
@@ -168,6 +168,13 @@ function renderSongList() {
     ul.appendChild(li);
   });
 }
+
+/* 배지 종류. 곡 데이터의 tag 문자열을 여기서 한 번만 해석한다
+   (예전에는 '대표곡' 비교가 세 곳에 흩어져 있어 이름을 바꾸면 빠뜨리기 쉬웠다) */
+const TAG_KIND = { '주제곡': 'lead', '기도': 'pray' };
+const tagKind = tag => TAG_KIND[tag] || 'pray';
+const isLeadSong = song => tagKind(song.tag) === 'lead';
+
 
 /** 곡 줄에 붙는 '가사'·'말씀' 표시 */
 function _metaTag(iconId, label) {
@@ -206,7 +213,7 @@ function renderSongDetail(slug) {
   head.appendChild(h1);
   if (song.artist) head.appendChild(_el('p', 'song-head-artist', song.artist));
   if (song.tag) {
-    head.appendChild(_el('span', 'song-badge tag-' + (song.tag === '대표곡' ? 'lead' : 'pray'), song.tag));
+    head.appendChild(_el('span', 'song-badge tag-' + tagKind(song.tag), song.tag));
   }
   if (song.tag === '기도') {
     head.appendChild(_el('p', 'song-head-note', '기도하며 함께 드리는 곡입니다'));

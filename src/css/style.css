@@ -1124,7 +1124,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   word-break: keep-all;
 }
 
-/* 대표곡·기도 배지 — 강한 색이 아니라 작은 라벨로 구분한다 */
+/* 주제곡·기도 배지 — 강한 색이 아니라 작은 라벨로 구분한다 */
 .song-badge {
   flex-shrink: 0;
   font-size: clamp(13px, 3.2vw, 14px);
@@ -1146,7 +1146,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   border: 1px solid var(--line);
 }
 
-/* 대표곡 줄은 배경만 아주 살짝 다르게 — 통일성을 깨지 않는 선에서 */
+/* 주제곡 줄은 배경만 아주 살짝 다르게 — 통일성을 깨지 않는 선에서 */
 .song-row.is-featured {
   background: linear-gradient(to right, rgba(230, 201, 182, .30), rgba(255, 255, 255, .55) 55%);
 }

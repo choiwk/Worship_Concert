@@ -9,7 +9,7 @@
      slug     URL 조각. 해시 라우팅에 쓰인다 (#/songs/02)
      title    곡 제목
      artist   원곡자 (있을 때만)
-     tag      '대표곡' | '기도' | null — 리스트에 배지로 표시
+     tag      '주제곡' | '기도' | null — 리스트에 배지로 표시
      youtube  유튜브 링크 (없으면 null → 버튼을 그리지 않는다)
      parts    가사 묶음. 한 곡에 두 곡이 이어지는 경우 2개가 된다.
               { label, lyrics, bible }
@@ -264,7 +264,10 @@ const SONGS = [
 독생자를 주셨으니 믿는자는
 영생을 얻으리
 난 믿네
-다시 사신 독생자`
+다시 사신 독생자`,
+        bible: bibleRef('요한복음 3장 16절', 'JHN.3.16', [
+          [16, '하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니 이는 저를 믿는 자마다 멸망치 않고 영생을 얻게 하려 하심이니라']
+        ])
       }
     ]
   },
@@ -330,7 +333,7 @@ const SONGS = [
     no: '09',
     slug: '09',
     title: '우리가 서로 사랑하자',
-    tag: '대표곡',
+    tag: '주제곡',
     youtube: 'https://youtu.be/OiICN75Oqv4?si=CCFxNAhGZgmCX_Sr',
     parts: [
       {
