@@ -1976,11 +1976,44 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
   font-size: .95em;
   line-height: 1;
+  width: 19px;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   -webkit-text-stroke: 0;
 }
 
+/* 인스타는 브랜드 마크 그대로 — 그라데이션 사각형 위에 흰 글리프.
+   공유 시트의 인스타 아이콘과 같은 색을 쓴다. */
+.member-meta-ig {
+  width: 19px;
+  height: 19px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+}
+.member-meta-ig svg {
+  width: 13px;
+  height: 13px;
+  fill: #fff;
+}
+
 .member-meta-text { word-break: break-all; }
+
+/* 누르면 인스타로 이동하는 아이디 */
+.member-meta-text.is-link {
+  color: var(--clay);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 4px;
+  transition: text-decoration-color .2s;
+}
+.member-meta-text.is-link:hover { text-decoration-color: var(--clay); }
+.member-meta-text.is-link:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 
 
 /* 한마디 — 말씀 블록보다 가볍게, 배경 없이 */

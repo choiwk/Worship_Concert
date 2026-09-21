@@ -583,19 +583,37 @@ function openMember(groupIndex, personIndex) {
   // 소속 교회 · 인스타 아이디 — 한마디 위에 나란히
   const meta = document.getElementById('memberMeta');
   meta.innerHTML = '';
-  const metaRow = (icon, label, text) => {
+  const metaRow = (iconNode, label, text, href) => {
     const li = _el('li', 'member-meta-row');
-    const ic = _el('span', 'member-meta-icon', icon);
-    ic.setAttribute('aria-hidden', 'true');
-    li.appendChild(ic);
-    const v = _el('span', 'member-meta-text', text);
-    v.setAttribute('aria-label', label + ' ' + text);
+    iconNode.setAttribute('aria-hidden', 'true');
+    li.appendChild(iconNode);
+
+    // 링크가 있으면 글자를 눌러 바로 이동할 수 있게 한다
+    const v = href ? _el('a', 'member-meta-text is-link') : _el('span', 'member-meta-text');
+    v.textContent = text;
+    if (href) {
+      v.href = href;
+      v.target = '_blank';
+      v.rel = 'noopener noreferrer';
+      v.setAttribute('aria-label', label + ' ' + text + ' (새 탭에서 열림)');
+    } else {
+      v.setAttribute('aria-label', label + ' ' + text);
+    }
     li.appendChild(v);
     meta.appendChild(li);
   };
-  if (person.church) metaRow('⛪', '소속 교회', person.church);
+
+  const emojiIcon = ch => _el('span', 'member-meta-icon', ch);
+  // 인스타는 브랜드 마크 그대로 — 그라데이션 사각형 위에 흰 글리프
+  const igIcon = () => {
+    const box = _el('span', 'member-meta-icon member-meta-ig');
+    box.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-ig"/></svg>';
+    return box;
+  };
+
+  if (person.church) metaRow(emojiIcon('⛪'), '소속 교회', person.church);
   const handle = person.igId || _igHandle(person.instagram);
-  if (handle) metaRow('📷', '인스타그램', handle);
+  if (handle) metaRow(igIcon(), '인스타그램', handle, person.instagram);
   meta.hidden = !meta.children.length;
 
   openOverlay('member');
