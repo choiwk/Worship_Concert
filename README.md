@@ -119,12 +119,31 @@ python3 -m http.server 8000
 [`src/js/members.js`](src/js/members.js) 의 `MEMBERS` 배열 한 곳에 있다.
 '맴버소개' 화면이 이 배열을 읽어 그린다.
 
+구조가 두 층이다. **사람 정보는 `PEOPLE` 에 한 번만** 적고,
+팀 목록(`MEMBERS`)에서는 id 로 참조만 한다.
+한 사람이 여러 팀에 들어가도(최원근은 악기팀·스텝팀·소품팀) 카드 내용이
+한 곳에만 있어, 고칠 때도 한 번만 고치면 된다.
+
 ```js
-{ name: '박성은', role: '보컬', icon: '♪',
-  instagram: 'https://www.instagram.com/아이디',        // 전체 주소
-  photo: 'public/images/members/park-seongeun.jpg',   // 없으면 icon 이 나온다
-  bio: '한 줄 소개',                                    // 없으면 영역을 안 그린다
-  verse: { text: '좋아하는 말씀 본문', ref: '요한1서 4장 7절' } }
+const PEOPLE = {
+  'choi-wonkeun': {
+    name: '최원근', icon: '🥁',
+    photo: 'public/images/members/choi-wonkeun.jpg',
+    instagram: 'https://www.instagram.com/아이디',   // 전체 주소
+    church: '향상교회',
+    bio: '한마디로 보여줄 문장',
+    verse: { text: '말씀 본문', ref: '갈라디아서 6장 9절' }
+  }
+};
+
+const MEMBERS = [
+  { group: '악기팀', people: [
+      { id: 'choi-wonkeun', role: '드럼' }          // 팀별 파트
+  ]},
+  { group: '소품팀', people: [
+      { id: 'choi-wonkeun', icon: '📦' }            // 팀별 기호만 다르게
+  ]}
+];
 ```
 
 - `instagram` 을 넣으면 카드를 눌렀을 때 **아래에서 시트가 올라와**

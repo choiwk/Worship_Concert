@@ -498,7 +498,9 @@ function renderMembers() {
     block.appendChild(_el('h3', 'artist-group-label', section.group));
 
     const grid = _el('div', 'artist-grid');
-    section.people.forEach((person, pi) => {
+    section.people.forEach((entry, pi) => {
+      const person = resolveMember(entry);
+      if (!person) return;               // PEOPLE 에 없는 id 는 건너뛴다
       // 인스타 주소가 있으면 카드를 눌러 아래에서 올라오는 시트를 연다
       const linked = !!person.instagram;
       const card = _el(linked ? 'button' : 'div', 'artist-card reveal' + (linked ? ' is-linked' : ''));
@@ -545,7 +547,8 @@ function renderMembers() {
 /** 멤버 카드를 누르면 아래에서 올라오는 시트 */
 function openMember(groupIndex, personIndex) {
   const section = MEMBERS[groupIndex];
-  const person = section && section.people[personIndex];
+  const entry = section && section.people[personIndex];
+  const person = entry && resolveMember(entry);
   if (!person) return;
 
   const avatar = document.getElementById('memberAvatar');
