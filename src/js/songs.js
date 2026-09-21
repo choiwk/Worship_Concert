@@ -44,6 +44,29 @@ const SONGS = [
   {
     no: '01',
     slug: '01',
+    title: '하나님이 너를 엄청 사랑하신대',
+    tag: null,
+    youtube: 'https://youtu.be/rSRm_no1hqk?si=78jhGhVMjWUNuU9y',
+    parts: [
+      {
+        lyrics: `하나님이 너를 엄청 사랑하신대
+하나님이 너를 엄청 사랑하신대
+하나님이 너를 엄청 사랑해서
+
+사람이 아닌 하나님을
+바라보기를 기다리신대
+
+너의 삶을 허락하시고
+이 땅에 태어나게 하셨대
+
+지금 눈 앞의 어둠 속에
+그저 두지 않으실거래`
+      }
+    ]
+  },
+  {
+    no: '02',
+    slug: '02',
     title: '주를 바라보며 / 주를 찾는 모든 자들이',
     tag: null,
     youtube: 'https://youtu.be/bgdU5_BbACM?si=yqVUuw1jRkxm0iQt',
@@ -87,8 +110,8 @@ const SONGS = [
   },
 
   {
-    no: '02',
-    slug: '02',
+    no: '03',
+    slug: '03',
     title: '주와 함께 걸어가네',
     tag: null,
     youtube: 'https://youtu.be/ApHcXxQPSC4?si=hbOrl6qfFHUpLCAu',
@@ -130,8 +153,8 @@ const SONGS = [
   },
 
   {
-    no: '03',
-    slug: '03',
+    no: '04',
+    slug: '04',
     title: '길을 찾는 너를 위해',
     tag: null,
     youtube: 'https://youtu.be/S-gNwMSxX3w?si=YXIUD5KBegfsV0fd',
@@ -158,8 +181,8 @@ const SONGS = [
   },
 
   {
-    no: '04',
-    slug: '04',
+    no: '05',
+    slug: '05',
     title: '온 땅의 주인 Who am I',
     tag: null,
     youtube: 'https://youtu.be/_FhX--lQQXQ?si=l9SSoqm3XC8D7kNJ',
@@ -189,8 +212,8 @@ const SONGS = [
   },
 
   {
-    no: '05',
-    slug: '05',
+    no: '06',
+    slug: '06',
     title: '주 예수 나의 산 소망',
     tag: null,
     youtube: 'https://youtu.be/8Xeeij0hAB4?si=fMUlD37mZBU86mfI',
@@ -233,8 +256,8 @@ const SONGS = [
   },
 
   {
-    no: '06',
-    slug: '06',
+    no: '07',
+    slug: '07',
     title: '하나님께서 세상을 사랑하사',
     tag: null,
     youtube: 'https://youtu.be/-n24d45myCg?si=dWHznlhr0xY9jSoS',
@@ -273,8 +296,8 @@ const SONGS = [
   },
 
   {
-    no: '07',
-    slug: '07',
+    no: '08',
+    slug: '08',
     title: '주님의 선하심',
     tag: null,
     youtube: 'https://youtu.be/ErqijpGQmO4?si=SwmgSPSmYlqGi2Tp',
@@ -306,8 +329,8 @@ const SONGS = [
   },
 
   {
-    no: '08',
-    slug: '08',
+    no: '09',
+    slug: '09',
     title: '우리 살아가는 모든 날들이',
     tag: null,
     youtube: 'https://youtu.be/LumqOmVvOos?si=jV9PfBLMkq1JYvbF',
@@ -330,8 +353,8 @@ const SONGS = [
   },
 
   {
-    no: '09',
-    slug: '09',
+    no: '10',
+    slug: '10',
     title: '우리가 서로 사랑하자',
     tag: '주제곡',
     youtube: 'https://youtu.be/OiICN75Oqv4?si=CCFxNAhGZgmCX_Sr',
@@ -360,8 +383,8 @@ const SONGS = [
   },
 
   {
-    no: '10',
-    slug: '10',
+    no: '11',
+    slug: '11',
     title: '친구여 함께 노래해',
     tag: null,
     youtube: 'https://youtu.be/hvlWFoK56dg?si=ULgmhWfGlWqaBPjZ',
@@ -395,8 +418,8 @@ const SONGS = [
   },
 
   {
-    no: '11',
-    slug: '11',
+    no: '12',
+    slug: '12',
     title: '달리기',
     artist: '웨이홈',
     tag: null,
@@ -432,8 +455,8 @@ const SONGS = [
   },
 
   {
-    no: '12',
-    slug: '12',
+    no: '13',
+    slug: '13',
     title: '우리가 주를 더욱 사랑하고',
     tag: null,
     youtube: 'https://youtu.be/aZKVBRA_hAg?si=9M3-gqaDvw3JNaZC',

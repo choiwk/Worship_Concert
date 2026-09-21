@@ -1949,6 +1949,40 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 }
 
 /* 버튼 앞 여백 — 소개·말씀이 없을 때도 답답하지 않게 */
+/* 소속 교회 · 인스타 아이디 — 이름 바로 아래 조용히 */
+.member-meta {
+  list-style: none;
+  width: 100%;
+  margin: clamp(14px, 4vw, 18px) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+.member-meta[hidden] { display: none; }
+
+.member-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: clamp(15px, 3.9vw, 17px);
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+/* 이모지는 손글씨 폰트에 없어 폴백을 명시한다 */
+.member-meta-icon {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+  font-size: .95em;
+  line-height: 1;
+  flex-shrink: 0;
+  -webkit-text-stroke: 0;
+}
+
+.member-meta-text { word-break: break-all; }
+
+
 /* 한마디 — 말씀 블록보다 가볍게, 배경 없이 */
 .member-say {
   width: 100%;
@@ -2000,25 +2034,6 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   margin-top: 6px;
 }
 .member-verse-ref[hidden] { display: none; }
-
-.member-ig-btn {
-  margin-top: clamp(20px, 6vw, 26px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  width: 100%;
-  min-height: 52px;
-  padding: 13px 20px;
-  background: var(--clay);
-  color: #fdfbf6;
-  border-radius: 14px;
-  font-size: clamp(16px, 4.2vw, 18px);
-  text-decoration: none;
-  transition: background .2s, transform .12s;
-}
-.member-ig-btn:active { background: #8e4128; transform: scale(.985); }
-.member-ig-btn svg { width: 19px; height: 19px; fill: currentColor; flex-shrink: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .member-sheet { transition: transform .01s; }

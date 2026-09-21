@@ -69,12 +69,20 @@ function route() {
   const back = prev && prev.tab === 'songs' && prev.slug && r.tab === 'songs' && !r.slug;
   const y = back ? _songListScroll : 0;
 
+  // html 에 scroll-behavior: smooth 가 걸려 있어 그냥 scrollTop 을 넣으면
+  // 이전 위치에서 1초 가까이 천천히 미끄러진다. 화면을 바꾸는 순간에는
+  // 부드럽게 갈 이유가 없으므로 잠시 꺼서 즉시 이동시킨다.
   const sc = _scroller();
+  const html = document.documentElement;
+  const prevBehavior = html.style.scrollBehavior;
+  html.style.scrollBehavior = 'auto';
+
   sc.scrollTop = y;
   requestAnimationFrame(() => {
     sc.scrollTop = y;
     requestAnimationFrame(() => {
       sc.scrollTop = y;
+      html.style.scrollBehavior = prevBehavior;   // 원래대로 (링크 이동 등은 계속 부드럽게)
       triggerReveal();
       updateStoryProgress();
     });
@@ -572,15 +580,39 @@ function openMember(groupIndex, personIndex) {
     refEl.hidden = !verse.ref;
   }
 
-  const btn = document.getElementById('memberIgBtn');
-  btn.href = person.instagram;
-  btn.setAttribute('aria-label', person.name + ' 인스타그램 프로필 방문 (새 탭에서 열림)');
+  // 소속 교회 · 인스타 아이디 — 한마디 위에 나란히
+  const meta = document.getElementById('memberMeta');
+  meta.innerHTML = '';
+  const metaRow = (icon, label, text) => {
+    const li = _el('li', 'member-meta-row');
+    const ic = _el('span', 'member-meta-icon', icon);
+    ic.setAttribute('aria-hidden', 'true');
+    li.appendChild(ic);
+    const v = _el('span', 'member-meta-text', text);
+    v.setAttribute('aria-label', label + ' ' + text);
+    li.appendChild(v);
+    meta.appendChild(li);
+  };
+  if (person.church) metaRow('⛪', '소속 교회', person.church);
+  const handle = person.igId || _igHandle(person.instagram);
+  if (handle) metaRow('📷', '인스타그램', handle);
+  meta.hidden = !meta.children.length;
 
   openOverlay('member');
   requestAnimationFrame(() => document.querySelector('.member-close').focus());
 }
 
 function closeMember() { closeOverlay('member'); }
+
+/** 인스타 주소에서 아이디만 뽑는다. 주소 형태가 달라도 깨지지 않게 감싼다. */
+function _igHandle(url) {
+  if (!url) return '';
+  try {
+    return new URL(url).pathname.replace(/^\/+|\/+$/g, '').split('/')[0] || '';
+  } catch (e) {
+    return '';
+  }
+}
 
 
 function _avatarIcon(person) {
