@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=36" rel="stylesheet"/>
+<link href="src/css/style.css?v=37" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -411,7 +411,8 @@
 </div>
 <div class="member-verse" id="memberVerse">
 <p class="member-verse-label">말씀</p>
-<p class="member-verse-text" id="memberVerseText"></p>
+<p class="member-verse-text is-clamped" id="memberVerseText"></p>
+<button class="member-verse-more" id="memberVerseMore" onclick="toggleMemberVerse()" hidden>펼쳐보기</button>
 <p class="member-verse-ref" id="memberVerseRef"></p>
 </div>
 </div>
@@ -454,9 +455,9 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=36" defer></script>
-<script src="src/js/members.js?v=36" defer></script>
-<script src="src/js/app.js?v=36" defer></script>
+<script src="src/js/songs.js?v=37" defer></script>
+<script src="src/js/members.js?v=37" defer></script>
+<script src="src/js/app.js?v=37" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

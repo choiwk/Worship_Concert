@@ -54,7 +54,17 @@ const PEOPLE = {
   'park-seongeun': { name: '박성은', icon: '♪' },
   'kim-ahyeon':    { name: '김아현', icon: '♪' },
   'kwon-yeseul':   { name: '권예슬', icon: '♪' },
-  'hwang-yuchan':  { name: '황유찬', icon: '♪' },
+  'hwang-yuchan': {
+    name: '황유찬',
+    icon: '♪',
+    photo: 'public/images/members/hwang-yuchan.jpg',
+    instagram: 'https://www.instagram.com/y_0o0_c',
+    church: '더향상교회',
+    verse: {
+      text: '눈물을 흘리며 씨를 뿌리는 자는 기쁨으로 거두리로다',
+      ref: '시편 126편 5절'
+    }
+  },
   'lee-hanbin':    { name: '이한빈', icon: '♪' },
   'go-un':         { name: '고운',   icon: '♪' },
 
@@ -69,7 +79,7 @@ const PEOPLE = {
     photo: 'public/images/members/choi-wonkeun.jpg',
     instagram: 'https://www.instagram.com/wonkeun_e',
     church: '향상교회',
-    bio: '하나님은 어디서든지 우리를 찾으십니다.',
+    bio: '하나님이 너를 엄청 사랑하신대!',
     verse: {
       text: '우리가 선을 행하되 낙심하지 말찌니 피곤하지 아니하면 때가 이르매 거두리라',
       ref: '갈라디아서 6장 9절'
@@ -79,7 +89,17 @@ const PEOPLE = {
   'kim-jaeseo':    { name: '김재서', icon: '📣' },
   'yeo-myeong':    { name: '여명',   icon: '📷' },
   'choi-juhee':    { name: '최주희', icon: '📷' },
-  'kim-yeeun':     { name: '김예은', icon: '🤝' },
+  'kim-yeeun': {
+    name: '김예은',
+    icon: '🤝',
+    photo: 'public/images/members/kim-yeeun.jpg',
+    instagram: 'https://www.instagram.com/yes_silver_n._.n',
+    church: '더향상교회',
+    verse: {
+      text: '나의 달려갈 길과 주 예수께 받은 사명 곧 하나님의 은혜의 복음 증거하는 일을 마치려 함에는 나의 생명을 조금도 귀한 것으로 여기지 아니하노라',
+      ref: '사도행전 20장 24절'
+    }
+  },
   'lee-gijun':     { name: '이기준', icon: '🤝' }
 };
 

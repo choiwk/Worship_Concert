@@ -545,6 +545,13 @@ function renderMembers() {
 }
 
 /** 멤버 카드를 누르면 아래에서 올라오는 시트 */
+/** 멤버 시트의 말씀 접기/펼치기 */
+function toggleMemberVerse() {
+  const textEl = document.getElementById('memberVerseText');
+  const open = textEl.classList.toggle('is-clamped');
+  document.getElementById('memberVerseMore').textContent = open ? '펼쳐보기' : '접기';
+}
+
 function openMember(groupIndex, personIndex) {
   const section = MEMBERS[groupIndex];
   const entry = section && section.people[personIndex];
@@ -577,10 +584,23 @@ function openMember(groupIndex, personIndex) {
   const hasVerse = !!(verse && verse.text);
   verseBox.hidden = !hasVerse;
   if (hasVerse) {
-    document.getElementById('memberVerseText').textContent = verse.text;
+    const textEl = document.getElementById('memberVerseText');
+    textEl.textContent = verse.text;
     const refEl = document.getElementById('memberVerseRef');
     refEl.textContent = verse.ref || '';
     refEl.hidden = !verse.ref;
+
+    // 긴 말씀은 세 줄만 보여주고 '펼쳐보기' 를 붙인다.
+    // 세 줄 안에 다 들어가면 버튼을 그리지 않는다.
+    // line-clamp 가 걸린 뒤에는 scrollHeight 도 잘린 높이로 나와서
+    // 넘치는지 알 수 없다. 그래서 자르기 전에 전체 높이를 먼저 재고,
+    // 같은 프레임 안에서 클래스를 붙인다(그리기 전이라 깜빡임이 없다).
+    const moreBtn = document.getElementById('memberVerseMore');
+    textEl.classList.remove('is-clamped');
+    const fullHeight = textEl.scrollHeight;
+    textEl.classList.add('is-clamped');
+    moreBtn.textContent = '펼쳐보기';
+    moreBtn.hidden = textEl.clientHeight >= fullHeight - 1;
   }
 
   // 소속 교회 · 인스타 아이디 — 한마디 위에 나란히
@@ -607,10 +627,25 @@ function openMember(groupIndex, personIndex) {
   };
 
   const emojiIcon = ch => _el('span', 'member-meta-icon', ch);
-  // 인스타는 브랜드 마크 그대로 — 그라데이션 사각형 위에 흰 글리프
+  // 인스타는 브랜드 마크 그대로 — 테두리에 그라데이션이 들어간 로고.
+  // 스프라이트(<use>)로는 그라데이션이 칠해지지 않아(그라데이션이
+  // 그림자 트리 밖에 있어서 참조가 끊긴다) SVG 를 통째로 넣는다.
   const igIcon = () => {
     const box = _el('span', 'member-meta-icon member-meta-ig');
-    box.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-ig"/></svg>';
+    const gid = 'igGrad' + (igIcon.n = (igIcon.n || 0) + 1);
+    box.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+        '<defs><linearGradient id="' + gid + '" gradientUnits="userSpaceOnUse" x1="1" y1="23" x2="23" y2="1">' +
+          '<stop offset="0" stop-color="#FEDA75"/><stop offset=".25" stop-color="#FA7E1E"/>' +
+          '<stop offset=".5" stop-color="#D62976"/><stop offset=".75" stop-color="#962FBF"/>' +
+          '<stop offset="1" stop-color="#4F5BD5"/>' +
+        '</linearGradient></defs>' +
+        '<g fill="none" stroke="url(#' + gid + ')" stroke-width="2.15">' +
+          '<rect x="2.2" y="2.2" width="19.6" height="19.6" rx="5.9"/>' +
+          '<circle cx="12" cy="12" r="4.6"/>' +
+        '</g>' +
+        '<circle cx="17.6" cy="6.6" r="1.5" fill="url(#' + gid + ')"/>' +
+      '</svg>';
     return box;
   };
 

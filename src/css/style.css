@@ -1984,18 +1984,16 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   -webkit-text-stroke: 0;
 }
 
-/* 인스타는 브랜드 마크 그대로 — 그라데이션 사각형 위에 흰 글리프.
-   공유 시트의 인스타 아이콘과 같은 색을 쓴다. */
+/* 인스타는 브랜드 마크 그대로 — 배경 없이 테두리에 그라데이션을 입힌 로고.
+   색은 #igGrad (index.html 의 심볼 정의)에서 온다. */
 .member-meta-ig {
   width: 19px;
   height: 19px;
-  border-radius: 5px;
-  background: linear-gradient(135deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
 }
 .member-meta-ig svg {
-  width: 13px;
-  height: 13px;
-  fill: #fff;
+  width: 19px;
+  height: 19px;
+  display: block;
 }
 
 .member-meta-text { word-break: break-all; }
@@ -2060,6 +2058,29 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   color: var(--ink);
   word-break: keep-all;
 }
+
+/* 말씀이 길면 세 줄만 보이고, 버튼으로 펼친다 */
+.member-verse-text.is-clamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.member-verse-more {
+  margin-top: 6px;
+  padding: 4px 0;
+  min-height: 24px;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: clamp(13px, 3.4vw, 15px);
+  color: var(--clay);
+  cursor: pointer;
+  -webkit-text-stroke: var(--stroke-sm) currentColor;
+  paint-order: stroke fill;
+}
+.member-verse-more[hidden] { display: none; }
 
 .member-verse-ref {
   font-size: clamp(13px, 3.4vw, 15px);
