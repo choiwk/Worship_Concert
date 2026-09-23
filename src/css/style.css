@@ -1007,71 +1007,6 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
    장식용 카드가 아니라 '누르면 열리는 것'으로 읽혀야 한다.
    왼쪽 강조선 + 화살표 이동 + 명확한 focus 링으로 그 성격을 드러낸다. */
 
-/* ── 곡 전체 듣기 — 목록 맨 위, 유튜브 재생목록으로 보낸다 ──
-   곡 줄과 같은 카드 모양을 쓰되 테두리를 강조색으로 둘러 '목록 전체'
-   라는 걸 드러낸다. 줄마다 있는 유튜브 버튼과 헷갈리지 않도록
-   아이콘을 원형 강조색으로 채웠다. */
-.setlist-play-wrap {
-  background: var(--paper);
-  padding: clamp(20px, 6vw, 32px) clamp(16px, 5.5vw, 28px) 0;
-}
-
-.setlist-play {
-  display: flex;
-  align-items: center;
-  gap: clamp(12px, 3.5vw, 15px);
-  min-height: 60px;
-  padding: clamp(12px, 3.5vw, 15px) clamp(14px, 4vw, 18px);
-  background: linear-gradient(to right, rgba(230, 201, 182, .26), rgba(255, 255, 255, .5) 60%);
-  border: 1px solid var(--clay-wash);
-  border-radius: 14px;
-  text-decoration: none;
-  transition: background .2s, border-color .2s;
-}
-.setlist-play:hover {
-  background: linear-gradient(to right, rgba(230, 201, 182, .38), #fff 60%);
-  border-color: var(--clay);
-}
-
-.setlist-play-icon {
-  flex-shrink: 0;
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  background: var(--clay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.setlist-play-icon svg {
-  width: 17px; height: 17px;
-  fill: var(--paper);
-}
-
-.setlist-play-text {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.setlist-play-title {
-  font-size: clamp(15px, 4vw, 17px);
-  color: var(--ink);
-  -webkit-text-stroke: var(--stroke-md) var(--ink);
-  paint-order: stroke fill;
-}
-.setlist-play-sub {
-  font-size: clamp(12px, 3.2vw, 14px);
-  color: var(--ink-faint);
-}
-
-.setlist-play-go {
-  flex-shrink: 0;
-  font-size: clamp(15px, 4vw, 17px);
-  color: var(--clay);
-  transform: rotate(-45deg);
-}
-
 .song-list {
   list-style: none;
   padding: clamp(20px, 6vw, 32px) clamp(16px, 5.5vw, 28px) 0;
@@ -1414,6 +1349,38 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 }
 .lp-yt-btn:active { background: #8e4128; transform: scale(.96); }
 .lp-yt-btn svg { flex-shrink: 0; }
+
+/* ── 듣기 버튼 두 개 — 위는 '이 곡', 아래는 '전체' ──
+   같은 알약 모양을 쓰되 위는 채우고 아래는 테두리만 둘러서,
+   무엇이 주된 동작인지 색의 무게로 구분한다. */
+.lp-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.lp-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: clamp(9px, 2.6vw, 12px) clamp(18px, 5.5vw, 26px);
+  background: transparent;
+  color: var(--clay);
+  border: 1px solid var(--clay-wash);
+  border-radius: 999px;
+  min-height: 44px;
+  font-size: clamp(13px, 2.8vw, 15px);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: background .2s, border-color .2s, transform .15s;
+}
+.lp-all-btn:hover { background: var(--paper-warm); border-color: var(--clay); }
+.lp-all-btn:active { transform: scale(.96); }
+.lp-all-btn:focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; }
+.lp-all-btn svg { flex-shrink: 0; fill: var(--clay); }
+
+.lp-all-count { color: var(--ink-faint); }
 
 @media (prefers-reduced-motion: reduce) {
   .lp-disc, .lp-label { animation: none; }

@@ -146,8 +146,7 @@ function renderSongList() {
     play.href = SETLIST_PLAYLIST;
     play.setAttribute('aria-label',
       '곡 전체 듣기 — 유튜브 재생목록 ' + SONGS.length + '곡 (새 탭에서 열림)');
-    document.getElementById('setlistPlaySub').textContent =
-      '유튜브 재생목록 · ' + SONGS.length + '곡';
+    document.getElementById('setlistPlaySub').textContent = SONGS.length + '곡';
   }
 
   SONGS.forEach(song => {
