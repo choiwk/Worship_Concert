@@ -40,6 +40,9 @@ function bibleRef(ref, usfm, verses, note) {
   };
 }
 
+/** 공연 순서대로 묶어 둔 유튜브 재생목록 — '곡 전체 듣기' 버튼이 쓴다 */
+const SETLIST_PLAYLIST = 'https://www.youtube.com/playlist?list=PLPItSHBk4jRQ';
+
 const SONGS = [
   {
     no: '01',
@@ -225,7 +228,7 @@ const SONGS = [
     slug: '06',
     title: '주 예수 나의 산 소망',
     tag: null,
-    youtube: 'https://youtu.be/8Xeeij0hAB4?si=fMUlD37mZBU86mfI',
+    youtube: 'https://youtu.be/pck5Q6CXQNg?si=_gLhV5OlrHCNxU5Z',
     parts: [
       {
         lyrics: `닿을 수 없고 오를 수 없네
@@ -496,6 +499,31 @@ const SONGS = [
 이곳에 함께 모여 찬양하니
 모든 두렴과 걱정은 떠나가네
 주 사랑만이 이곳에 가득해`
+      }
+    ]
+  },
+
+  {
+    no: '14',
+    slug: '14',
+    title: '사랑의 계절',
+    artist: 'WELOVE',
+    tag: '앵콜',
+    youtube: 'https://youtu.be/2wR4g_C1KsA?si=x4k_urYl_BjGdqhN',
+    parts: [
+      {
+        lyrics: `하늘 끝에 서 있는 우릴 한데 모아주신 주님
+선하신 손길로 보살펴 주시네
+당신 품 안에서 용서와 사랑 가르치신 주님
+아버지, 당신 같은 분은 없네
+
+이날은 주의 날
+기쁨과 웃음 가득한 우릴 이끌어 주신 당신을 찬양해
+우릴 살리신 주님
+내 마음에 당신의 집 세우시네
+
+주의 계절은, 사랑의 계절은
+이날부터 새날까지 이르리`
       }
     ]
   }

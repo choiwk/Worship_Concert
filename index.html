@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=37" rel="stylesheet"/>
+<link href="src/css/style.css?v=38" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -139,6 +139,19 @@
 <span class="ph-label">Setlist</span>
 <h2 class="ph-title">곡 리스트</h2>
 <p class="ph-hint">곡을 누르면 가사와 함께 묵상할 말씀을 볼 수 있어요</p>
+</div>
+<!-- 곡 전체 듣기 — 공연 순서대로 묶은 유튜브 재생목록 -->
+<div class="setlist-play-wrap">
+<a class="setlist-play" id="setlistPlay" href="#" target="_blank" rel="noopener noreferrer">
+<span class="setlist-play-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24"><use href="#icon-yt"/></svg>
+</span>
+<span class="setlist-play-text">
+<span class="setlist-play-title">곡 전체 듣기</span>
+<span class="setlist-play-sub" id="setlistPlaySub"></span>
+</span>
+<span class="setlist-play-go" aria-hidden="true">→</span>
+</a>
 </div>
 <!-- 곡 리스트 (src/js/songs.js 데이터로 렌더) -->
 <ul class="song-list" id="songList" aria-label="곡 리스트"></ul>
@@ -455,9 +468,9 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=37" defer></script>
-<script src="src/js/members.js?v=37" defer></script>
-<script src="src/js/app.js?v=37" defer></script>
+<script src="src/js/songs.js?v=38" defer></script>
+<script src="src/js/members.js?v=38" defer></script>
+<script src="src/js/app.js?v=38" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

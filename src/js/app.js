@@ -140,6 +140,16 @@ function renderSongList() {
   if (!ul) return;
   ul.innerHTML = '';
 
+  // 목록 맨 위 '곡 전체 듣기' — 곡 수는 데이터에서 그대로 가져온다
+  const play = document.getElementById('setlistPlay');
+  if (play) {
+    play.href = SETLIST_PLAYLIST;
+    play.setAttribute('aria-label',
+      '곡 전체 듣기 — 유튜브 재생목록 ' + SONGS.length + '곡 (새 탭에서 열림)');
+    document.getElementById('setlistPlaySub').textContent =
+      '유튜브 재생목록 · ' + SONGS.length + '곡';
+  }
+
   SONGS.forEach(song => {
     const li = _el('li', 'song-item');
 
@@ -179,7 +189,7 @@ function renderSongList() {
 
 /* 배지 종류. 곡 데이터의 tag 문자열을 여기서 한 번만 해석한다
    (예전에는 '대표곡' 비교가 세 곳에 흩어져 있어 이름을 바꾸면 빠뜨리기 쉬웠다) */
-const TAG_KIND = { '주제곡': 'lead', '기도': 'pray' };
+const TAG_KIND = { '주제곡': 'lead', '앵콜': 'encore', '기도': 'pray' };
 const tagKind = tag => TAG_KIND[tag] || 'pray';
 const isLeadSong = song => tagKind(song.tag) === 'lead';
 
