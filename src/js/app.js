@@ -896,40 +896,39 @@ function closeVerse() { closeOverlay('verse'); }
 
 
 /* ══════════════════════════════════
-   lp-player.js — 곡 소개 및 미리듣기
+   lp-player.js — 이번 공연의 주제곡
 
-   곡 리스트와 같은 SONGS 배열을 읽는다. 곡을 추가하면 여기도 함께 늘어난다.
+   예전에는 화살표로 14곡을 하나씩 넘겨 보는 장치였다. 그런데 바로 위
+   곡 목록이 이미 14곡을 한눈에 펼쳐 보여주고 있어서, 같은 내용을 더
+   느린 방법(14번째 곡에 가려면 화살표 13번)으로 반복하는 셈이었다.
+   지금은 주제곡 한 곡만 고정으로 세운다. '무엇이 이 공연의 중심인가'
+   는 목록이 말해 주지 못하는 정보다.
 ══════════════════════════════════ */
 
-// LP 라벨 색상 — 곡 수와 무관하게 순환시킨다.
-// 라벨 위에 흰 숫자가 올라가므로 대비 4.5:1을 넘기도록 어둡게 잡았다.
-const _LP_COLORS = ['#9c5044', '#4f6a5c', '#5c5877', '#8a6a41', '#43647b', '#7d5462',
-                    '#57724c', '#6e5b42', '#4f5c72', '#845244', '#6d5b47', '#4f5e49'];
-
-let _lpIndex = 0;
+// 라벨 색 — 흰 숫자가 올라가므로 대비 4.5:1 을 넘기도록 어둡게 잡았다
+const _LP_LABEL_COLOR = '#9c5044';
 
 function _updateLP() {
-  const song = SONGS[_lpIndex];
+  // tag 가 '주제곡' 인 곡. 없으면 첫 곡으로 물러선다.
+  const song = SONGS.find(isLeadSong) || SONGS[0];
   if (!song) return;
 
-  const color = _LP_COLORS[_lpIndex % _LP_COLORS.length];
   const label = document.getElementById('lpLabel');
   const name  = document.getElementById('lpTrackName');
-  const count = document.getElementById('lpTrackCount');
   const yt    = document.getElementById('lpYtLink');
   const disc  = document.getElementById('lpDisc');
 
   label.textContent = song.no;
   name.textContent  = song.title;
-  count.textContent = (_lpIndex + 1) + ' / ' + SONGS.length;
-  disc.style.setProperty('--lp-label-color', color);
+  disc.style.setProperty('--lp-label-color', _LP_LABEL_COLOR);
 
   // 디스크와 곡명을 누르면 해당 곡 상세로
   const go = () => { location.hash = '#/songs/' + song.slug; };
+  const openLabel = song.no + '번 ' + song.title + ' 가사와 말씀 보기';
   disc.onclick = go;
   name.onclick = go;
-  disc.setAttribute('aria-label', song.no + '번 ' + song.title + ' 가사와 말씀 보기');
-  name.setAttribute('aria-label', song.no + '번 ' + song.title + ' 가사와 말씀 보기');
+  disc.setAttribute('aria-label', openLabel);
+  name.setAttribute('aria-label', openLabel);
 
   // 유튜브 링크가 없는 곡은 버튼을 숨긴다 (빈 링크를 남기지 않는다)
   if (song.youtube) {
@@ -940,16 +939,6 @@ function _updateLP() {
     yt.hidden = true;
     yt.removeAttribute('href');
   }
-}
-
-function lpNext() {
-  _lpIndex = (_lpIndex + 1) % SONGS.length;
-  _updateLP();
-}
-
-function lpPrev() {
-  _lpIndex = (_lpIndex - 1 + SONGS.length) % SONGS.length;
-  _updateLP();
 }
 
 
