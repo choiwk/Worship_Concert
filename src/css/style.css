@@ -1201,10 +1201,37 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   text-align: center;
 }
 
+.lp-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 5vw, 28px);
+  margin-bottom: clamp(16px, 5vw, 24px);
+}
+
+.lp-arrow {
+  width: 46px; height: 46px;
+  border: 1px solid rgba(196, 168, 130, .35);
+  border-radius: 50%;
+  background: none;
+  font-size: 22px;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s, border-color .2s;
+  flex-shrink: 0;
+}
+.lp-arrow:active {
+  background: var(--paper-warm);
+  border-color: var(--line);
+}
+
 .lp-disc-wrap {
   width: clamp(140px, 38vw, 180px);
   height: clamp(140px, 38vw, 180px);
-  margin: 0 auto clamp(16px, 5vw, 24px);
+  flex-shrink: 0;
 }
 
 .lp-disc {
@@ -1291,9 +1318,18 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .lp-track-name:hover { color: var(--clay); text-decoration-color: var(--clay); }
 .lp-disc:focus-visible,
 .lp-track-name:focus-visible,
+.lp-arrow:focus-visible,
 .lp-yt-btn:focus-visible {
   outline: 2px solid var(--clay);
   outline-offset: 3px;
+}
+
+/* 트랙 카운터 */
+.lp-track-count {
+  font-size: clamp(14px, 3vw, 16px);
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  margin-bottom: clamp(14px, 4vw, 20px);
 }
 
 /* YouTube 버튼 */
@@ -1352,6 +1388,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 @media (max-width: 359px) {
   .lp-disc-wrap { width: 120px; height: 120px; }
+  .lp-arrow { width: 44px; height: 44px; font-size: 18px; }
 }
 
 

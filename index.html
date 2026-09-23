@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=40" rel="stylesheet"/>
+<link href="src/css/style.css?v=41" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -143,21 +143,24 @@
 <!-- 곡 리스트 (src/js/songs.js 데이터로 렌더) -->
 <ul class="song-list" id="songList" aria-label="곡 리스트"></ul>
 <div class="song-detail-section">
-<span class="detail-section-label">이번 공연의 주제곡</span>
-<!-- 주제곡 한 곡만 고정으로 보여준다.
-     곡을 훑는 일은 바로 위 목록이 이미 하고 있어서, 여기서는
-     14곡 중 무엇이 중심인지 — 목록에 없는 정보만 전한다. -->
+<span class="detail-section-label">곡 소개 및 미리듣기</span>
+<!-- LP 플레이어 -->
 <div class="lp-player">
+<div class="lp-controls">
+<button class="lp-arrow lp-prev" onclick="lpPrev()" aria-label="이전 곡">←</button>
 <div class="lp-disc-wrap">
-<button class="lp-disc" id="lpDisc">
+<button class="lp-disc" id="lpDisc" aria-label="이 곡의 가사와 말씀 보기">
 <span class="lp-label" id="lpLabel">01</span>
 </button>
 </div>
-<button class="lp-track-name" id="lpTrackName"></button>
+<button class="lp-arrow lp-next" onclick="lpNext()" aria-label="다음 곡">→</button>
+</div>
+<button class="lp-track-name" id="lpTrackName" aria-label="이 곡의 가사와 말씀 보기"></button>
+<p class="lp-track-count" id="lpTrackCount"></p>
 <div class="lp-actions">
 <a class="lp-yt-btn" id="lpYtLink" href="#" rel="noopener noreferrer" target="_blank">
 <svg fill="white" width="16" height="16" aria-hidden="true"><use href="#icon-yt"/></svg>
-<span id="lpYtText">주제곡 듣기</span>
+<span>YouTube에서 듣기</span>
 <span class="ext-mark" aria-hidden="true">→</span>
 </a>
 <!-- 공연 순서대로 묶은 유튜브 재생목록 — 위 버튼은 '이 곡', 이건 '전체' -->
@@ -461,9 +464,9 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=40" defer></script>
-<script src="src/js/members.js?v=40" defer></script>
-<script src="src/js/app.js?v=40" defer></script>
+<script src="src/js/songs.js?v=41" defer></script>
+<script src="src/js/members.js?v=41" defer></script>
+<script src="src/js/app.js?v=41" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
