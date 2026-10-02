@@ -425,16 +425,14 @@ const CONCERT = {
     { iso: '2026-12-19', short: '2026. 12. 19.', ko: '2026년 12월 19일', dow: '토요일' }
   ],
   time: {
-    text: '오후 8:00 ~ 9:30',
-    startUTC: 'T110000Z',   // KST 20:00
-    endUTC:   'T123000Z'    // KST 21:30
+    text: '오후 7:30 ~ 9:00',
+    startUTC: 'T103000Z',   // KST 19:30
+    endUTC:   'T120000Z'    // KST 21:00
   },
-  // 장소는 아직 두 곳 중 하나로 정해지는 중.
-  // 확정되면 venues 를 하나만 남기고 venueConfirmed 를 true 로 바꾸면 된다.
-  venueConfirmed: false,
+  // 장소 확정 완료
+  venueConfirmed: true,
   venues: [
-    { name: '향상교회 3층', address: '기흥구 언동로 140' },
-    { name: '은혜샘물교회 6층 체육관' }
+    { name: '향상교회 3층 체육관', address: '기흥구 언동로 140' }
   ]
 };
 
