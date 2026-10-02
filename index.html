@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=44" rel="stylesheet"/>
+<link href="src/css/style.css?v=45" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -430,7 +430,7 @@
      참여 신청 시트
 ════════════════════════════════ -->
 <div class="modal-backdrop" id="rsvpBackdrop" onclick="closeRsvp()"></div>
-<div class="rsvp-sheet" id="rsvpSheet" role="dialog" aria-modal="true" aria-labelledby="rsvpTitle">
+<div class="rsvp-modal" id="rsvpSheet" role="dialog" aria-modal="true" aria-labelledby="rsvpTitle">
 <div class="sheet-handle"></div>
 <button class="member-close" onclick="closeRsvp()" aria-label="닫기">
 <svg fill="none" height="14" stroke="currentColor" stroke-width="1.8" viewbox="0 0 14 14" width="14" aria-hidden="true">
@@ -439,9 +439,8 @@
 </svg>
 </button>
 <div class="rsvp-body">
-<p class="rsvp-label">Join us</p>
+<p class="rsvp-label" id="rsvpLabel">Join us</p>
 <h3 class="rsvp-title" id="rsvpTitle">참여 신청</h3>
-<p class="rsvp-intro">행사 준비를 위한 예상 참여 인원 파악을 목적으로 합니다.<br/>부담 없이 작성해 주세요.</p>
 
 <form class="rsvp-form" id="rsvpForm" novalidate>
 <div class="rsvp-field">
@@ -471,7 +470,7 @@
 <ul class="rsvp-consent-list">
 <li><b>수집 항목</b> 이름, 소속 교회, 남겨주신 이야기</li>
 <li><b>이용 목적</b> 공연 준비를 위한 예상 참여 인원 파악</li>
-<li><b>보유 기간</b> 2026년 12월 19일 공연이 끝나면 바로 지웁니다</li>
+<li><b>보유 기간</b> 공연이 끝나면 자동으로 삭제됩니다</li>
 </ul>
 <label class="rsvp-check">
 <input id="rsvpAgree" name="agree" type="checkbox"/>
@@ -529,9 +528,9 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=44" defer></script>
-<script src="src/js/members.js?v=44" defer></script>
-<script src="src/js/app.js?v=44" defer></script>
+<script src="src/js/songs.js?v=45" defer></script>
+<script src="src/js/members.js?v=45" defer></script>
+<script src="src/js/app.js?v=45" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

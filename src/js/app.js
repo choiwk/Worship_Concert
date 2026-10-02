@@ -994,6 +994,8 @@ function _rsvpReset() {
   if (!form || !done) return;
   form.hidden = false;
   done.hidden = true;
+  document.getElementById('rsvpLabel').hidden = false;
+  document.getElementById('rsvpTitle').textContent = '참여 신청';
   _rsvpError('');
   _rsvpBusy(false);
 }
@@ -1025,7 +1027,7 @@ async function _rsvpSubmit(e) {
   _rsvpError('');
 
   // 자동 프로그램이 채우는 함정 칸. 조용히 끝낸 척한다.
-  if (document.getElementById('rsvpWebsite').value) { _rsvpShowDone(); return; }
+  if (document.getElementById('rsvpWebsite').value) { _rsvpShowDone(document.getElementById('rsvpName').value.trim()); return; }
 
   const name    = document.getElementById('rsvpName').value.trim();
   const church  = document.getElementById('rsvpChurch').value.trim();
@@ -1065,7 +1067,7 @@ async function _rsvpSubmit(e) {
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     _rsvpStore('set');
-    _rsvpShowDone();
+    _rsvpShowDone(name);
   } catch (err) {
     console.error('[rsvp]', err);
     _rsvpError('신청을 보내지 못했어요. 인터넷 연결을 확인하고 다시 시도해주세요.');
@@ -1073,8 +1075,15 @@ async function _rsvpSubmit(e) {
   }
 }
 
-function _rsvpShowDone() {
+function _rsvpShowDone(name) {
   document.getElementById('rsvpForm').hidden = true;
+
+  // 하트 위쪽을 신청한 사람 이름으로 바꾼다 ('참여 신청' → '최원근님!')
+  if (name) {
+    document.getElementById('rsvpLabel').hidden = true;
+    document.getElementById('rsvpTitle').textContent = name + '님!';
+  }
+
   const done = document.getElementById('rsvpDone');
   done.hidden = false;
   requestAnimationFrame(() => done.querySelector('.rsvp-done-close').focus());
@@ -1168,6 +1177,59 @@ Object.keys(DRAG_SHEETS).forEach(id => {
 
   sheet.addEventListener('touchcancel', () => { dragging = false; reset(); }, { passive: true });
 });
+
+
+/* ── 참여 신청 창: 위쪽을 쓸어내려 닫기 ──────────────────────
+   창 안에 입력 칸이 많아 세로 스크롤이 생긴다. 그래서 아무 데나
+   잡아 끌면 글을 읽으려던 손짓까지 닫기로 먹힌다. 손잡이를 잡았거나
+   이미 맨 위까지 올라온 상태에서만 끌리게 했다.
+   가운데 정렬이라 끄는 동안 transform 에 translate(-50%, -50%) 를
+   유지해야 창이 좌상단으로 튀지 않는다. */
+(function () {
+  const modal = document.getElementById('rsvpSheet');
+  if (!modal) return;
+  const handle = modal.querySelector('.sheet-handle');
+
+  let startY = 0, lastY = 0, startT = 0, dragging = false;
+
+  const setY = y =>
+    modal.style.transform = 'translate(-50%, calc(-50% + ' + y + 'px)) scale(1)';
+  const reset = () => { modal.style.transition = ''; modal.style.transform = ''; };
+
+  modal.addEventListener('touchstart', e => {
+    if (!modal.classList.contains('open')) return;
+    const onHandle = handle && handle.contains(e.target);
+    if (!onHandle && modal.scrollTop > 0) return;   // 내용을 읽는 중이면 끌지 않는다
+    dragging = true;
+    startY = lastY = e.touches[0].clientY;
+    startT = Date.now();
+    modal.style.transition = 'none';
+  }, { passive: true });
+
+  modal.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    lastY = e.touches[0].clientY;
+    const dy = lastY - startY;
+    if (dy > 0) setY(dy);                            // 아래로만
+  }, { passive: true });
+
+  modal.addEventListener('touchend', () => {
+    if (!dragging) return;
+    dragging = false;
+    const dy = lastY - startY;
+    const v = dy / Math.max(1, Date.now() - startT);
+
+    modal.style.transition = '';
+    if (dy > DRAG_CLOSE_PX || v > DRAG_FLICK_V) {
+      modal.style.transform = '';
+      closeRsvp();
+    } else {
+      reset();
+    }
+  }, { passive: true });
+
+  modal.addEventListener('touchcancel', () => { dragging = false; reset(); }, { passive: true });
+})();
 
 
 /* ── Toast Notification ── */
