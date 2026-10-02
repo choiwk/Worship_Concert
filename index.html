@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=42" rel="stylesheet"/>
+<link href="src/css/style.css?v=43" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -107,7 +107,7 @@
 <!-- 날짜·시간·장소 (src/js/app.js 의 CONCERT 설정에서 렌더) -->
 <div class="detail-grid reveal" id="detailGrid"></div>
 <div class="ticket-cta reveal">
-<a class="btn-ticket" href="https://docs.google.com/forms/d/e/1FAIpQLScYEgEC8HKVn0-N3_Be30OrUZdydF5sLyx7sVFlAdy3X2GAUA/viewform?usp=publish-editor" rel="noopener" target="_blank">참여하기</a>
+<button class="btn-ticket" type="button" onclick="openRsvp()">참여하기</button>
 <button class="btn-secondary" onclick="addToCalendar()">캘린더에 추가</button>
 </div>
 </section>
@@ -426,6 +426,71 @@
 </div>
 </div>
 </div>
+<!-- ════════════════════════════════
+     참여 신청 시트
+════════════════════════════════ -->
+<div class="modal-backdrop" id="rsvpBackdrop" onclick="closeRsvp()"></div>
+<div class="rsvp-sheet" id="rsvpSheet" role="dialog" aria-modal="true" aria-labelledby="rsvpTitle">
+<div class="sheet-handle"></div>
+<button class="member-close" onclick="closeRsvp()" aria-label="닫기">
+<svg fill="none" height="14" stroke="currentColor" stroke-width="1.8" viewbox="0 0 14 14" width="14" aria-hidden="true">
+<line x1="1" x2="13" y1="1" y2="13"></line>
+<line x1="13" x2="1" y1="1" y2="13"></line>
+</svg>
+</button>
+<div class="rsvp-body">
+<p class="rsvp-label">Join us</p>
+<h3 class="rsvp-title" id="rsvpTitle">참여 신청</h3>
+<p class="rsvp-intro">행사 준비를 위한 예상 참여 인원 파악을 목적으로 합니다.<br/>부담 없이 작성해 주세요.</p>
+
+<form class="rsvp-form" id="rsvpForm" novalidate>
+<div class="rsvp-field">
+<label class="rsvp-flabel" for="rsvpName">이름 <span class="rsvp-req" aria-hidden="true">*</span></label>
+<input class="rsvp-input" id="rsvpName" name="name" type="text" maxlength="40" autocomplete="name" placeholder="이름을 입력해주세요" required=""/>
+</div>
+
+<div class="rsvp-field">
+<label class="rsvp-flabel" for="rsvpChurch">소속 교회</label>
+<input class="rsvp-input" id="rsvpChurch" name="church" type="text" maxlength="60" autocomplete="organization" placeholder="소속된 교회를 입력해주세요"/>
+</div>
+
+<div class="rsvp-field">
+<label class="rsvp-flabel" for="rsvpMessage">찬양 콘서트를 통해 기대하는 점 또는 한마디</label>
+<textarea class="rsvp-input rsvp-textarea" id="rsvpMessage" name="message" maxlength="500" rows="3" placeholder="기대하는 점이나 전하고 싶은 이야기를 자유롭게 남겨주세요"></textarea>
+<p class="rsvp-count"><span id="rsvpCount">0</span> / 500</p>
+</div>
+
+<!-- 사람 눈에는 안 보이는 함정 칸. 자동 프로그램만 여기를 채운다. -->
+<div class="rsvp-trap" aria-hidden="true">
+<label for="rsvpWebsite">홈페이지</label>
+<input id="rsvpWebsite" name="website" type="text" tabindex="-1" autocomplete="off"/>
+</div>
+
+<div class="rsvp-consent">
+<p class="rsvp-consent-title">개인정보 수집·이용 안내</p>
+<ul class="rsvp-consent-list">
+<li><b>수집 항목</b> 이름, 소속 교회, 남겨주신 이야기</li>
+<li><b>이용 목적</b> 공연 준비를 위한 예상 참여 인원 파악</li>
+<li><b>보유 기간</b> 2026년 12월 19일 공연이 끝나면 바로 지웁니다</li>
+</ul>
+<label class="rsvp-check">
+<input id="rsvpAgree" name="agree" type="checkbox"/>
+<span>위 내용에 동의합니다. 동의하지 않으셔도 공연에 오실 수 있어요.</span>
+</label>
+</div>
+
+<p class="rsvp-error" id="rsvpError" role="alert" hidden=""></p>
+<button class="rsvp-submit" id="rsvpSubmit" type="submit">신청하기</button>
+</form>
+
+<div class="rsvp-done" id="rsvpDone" hidden="">
+<p class="rsvp-done-mark" aria-hidden="true">♥</p>
+<p class="rsvp-done-title">신청이 접수되었어요</p>
+<p class="rsvp-done-text">12월 19일 토요일 저녁 7시 30분<br/>향상교회 3층 체육관에서 만나요</p>
+<button class="rsvp-done-close" type="button" onclick="closeRsvp()">닫기</button>
+</div>
+</div>
+</div>
 <!-- Donate Modal -->
 <div class="modal-backdrop" id="donateBackdrop" onclick="closeDonate()"></div>
 <div class="donate-modal" id="donateModal" role="dialog" aria-modal="true" aria-label="후원하기">
@@ -464,9 +529,9 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=42" defer></script>
-<script src="src/js/members.js?v=42" defer></script>
-<script src="src/js/app.js?v=42" defer></script>
+<script src="src/js/songs.js?v=43" defer></script>
+<script src="src/js/members.js?v=43" defer></script>
+<script src="src/js/app.js?v=43" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

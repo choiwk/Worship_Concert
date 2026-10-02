@@ -1,11 +1,11 @@
-const CACHE_NAME = 'worship-concert-v42';
+const CACHE_NAME = 'worship-concert-v43';
 const ASSETS = [
   './',
   './index.html',
-  './src/css/style.css?v=42',
-  './src/js/app.js?v=42',
-  './src/js/songs.js?v=42',
-  './src/js/members.js?v=42',
+  './src/css/style.css?v=43',
+  './src/js/app.js?v=43',
+  './src/js/songs.js?v=43',
+  './src/js/members.js?v=43',
   './manifest.json',
   './public/fonts/Sarang-site.woff2',
   './public/audio/bgm.mp3',
@@ -50,6 +50,11 @@ self.addEventListener('activate', (e) => {
 //  · HTML: 네트워크 우선 — 새 배포의 ?v= 버전을 즉시 알아야 하므로
 //  · 나머지: 캐시 우선 (URL에 ?v= 가 붙어 있어 갱신 시 키가 바뀐다)
 self.addEventListener('fetch', (e) => {
+  // GET 이 아니거나 바깥 도메인으로 나가는 요청은 손대지 않는다.
+  // 참여 신청 POST 가 캐시에 잡히면 두 번째 신청부터 서버에 닿지 않는다.
+  if (e.request.method !== 'GET') return;
+  if (new URL(e.request.url).origin !== self.location.origin) return;
+
   const isHTML = e.request.mode === 'navigate' ||
                  (e.request.headers.get('accept') || '').includes('text/html');
 

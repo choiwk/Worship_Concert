@@ -753,7 +753,8 @@ const OVERLAYS = {
   share:  { backdrop: 'modalBackdrop',  panel: 'shareSheet'  },
   donate: { backdrop: 'donateBackdrop', panel: 'donateModal' },
   verse:  { backdrop: 'verseBackdrop',  panel: 'verseModal'  },
-  member: { backdrop: 'memberBackdrop', panel: 'memberSheet'  }
+  member: { backdrop: 'memberBackdrop', panel: 'memberSheet'  },
+  rsvp:   { backdrop: 'rsvpBackdrop',   panel: 'rsvpSheet'   }
 };
 
 let _openOverlays = [];   // 여러 개가 겹쳐도 스크롤 잠금이 어긋나지 않게 스택으로
@@ -832,8 +833,8 @@ document.addEventListener('keydown', (e) => {
 
   const top = OVERLAYS[_openOverlays[_openOverlays.length - 1]];
   const panel = document.getElementById(top.panel);
-  const items = [...panel.querySelectorAll('button, a[href]')]
-    .filter(el => el.offsetParent !== null && !el.hidden);
+  const items = [...panel.querySelectorAll('button, a[href], input, textarea, select')]
+    .filter(el => el.offsetParent !== null && !el.hidden && el.tabIndex !== -1);
   if (!items.length) return;
 
   const first = items[0], last = items[items.length - 1];
@@ -948,6 +949,143 @@ function lpNext() {
 function lpPrev() {
   _lpIndex = (_lpIndex - 1 + SONGS.length) % SONGS.length;
   _updateLP();
+}
+
+
+/* ══════════════════════════════════
+   rsvp.js — 참여 신청
+
+   ┌─ 설정 ──────────────────────────────────────────────────┐
+   │ Supabase 프로젝트를 만든 뒤 아래 두 줄만 채우면 된다.      │
+   │   url  프로젝트 URL   (https://xxxxxxxx.supabase.co)     │
+   │   key  anon public 키                                    │
+   │                                                          │
+   │ 이 키는 공개 저장소에 올라간다. 그래도 되는 이유는        │
+   │ 테이블에 '쓰기만 허용, 읽기 없음' 규칙(RLS)을 걸기        │
+   │ 때문이다. 즉 이 키로는 신청만 넣을 수 있고 신청자 명단을  │
+   │ 꺼내 볼 수 없다. 명단은 Supabase 관리자 화면에서만 본다.  │
+   │ 반대로 service_role 키는 절대 여기 넣으면 안 된다.        │
+   └──────────────────────────────────────────────────────────┘ */
+
+const RSVP = {
+  url:   '',        // 예: 'https://abcdefgh.supabase.co'
+  key:   '',        // anon public 키
+  table: 'rsvp'
+};
+
+// 같은 사람이 실수로 연속해 누르는 것만 막는다 (초)
+const RSVP_COOLDOWN = 30;
+
+function openRsvp() {
+  _rsvpReset();
+  openOverlay('rsvp');
+  requestAnimationFrame(() => {
+    const el = document.getElementById('rsvpName');
+    if (el) el.focus();
+  });
+}
+
+function closeRsvp() { closeOverlay('rsvp'); }
+
+/** 시트를 열 때마다 처음 상태로 — 완료 화면이 남아 있지 않게 */
+function _rsvpReset() {
+  const form = document.getElementById('rsvpForm');
+  const done = document.getElementById('rsvpDone');
+  if (!form || !done) return;
+  form.hidden = false;
+  done.hidden = true;
+  _rsvpError('');
+  _rsvpBusy(false);
+}
+
+function _rsvpError(msg) {
+  const el = document.getElementById('rsvpError');
+  if (!el) return;
+  el.textContent = msg || '';
+  el.hidden = !msg;
+}
+
+function _rsvpBusy(on) {
+  const btn = document.getElementById('rsvpSubmit');
+  if (!btn) return;
+  btn.disabled = on;
+  btn.textContent = on ? '보내는 중…' : '신청하기';
+}
+
+/** 글자 수 표시 */
+function _rsvpBindCount() {
+  const ta = document.getElementById('rsvpMessage');
+  const out = document.getElementById('rsvpCount');
+  if (!ta || !out) return;
+  ta.addEventListener('input', () => { out.textContent = ta.value.length; });
+}
+
+async function _rsvpSubmit(e) {
+  e.preventDefault();
+  _rsvpError('');
+
+  // 자동 프로그램이 채우는 함정 칸. 조용히 끝낸 척한다.
+  if (document.getElementById('rsvpWebsite').value) { _rsvpShowDone(); return; }
+
+  const name    = document.getElementById('rsvpName').value.trim();
+  const church  = document.getElementById('rsvpChurch').value.trim();
+  const message = document.getElementById('rsvpMessage').value.trim();
+  const agree   = document.getElementById('rsvpAgree').checked;
+
+  if (!name)            { _rsvpError('이름을 입력해주세요.'); document.getElementById('rsvpName').focus(); return; }
+  if (name.length > 40) { _rsvpError('이름이 너무 깁니다.');   document.getElementById('rsvpName').focus(); return; }
+  if (!agree)           { _rsvpError('개인정보 수집·이용에 동의해주세요.'); document.getElementById('rsvpAgree').focus(); return; }
+
+  // 연속 전송 막기
+  const last = Number(_rsvpStore('get') || 0);
+  const left = RSVP_COOLDOWN - Math.floor((Date.now() - last) / 1000);
+  if (last && left > 0) { _rsvpError('방금 신청하셨어요. ' + left + '초 뒤에 다시 시도해주세요.'); return; }
+
+  if (!RSVP.url || !RSVP.key) {
+    _rsvpError('아직 신청 받을 준비가 되지 않았어요. 잠시 뒤 다시 시도해주세요.');
+    console.warn('[rsvp] RSVP.url / RSVP.key 가 비어 있습니다. src/js/app.js 의 RSVP 설정을 채워주세요.');
+    return;
+  }
+
+  _rsvpBusy(true);
+  try {
+    const res = await fetch(RSVP.url.replace(/\/+$/, '') + '/rest/v1/' + RSVP.table, {
+      method: 'POST',
+      headers: {
+        'apikey': RSVP.key,
+        'Authorization': 'Bearer ' + RSVP.key,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        name: name,
+        church: church || null,
+        message: message || null
+      })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    _rsvpStore('set');
+    _rsvpShowDone();
+  } catch (err) {
+    console.error('[rsvp]', err);
+    _rsvpError('신청을 보내지 못했어요. 인터넷 연결을 확인하고 다시 시도해주세요.');
+    _rsvpBusy(false);
+  }
+}
+
+function _rsvpShowDone() {
+  document.getElementById('rsvpForm').hidden = true;
+  const done = document.getElementById('rsvpDone');
+  done.hidden = false;
+  requestAnimationFrame(() => done.querySelector('.rsvp-done-close').focus());
+}
+
+/** 마지막 신청 시각 — 저장이 막혀 있어도(사생활 보호 모드) 터지지 않게 감싼다 */
+function _rsvpStore(mode) {
+  try {
+    if (mode === 'set') { localStorage.setItem('rsvp-last', String(Date.now())); return null; }
+    return localStorage.getItem('rsvp-last');
+  } catch (e) { return null; }
 }
 
 
@@ -1118,6 +1256,8 @@ renderFinaleDate();
 renderMembers();
 renderSongList();
 _updateLP();
+_rsvpBindCount();
+document.getElementById('rsvpForm').addEventListener('submit', _rsvpSubmit);
 updateDday();
 setInterval(updateDday, 60000);
 route();
