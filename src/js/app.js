@@ -968,8 +968,8 @@ function lpPrev() {
    └──────────────────────────────────────────────────────────┘ */
 
 const RSVP = {
-  url:   '',        // 예: 'https://abcdefgh.supabase.co'
-  key:   '',        // anon public 키
+  url:   'https://kjlaluzoeygsqojnioce.supabase.co',
+  key:   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtqbGFsdXpvZXlnc3Fvam5pb2NlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NDU1NDgsImV4cCI6MjEwNjUyMTU0OH0.3x7k6VygIw7JSMcP4MhKP0NKuJ4J48Vzs64SU3Uz6Vg',
   table: 'rsvp'
 };
 
