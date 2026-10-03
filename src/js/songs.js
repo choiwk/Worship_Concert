@@ -49,7 +49,7 @@ const SONGS = [
     slug: '01',
     title: '하나님이 너를 엄청 사랑하신대',
     tag: null,
-    youtube: 'https://youtu.be/rSRm_no1hqk?si=78jhGhVMjWUNuU9y',
+    youtube: 'https://youtu.be/Fxtmq-1tipo?si=qaVhzjxqfrN6tKuU',
     parts: [
       {
         lyrics: `하나님이 너를 엄청 사랑하신대
@@ -66,13 +66,15 @@ const SONGS = [
 그저 두지 않으실거래`
       }
     ]
-  },
+  }
+,
+
   {
     no: '02',
     slug: '02',
     title: '주를 바라보며 / 주를 찾는 모든 자들이',
     tag: null,
-    youtube: 'https://youtu.be/bgdU5_BbACM?si=yqVUuw1jRkxm0iQt',
+    youtube: 'https://youtu.be/bgdU5_BbACM?si=YKqGbKfV1RXgJtSq',
     parts: [
       {
         label: '주를 바라보며',
@@ -110,14 +112,15 @@ const SONGS = [
         ])
       }
     ]
-  },
+  }
+,
 
   {
     no: '03',
     slug: '03',
     title: '주와 함께 걸어가네',
     tag: null,
-    youtube: 'https://youtu.be/ApHcXxQPSC4?si=hbOrl6qfFHUpLCAu',
+    youtube: 'https://youtu.be/H56xVRKQ2Ag?si=NGX8c_vy2BCeGtwZ',
     parts: [
       {
         lyrics: `어둠이 무너지고
@@ -153,14 +156,15 @@ const SONGS = [
         ], '42장 1-6절 발췌')
       }
     ]
-  },
+  }
+,
 
   {
     no: '04',
     slug: '04',
     title: '길을 찾는 너를 위해',
     tag: null,
-    youtube: 'https://youtu.be/S-gNwMSxX3w?si=YXIUD5KBegfsV0fd',
+    youtube: 'https://youtu.be/3RbST8rkuao?si=svRVkU50dgOHg9tF',
     parts: [
       {
         lyrics: `우리 걸어가는 삶 속에 갈림길이 있어도
@@ -181,17 +185,17 @@ const SONGS = [
         ])
       }
     ]
-  },
+  }
+,
 
   {
     no: '05',
     slug: '05',
-    title: '온 땅의 주인 Who am I / 비 준비하시니',
+    title: '온 땅의 주인',
     tag: null,
-    youtube: 'https://youtu.be/_FhX--lQQXQ?si=l9SSoqm3XC8D7kNJ',
+    youtube: 'https://youtu.be/wFooiln1gIc?si=hgJJet7VKzWS1b3G',
     parts: [
       {
-        label: '온 땅의 주인 Who am I',
         lyrics: `온 땅의 주인 되신 주님이
 내 이름 아시며 상한 맘 돌보네
 어둠을 밝히시는 새벽 별
@@ -211,11 +215,21 @@ const SONGS = [
 내 영혼의 폭풍 고요케 하시네
 나로 인함이 아닌 주가 행하신 일로
 나의 행함이 아닌 오직 주로 인하여`
-      },
+      }
+    ]
+  }
+,
+
+  {
+    no: '06',
+    slug: '06',
+    title: '비 준비하시니',
+    tag: null,
+    // 앞 곡(05 온 땅의 주인)에서 끊지 않고 이어 부른다 — 후렴만
+    segue: { note: '후렴만' },
+    youtube: 'https://youtu.be/95vtJk3nEOQ?si=QQ92TiSVGPItSJGi&t=448',
+    parts: [
       {
-        label: '비 준비하시니',
-        // 앞 파트에서 이어 부르되 후렴만 — 라벨 옆에 꼬리표로 붙는다
-        note: '후렴만',
         lyrics: `예루살렘아
 여호와를 찬송할지어다
 네 하나님을
@@ -223,14 +237,15 @@ const SONGS = [
 주 임재 앞에 경배해`
       }
     ]
-  },
+  }
+,
 
   {
-    no: '06',
-    slug: '06',
+    no: '07',
+    slug: '07',
     title: '주 예수 나의 산 소망',
     tag: null,
-    youtube: 'https://youtu.be/pck5Q6CXQNg?si=_gLhV5OlrHCNxU5Z',
+    youtube: 'https://youtu.be/jt2qxbrexwg?si=-HLwd8TUZlrO87Ba',
     parts: [
       {
         lyrics: `닿을 수 없고 오를 수 없네
@@ -267,56 +282,56 @@ const SONGS = [
         ])
       }
     ]
-  },
-
-  {
-    no: '07',
-    slug: '07',
-    title: '사랑 중에 사랑',
-    artist: 'WELOVE',
-    tag: null,
-    youtube: null,
-    parts: [
-      {
-        lyrics: `지쳐 포기하고 싶을 때
-혼자 뒤쳐진 것만 같고
-울 힘조차 없을 때
-
-세상의 소리가 들리네
-사랑받을 자격 없다고
-너는 할 수 없다고
-
-예수 사랑 중에 사랑
-오늘 우리 가운데 오셔
-우릴 안아주시네
-
-하늘의 소리가 들리네
-나의 사랑하는 자들아
-일어나 함께 가자
-
-예수 십자가 무덤 지나
-승리하셨네
-예수 영원한 나의 사랑
-날 사랑하시네
-
-사랑 두려운 것 없네
-사랑 날 자유케 하네
-그 사랑 지금 우리 가운데`,
-        bible: bibleRef('이사야 40장 29-31절', 'ISA.40.29-31', [
-          [29, '피곤한 자에게는 능력을 주시며 무능한 자에게는 힘을 더하시나니'],
-          [30, '소년이라도 피곤하며 곤비하며 장정이라도 넘어지며 자빠지되'],
-          [31, '오직 여호와를 앙망하는 자는 새 힘을 얻으리니 독수리의 날개치며 올라감 같을 것이요 달음박질하여도 곤비치 아니하겠고 걸어가도 피곤치 아니하리로다']
-        ])
-      }
-    ]
-  },
+  }
+,
 
   {
     no: '08',
     slug: '08',
+    title: '하나님께서 세상을 사랑하사',
+    tag: null,
+    youtube: 'https://youtu.be/-n24d45myCg?si=WQ2MzZIECBkxWQTt',
+    parts: [
+      {
+        lyrics: `하늘보다 높으신 주 사랑
+바다보다 넓으신 주 사랑
+나를 향한 크고 높으신 사랑
+헛되고 헛된 그 모든 것
+내게서 멀리 거두셨네
+나의 수치 찬양 되었네
+하늘보다 높으신 주 사랑
+바다보다 넓으신 주 사랑
+나를 향한 크고 높으신 사랑
+헛되고 헛된 그 모든 것
+내게서 멀리 거두셨네
+나의 수치 찬양 되었네
+영원히 감사드리리
+주님의 그 은혜
+나 찾아주신 그 사랑
+오 주님의 전부 사랑해요
+경배해요 나 주 위해 살리
+영원토록 신실하신
+주 사랑을 전하리
+
+하나님께서 세상을 사랑하사
+독생자를 주셨으니 믿는자는
+영생을 얻으리
+난 믿네
+다시 사신 독생자`,
+        bible: bibleRef('요한복음 3장 16절', 'JHN.3.16', [
+          [16, '하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니 이는 저를 믿는 자마다 멸망치 않고 영생을 얻게 하려 하심이니라']
+        ])
+      }
+    ]
+  }
+,
+
+  {
+    no: '09',
+    slug: '09',
     title: '주님의 선하심',
     tag: null,
-    youtube: 'https://youtu.be/ErqijpGQmO4?si=SwmgSPSmYlqGi2Tp',
+    youtube: 'https://youtu.be/ErqijpGQmO4?si=gdO3-cREdzZYjZlA',
     parts: [
       {
         lyrics: `사랑해요 신실하신 나의 주님
@@ -342,14 +357,15 @@ const SONGS = [
         ])
       }
     ]
-  },
+  }
+,
 
   {
-    no: '09',
-    slug: '09',
+    no: '10',
+    slug: '10',
     title: '우리가 서로 사랑하자',
     tag: '주제곡',
-    youtube: 'https://youtu.be/OiICN75Oqv4?si=CCFxNAhGZgmCX_Sr',
+    youtube: 'https://youtu.be/5RGMkWIFrmU?si=cqChPScfN8B_UMBz',
     parts: [
       {
         lyrics: `여기 모인 우리 모두가
@@ -372,17 +388,18 @@ const SONGS = [
         ])
       }
     ]
-  },
+  }
+,
 
   {
-    no: '10',
-    slug: '10',
+    no: '11',
+    slug: '11',
     title: '우리 살아가는 모든 날들이',
     tag: null,
     // 앞 곡(09 우리가 서로 사랑하자)에서 끊지 않고 그대로 이어 부른다.
     // 리스트에서는 두 줄 사이에 연결선이, 곡 상세에는 안내가 붙는다.
     segue: { note: '후렴만' },
-    youtube: 'https://youtu.be/LumqOmVvOos?si=jV9PfBLMkq1JYvbF',
+    youtube: 'https://youtu.be/-xZZhbVnm_Q?si=lFN-Vj4wKBFrI_8U',
     parts: [
       {
         lyrics: `우리 살아가는 모든 날들이
@@ -399,14 +416,15 @@ const SONGS = [
         ])
       }
     ]
-  },
+  }
+,
 
   {
-    no: '11',
-    slug: '11',
+    no: '12',
+    slug: '12',
     title: '친구여 함께 노래해',
     tag: null,
-    youtube: 'https://youtu.be/hvlWFoK56dg?si=ULgmhWfGlWqaBPjZ',
+    youtube: 'https://youtu.be/xs1G1mJS_Vw?si=Lr28L_if_jqTEbFE',
     parts: [
       {
         lyrics: `아직 우린 여기에서 기다려
@@ -434,15 +452,16 @@ const SONGS = [
         ])
       }
     ]
-  },
+  }
+,
 
   {
-    no: '12',
-    slug: '12',
+    no: '13',
+    slug: '13',
     title: '달리기',
     artist: '웨이홈',
     tag: null,
-    youtube: 'https://youtu.be/4C3ySqA2A3U?si=aO_j2tVtH4fde2kk',
+    youtube: 'https://youtu.be/wmS1Ng_71Jc?si=2GzHQVeer9jjtXow',
     parts: [
       {
         lyrics: `다시 숨을 고르고 거칠은 이 길을 달리기
@@ -471,14 +490,15 @@ const SONGS = [
 나의 주님께 달리기`
       }
     ]
-  },
+  }
+,
 
   {
-    no: '13',
-    slug: '13',
+    no: '14',
+    slug: '14',
     title: '우리가 주를 더욱 사랑하고',
     tag: null,
-    youtube: 'https://youtu.be/aZKVBRA_hAg?si=9M3-gqaDvw3JNaZC',
+    youtube: 'https://youtu.be/AEQAG9uoEJ0?si=cEHveIq1wNf6msdI',
     parts: [
       {
         lyrics: `한 사랑 우리게 찾아왔네
@@ -506,15 +526,16 @@ const SONGS = [
 주 사랑만이 이곳에 가득해`
       }
     ]
-  },
+  }
+,
 
   {
-    no: '14',
-    slug: '14',
+    no: '15',
+    slug: '15',
     title: '사랑의 계절',
     artist: 'WELOVE',
     tag: '앵콜',
-    youtube: 'https://youtu.be/2wR4g_C1KsA?si=x4k_urYl_BjGdqhN',
+    youtube: 'https://youtu.be/ufkYcQsrt4c?si=_UbjZcLl8FIac88G',
     parts: [
       {
         lyrics: `하늘 끝에 서 있는 우릴 한데 모아주신 주님
