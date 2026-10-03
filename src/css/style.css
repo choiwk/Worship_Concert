@@ -1247,6 +1247,36 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   paint-order: stroke fill;
 }
 
+/* 접힌 뒷부분 — 높이를 재서 px 로 펼친다.
+   max-height 를 큰 값으로 고정하면 글 길이에 따라 속도가 들쭉날쭉해진다. */
+.setlist-note-rest {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height .42s cubic-bezier(.32, 0, .18, 1), opacity .3s;
+}
+.setlist-note-rest.open { opacity: 1; }
+.setlist-note-rest .setlist-note-body:first-child { margin-top: clamp(12px, 3.5vw, 16px); }
+
+.setlist-note-toggle {
+  display: block;
+  margin: clamp(14px, 4vw, 18px) auto 0;
+  min-height: 44px;
+  padding: 10px 22px;
+  background: transparent;
+  border: 1px solid var(--clay-wash);
+  border-radius: 999px;
+  font-size: clamp(13px, 3.4vw, 15px);
+  color: var(--clay);
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.setlist-note-toggle:hover { background: var(--paper); border-color: var(--clay); }
+
+@media (prefers-reduced-motion: reduce) {
+  .setlist-note-rest { transition: none; }
+}
+
 .song-detail-section {
   padding: clamp(28px, 8vw, 40px) clamp(16px, 5.5vw, 28px) 0;
   background: var(--paper);

@@ -989,6 +989,50 @@ function lpPrev() {
 
 
 /* ══════════════════════════════════
+   setlist-note.js — 콘티 한마디 접기/펼치기
+
+   글이 다섯 문단이라 그대로 두면 곡 목록과 미리듣기 사이가 멀어진다.
+   앞 두 문단(주제곡이 무엇이고 왜 그렇게 정했는지)만 보여 주고
+   나머지는 눌러서 펼친다.
+
+   페이지 안에 또 스크롤 상자를 두는 방법도 있었지만, 이미 세로로
+   스크롤되는 화면 안에서 손가락이 어느 쪽을 움직일지 헷갈린다.
+   그래서 펼치는 쪽을 골랐다.
+══════════════════════════════════ */
+
+function toggleSetlistNote() {
+  const box = document.getElementById('setlistNoteRest');
+  const btn = document.getElementById('setlistNoteToggle');
+  if (!box || !btn) return;
+
+  const opening = !box.classList.contains('open');
+
+  if (opening) {
+    box.classList.add('open');
+    box.style.maxHeight = box.scrollHeight + 'px';
+    // 다 펼쳐지면 고정 높이를 풀어 준다. 그래야 화면을 돌리거나
+    // 글자 크기가 바뀌어도 잘리지 않는다.
+    box.addEventListener('transitionend', function done(e) {
+      if (e.propertyName !== 'max-height') return;
+      box.style.maxHeight = 'none';
+      box.removeEventListener('transitionend', done);
+    });
+  } else {
+    // none 상태에서는 바로 0 으로 보내도 애니메이션이 걸리지 않는다.
+    // 지금 높이를 px 로 한 번 고정한 뒤 접는다.
+    box.style.maxHeight = box.scrollHeight + 'px';
+    requestAnimationFrame(() => {
+      box.classList.remove('open');
+      box.style.maxHeight = '0px';
+    });
+  }
+
+  btn.textContent = opening ? '접기' : '더 읽기';
+  btn.setAttribute('aria-expanded', String(opening));
+}
+
+
+/* ══════════════════════════════════
    rsvp.js — 참여 신청
 
    ┌─ 설정 ──────────────────────────────────────────────────┐
