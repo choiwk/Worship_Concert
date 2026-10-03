@@ -177,7 +177,7 @@ function renderSongList() {
     subs.forEach(part => {
       const sub = _el('span', 'song-sub');
       sub.appendChild(_el('span', 'song-sub-title', part.label));
-      if (part.note) sub.appendChild(_el('span', 'song-sub-note', part.note));
+      if (part.note) sub.appendChild(_el('span', 'song-sub-note', '(' + part.note + ')'));
       mid.appendChild(sub);
     });
 
@@ -271,7 +271,7 @@ function renderSongDetail(slug) {
     if (part.label) {
       const h = _el('h2', 'song-part-label', part.label);
       // '후렴만' 처럼 그 파트를 어떻게 부르는지 — 제목 옆 꼬리표로
-      if (part.note) h.appendChild(_el('span', 'song-part-note', part.note));
+      if (part.note) h.appendChild(_el('span', 'song-part-note', '(' + part.note + ')'));
       sec.appendChild(h);
       // 이어 부르는 곡은 자기 영상이 따로 있다. 위 큰 버튼은 첫 곡 것이라
       // 여기서 따로 걸어 준다.

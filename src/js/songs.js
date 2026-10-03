@@ -215,7 +215,7 @@ const SONGS = [
       },
       {
         label: '비 준비하시니',
-        note: '후렴만',
+        note: '후렴',
         youtube: 'https://youtu.be/95vtJk3nEOQ?si=QQ92TiSVGPItSJGi&t=448',
         lyrics: `예루살렘아
 여호와를 찬송할지어다
@@ -373,7 +373,7 @@ const SONGS = [
       },
       {
         label: '우리 살아가는 모든 날들이',
-        note: '후렴만',
+        note: '후렴',
         youtube: 'https://youtu.be/-xZZhbVnm_Q?si=lFN-Vj4wKBFrI_8U',
         lyrics: `우리 살아가는 모든 날들이
 다 주의 숨결 속에 지어졌으니
