@@ -285,7 +285,12 @@ function renderSongDetail(slug) {
   song.parts.forEach((part, i) => {
     const sec = _el('section', 'song-part');
 
-    if (part.label) sec.appendChild(_el('h2', 'song-part-label', part.label));
+    if (part.label) {
+      const h = _el('h2', 'song-part-label', part.label);
+      // '후렴만' 처럼 그 파트를 어떻게 부르는지 — 제목 옆 꼬리표로
+      if (part.note) h.appendChild(_el('span', 'song-part-note', part.note));
+      sec.appendChild(h);
+    }
     else if (i === 0) sec.appendChild(_el('h2', 'song-part-label sr-only', '가사'));
 
     sec.appendChild(_el('p', 'song-lyrics', part.lyrics));

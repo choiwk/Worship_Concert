@@ -1551,6 +1551,20 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   word-break: keep-all;
 }
 
+/* 파트 이름 옆 꼬리표 — '후렴만' 처럼 그 대목을 어떻게 부르는지.
+   09↔10 의 이어 부름 꼬리표와 같은 모양으로 맞춰 둔다. */
+.song-part-note {
+  display: inline-block;
+  margin-left: 9px;
+  padding: 2px 9px 3px;
+  border: 1px solid var(--clay-wash);
+  border-radius: 999px;
+  font-size: clamp(11px, 2.8vw, 13px);
+  color: var(--ink-soft);
+  vertical-align: middle;
+  -webkit-text-stroke: 0;
+}
+
 .song-head .song-badge { display: inline-block; margin-top: 4px; }
 
 /* ── 유튜브 버튼 — 제목 바로 아래, 가사 시작 전 ── */
