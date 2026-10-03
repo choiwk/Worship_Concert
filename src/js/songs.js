@@ -66,8 +66,7 @@ const SONGS = [
 그저 두지 않으실거래`
       }
     ]
-  }
-,
+  },
 
   {
     no: '02',
@@ -112,8 +111,7 @@ const SONGS = [
         ])
       }
     ]
-  }
-,
+  },
 
   {
     no: '03',
@@ -156,8 +154,7 @@ const SONGS = [
         ], '42장 1-6절 발췌')
       }
     ]
-  }
-,
+  },
 
   {
     no: '04',
@@ -185,17 +182,17 @@ const SONGS = [
         ])
       }
     ]
-  }
-,
+  },
 
   {
     no: '05',
     slug: '05',
-    title: '온 땅의 주인',
+    title: '온 땅의 주인 / 비 준비하시니',
     tag: null,
     youtube: 'https://youtu.be/wFooiln1gIc?si=hgJJet7VKzWS1b3G',
     parts: [
       {
+        label: '온 땅의 주인',
         lyrics: `온 땅의 주인 되신 주님이
 내 이름 아시며 상한 맘 돌보네
 어둠을 밝히시는 새벽 별
@@ -215,21 +212,11 @@ const SONGS = [
 내 영혼의 폭풍 고요케 하시네
 나로 인함이 아닌 주가 행하신 일로
 나의 행함이 아닌 오직 주로 인하여`
-      }
-    ]
-  }
-,
-
-  {
-    no: '06',
-    slug: '06',
-    title: '비 준비하시니',
-    tag: null,
-    // 앞 곡(05 온 땅의 주인)에서 끊지 않고 이어 부른다 — 후렴만
-    segue: { note: '후렴만' },
-    youtube: 'https://youtu.be/95vtJk3nEOQ?si=QQ92TiSVGPItSJGi&t=448',
-    parts: [
+      },
       {
+        label: '비 준비하시니',
+        note: '후렴만',
+        youtube: 'https://youtu.be/95vtJk3nEOQ?si=QQ92TiSVGPItSJGi&t=448',
         lyrics: `예루살렘아
 여호와를 찬송할지어다
 네 하나님을
@@ -237,12 +224,11 @@ const SONGS = [
 주 임재 앞에 경배해`
       }
     ]
-  }
-,
+  },
 
   {
-    no: '07',
-    slug: '07',
+    no: '06',
+    slug: '06',
     title: '주 예수 나의 산 소망',
     tag: null,
     youtube: 'https://youtu.be/jt2qxbrexwg?si=-HLwd8TUZlrO87Ba',
@@ -282,12 +268,11 @@ const SONGS = [
         ])
       }
     ]
-  }
-,
+  },
 
   {
-    no: '08',
-    slug: '08',
+    no: '07',
+    slug: '07',
     title: '하나님께서 세상을 사랑하사',
     tag: null,
     youtube: 'https://youtu.be/-n24d45myCg?si=WQ2MzZIECBkxWQTt',
@@ -323,12 +308,11 @@ const SONGS = [
         ])
       }
     ]
-  }
-,
+  },
 
   {
-    no: '09',
-    slug: '09',
+    no: '08',
+    slug: '08',
     title: '주님의 선하심',
     tag: null,
     youtube: 'https://youtu.be/ErqijpGQmO4?si=gdO3-cREdzZYjZlA',
@@ -357,17 +341,17 @@ const SONGS = [
         ])
       }
     ]
-  }
-,
+  },
 
   {
-    no: '10',
-    slug: '10',
-    title: '우리가 서로 사랑하자',
+    no: '09',
+    slug: '09',
+    title: '우리가 서로 사랑하자 / 우리 살아가는 모든 날들이',
     tag: '주제곡',
     youtube: 'https://youtu.be/5RGMkWIFrmU?si=cqChPScfN8B_UMBz',
     parts: [
       {
+        label: '우리가 서로 사랑하자',
         lyrics: `여기 모인 우리 모두가
 마음 열어 서로를 사랑하고
 서로를 돌아보며 주의 사랑을
@@ -386,22 +370,11 @@ const SONGS = [
           [7, '사랑하는 자들아 우리가 서로 사랑하자 사랑은 하나님께 속한것이니 사랑하는 자마다 하나님께로 나서 하나님을 알고'],
           [8, '사랑하지 아니하는 자는 하나님을 알지 못하나니 이는 하나님은 사랑이심이라']
         ])
-      }
-    ]
-  }
-,
-
-  {
-    no: '11',
-    slug: '11',
-    title: '우리 살아가는 모든 날들이',
-    tag: null,
-    // 앞 곡(09 우리가 서로 사랑하자)에서 끊지 않고 그대로 이어 부른다.
-    // 리스트에서는 두 줄 사이에 연결선이, 곡 상세에는 안내가 붙는다.
-    segue: { note: '후렴만' },
-    youtube: 'https://youtu.be/-xZZhbVnm_Q?si=lFN-Vj4wKBFrI_8U',
-    parts: [
+      },
       {
+        label: '우리 살아가는 모든 날들이',
+        note: '후렴만',
+        youtube: 'https://youtu.be/-xZZhbVnm_Q?si=lFN-Vj4wKBFrI_8U',
         lyrics: `우리 살아가는 모든 날들이
 다 주의 숨결 속에 지어졌으니
 이제 모두 모여 다 주를 찬양해
@@ -416,12 +389,11 @@ const SONGS = [
         ])
       }
     ]
-  }
-,
+  },
 
   {
-    no: '12',
-    slug: '12',
+    no: '10',
+    slug: '10',
     title: '친구여 함께 노래해',
     tag: null,
     youtube: 'https://youtu.be/xs1G1mJS_Vw?si=Lr28L_if_jqTEbFE',
@@ -452,12 +424,11 @@ const SONGS = [
         ])
       }
     ]
-  }
-,
+  },
 
   {
-    no: '13',
-    slug: '13',
+    no: '11',
+    slug: '11',
     title: '달리기',
     artist: '웨이홈',
     tag: null,
@@ -490,12 +461,11 @@ const SONGS = [
 나의 주님께 달리기`
       }
     ]
-  }
-,
+  },
 
   {
-    no: '14',
-    slug: '14',
+    no: '12',
+    slug: '12',
     title: '우리가 주를 더욱 사랑하고',
     tag: null,
     youtube: 'https://youtu.be/AEQAG9uoEJ0?si=cEHveIq1wNf6msdI',
@@ -526,12 +496,11 @@ const SONGS = [
 주 사랑만이 이곳에 가득해`
       }
     ]
-  }
-,
+  },
 
   {
-    no: '15',
-    slug: '15',
+    no: '13',
+    slug: '13',
     title: '사랑의 계절',
     artist: 'WELOVE',
     tag: '앵콜',

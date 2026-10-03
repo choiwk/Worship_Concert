@@ -150,28 +150,16 @@ function renderSongList() {
   }
 
   SONGS.forEach(song => {
-    // 앞 곡에서 끊지 않고 이어 부르는 곡이면, 두 줄 사이에 연결 표시를 넣는다.
-    // 번호는 따로 받되 '여기서 끊기지 않는다'는 걸 리스트에서 바로 읽히게 하려는 것.
-    if (song.segue) {
-      const link = _el('li', 'song-segue');
-      link.setAttribute('aria-hidden', 'true');       // 아래 곡 이름표에서 따로 읽어 준다
-      link.appendChild(_el('span', 'song-segue-line'));
-      const txt = _el('span', 'song-segue-text', '이어서');
-      if (song.segue.note) {
-        txt.appendChild(_el('span', 'song-segue-note', song.segue.note));
-      }
-      link.appendChild(txt);
-      ul.appendChild(link);
-    }
-
-    const li = _el('li', 'song-item' + (song.segue ? ' is-segue' : ''));
+    const li = _el('li', 'song-item');
 
     const a = _el('a', 'song-row' + (isLeadSong(song) ? ' is-featured' : ''));
     a.href = '#/songs/' + song.slug;
     const hasVerse = song.parts.some(p => p.bible);
+    const subs = song.parts.slice(1).filter(p => p.label);
     a.setAttribute('aria-label',
-      song.no + '번 ' + song.title + (song.tag ? ', ' + song.tag : '') +
-      (song.segue ? ', 앞 곡에서 이어서' + (song.segue.note ? ' ' + song.segue.note : '') : '') +
+      song.no + '번 ' + (song.parts[0].label || song.title) +
+      (song.tag ? ', ' + song.tag : '') +
+      subs.map(p => ', 이어서 ' + p.label + (p.note ? ' ' + p.note : '')).join('') +
       ' — 가사' + (hasVerse ? '와 말씀' : '') + ' 보기');
 
     a.appendChild(_el('span', 'song-num', song.no));
@@ -179,9 +167,19 @@ function renderSongList() {
     const mid = _el('span', 'song-main');
 
     const head = _el('span', 'song-head-row');
-    head.appendChild(_el('span', 'song-title-text', song.title));
+    // 두 곡을 한 칸에 담을 때는 첫 곡 이름만 제목 줄에 세우고,
+    // 이어 부르는 곡은 아래 줄에 들여 쓴다. 제목에 '/' 를 길게 늘어놓는
+    // 것보다 공연 순서가 그대로 읽힌다.
+    head.appendChild(_el('span', 'song-title-text', song.parts[0].label || song.title));
     if (song.tag) head.appendChild(_el('span', 'song-badge tag-' + tagKind(song.tag), song.tag));
     mid.appendChild(head);
+
+    subs.forEach(part => {
+      const sub = _el('span', 'song-sub');
+      sub.appendChild(_el('span', 'song-sub-title', part.label));
+      if (part.note) sub.appendChild(_el('span', 'song-sub-note', part.note));
+      mid.appendChild(sub);
+    });
 
     // 안에 무엇이 들어 있는지 미리 알려준다.
     // 말씀은 12곡 중 일부에만 있어서 장식이 아니라 실제 정보가 된다.
@@ -251,21 +249,6 @@ function renderSongDetail(slug) {
     head.appendChild(_el('p', 'song-head-note', '기도하며 함께 드리는 곡입니다'));
   }
 
-  // 이어 부르는 관계는 앞 곡·뒤 곡 양쪽에 적는다. 한쪽에만 적으면
-  // 그 곡만 열어 본 사람은 끊어 부르는 줄 안다.
-  if (song.segue) {
-    const from = SONGS[idx - 1];
-    head.appendChild(_el('p', 'song-head-segue',
-      from ? from.no + '번 ' + from.title + '에서 이어집니다'
-               + (song.segue.note ? ' · ' + song.segue.note : '')
-           : '앞 곡에서 이어집니다'));
-  }
-  const next = SONGS[idx + 1];
-  if (next && next.segue) {
-    head.appendChild(_el('p', 'song-head-segue',
-      '끊지 않고 ' + next.no + '번 ' + next.title + '로 이어집니다'
-      + (next.segue.note ? ' · ' + next.segue.note : '')));
-  }
   wrap.appendChild(head);
 
   /* 유튜브 — 제목 바로 아래, 가사 시작 전 */
@@ -290,6 +273,13 @@ function renderSongDetail(slug) {
       // '후렴만' 처럼 그 파트를 어떻게 부르는지 — 제목 옆 꼬리표로
       if (part.note) h.appendChild(_el('span', 'song-part-note', part.note));
       sec.appendChild(h);
+      // 이어 부르는 곡은 자기 영상이 따로 있다. 위 큰 버튼은 첫 곡 것이라
+      // 여기서 따로 걸어 준다.
+      if (part.youtube) {
+        const link = _extLink(part.youtube, 'YouTube에서 듣기', 'song-part-yt',
+                              part.label + ' 유튜브에서 듣기');
+        sec.appendChild(link);
+      }
     }
     else if (i === 0) sec.appendChild(_el('h2', 'song-part-label sr-only', '가사'));
 
