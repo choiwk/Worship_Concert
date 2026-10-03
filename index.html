@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=48" rel="stylesheet"/>
+<link href="src/css/style.css?v=49" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -142,6 +142,15 @@
 </div>
 <!-- 곡 리스트 (src/js/songs.js 데이터로 렌더) -->
 <ul class="song-list" id="songList" aria-label="곡 리스트"></ul>
+<!-- 콘티 한마디 — 곡 순서를 이렇게 정한 이유 -->
+<section class="setlist-note" aria-labelledby="setlistNoteLabel">
+<p class="setlist-note-label" id="setlistNoteLabel">곡 순서에 대하여</p>
+<p class="setlist-note-body">이번 주제곡은 <b>우리가 서로 사랑하자</b>입니다.<br/>
+서로 사랑하자는 말이 단순한 다짐으로 끝나지 않기를 바랐습니다.</p>
+<p class="setlist-note-body">그래서 그 고백에 앞서, 하나님이 우리를 어떻게 사랑하셨고 지금도 어떻게 붙들고 계시는지를 먼저 노래하도록 순서를 정했습니다.</p>
+<p class="setlist-note-body">받은 사랑에 응답하는 찬양이 되기를,<br/>
+그날의 주제곡으로만 남지 않고 우리의 일상에서도 드러나기를 소망합니다.</p>
+</section>
 <div class="song-detail-section">
 <span class="detail-section-label">곡 소개 및 미리듣기</span>
 <!-- LP 플레이어 -->
@@ -528,9 +537,9 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=48" defer></script>
-<script src="src/js/members.js?v=48" defer></script>
-<script src="src/js/app.js?v=48" defer></script>
+<script src="src/js/songs.js?v=49" defer></script>
+<script src="src/js/members.js?v=49" defer></script>
+<script src="src/js/app.js?v=49" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

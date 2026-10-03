@@ -1214,6 +1214,39 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   .song-row, .song-row::before, .song-row .song-arrow { transition: none; }
 }
 
+/* ── 콘티 한마디 — 곡 목록과 미리듣기 사이 ──────────────
+   곡을 다 훑고 난 자리에서 '왜 이 순서인가' 를 짧게 전한다.
+   편지 한 쪽처럼 보이도록 위아래 가는 선으로만 구분했다. */
+.setlist-note {
+  margin: clamp(26px, 7vw, 36px) clamp(16px, 5.5vw, 28px) 0;
+  padding: clamp(22px, 6vw, 28px) clamp(18px, 5vw, 24px);
+  background: var(--paper-warm);
+  border-radius: 16px;
+}
+
+.setlist-note-label {
+  font-size: clamp(12px, 3vw, 14px);
+  color: var(--ink-faint);
+  letter-spacing: .04em;
+  text-align: center;
+  margin-bottom: clamp(12px, 3.5vw, 16px);
+}
+
+.setlist-note-body {
+  font-size: clamp(14px, 3.7vw, 16px);
+  line-height: 2;
+  color: var(--ink-soft);
+  text-align: center;
+  word-break: keep-all;
+}
+.setlist-note-body + .setlist-note-body { margin-top: clamp(12px, 3.5vw, 16px); }
+
+.setlist-note-body b {
+  color: var(--ink);
+  -webkit-text-stroke: var(--stroke-md) var(--ink);
+  paint-order: stroke fill;
+}
+
 .song-detail-section {
   padding: clamp(28px, 8vw, 40px) clamp(16px, 5.5vw, 28px) 0;
   background: var(--paper);
