@@ -150,13 +150,28 @@ function renderSongList() {
   }
 
   SONGS.forEach(song => {
-    const li = _el('li', 'song-item');
+    // 앞 곡에서 끊지 않고 이어 부르는 곡이면, 두 줄 사이에 연결 표시를 넣는다.
+    // 번호는 따로 받되 '여기서 끊기지 않는다'는 걸 리스트에서 바로 읽히게 하려는 것.
+    if (song.segue) {
+      const link = _el('li', 'song-segue');
+      link.setAttribute('aria-hidden', 'true');       // 아래 곡 이름표에서 따로 읽어 준다
+      link.appendChild(_el('span', 'song-segue-line'));
+      const txt = _el('span', 'song-segue-text', '이어서');
+      if (song.segue.note) {
+        txt.appendChild(_el('span', 'song-segue-note', song.segue.note));
+      }
+      link.appendChild(txt);
+      ul.appendChild(link);
+    }
+
+    const li = _el('li', 'song-item' + (song.segue ? ' is-segue' : ''));
 
     const a = _el('a', 'song-row' + (isLeadSong(song) ? ' is-featured' : ''));
     a.href = '#/songs/' + song.slug;
     const hasVerse = song.parts.some(p => p.bible);
     a.setAttribute('aria-label',
       song.no + '번 ' + song.title + (song.tag ? ', ' + song.tag : '') +
+      (song.segue ? ', 앞 곡에서 이어서' + (song.segue.note ? ' ' + song.segue.note : '') : '') +
       ' — 가사' + (hasVerse ? '와 말씀' : '') + ' 보기');
 
     a.appendChild(_el('span', 'song-num', song.no));
@@ -234,6 +249,22 @@ function renderSongDetail(slug) {
   }
   if (song.tag === '기도') {
     head.appendChild(_el('p', 'song-head-note', '기도하며 함께 드리는 곡입니다'));
+  }
+
+  // 이어 부르는 관계는 앞 곡·뒤 곡 양쪽에 적는다. 한쪽에만 적으면
+  // 그 곡만 열어 본 사람은 끊어 부르는 줄 안다.
+  if (song.segue) {
+    const from = SONGS[idx - 1];
+    head.appendChild(_el('p', 'song-head-segue',
+      from ? from.no + '번 ' + from.title + '에서 이어집니다'
+               + (song.segue.note ? ' · ' + song.segue.note : '')
+           : '앞 곡에서 이어집니다'));
+  }
+  const next = SONGS[idx + 1];
+  if (next && next.segue) {
+    head.appendChild(_el('p', 'song-head-segue',
+      '끊지 않고 ' + next.no + '번 ' + next.title + '로 이어집니다'
+      + (next.segue.note ? ' · ' + next.segue.note : '')));
   }
   wrap.appendChild(head);
 
