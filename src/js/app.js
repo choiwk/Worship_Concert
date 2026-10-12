@@ -1256,6 +1256,7 @@ async function _wordUnlock(e) {
     _wordStore(WORD.passKey, before);  // 틀렸으면 되돌린다
     _wordShowLock(err.status === 401 ? '암호가 맞지 않아요.'
                  : err.status === 429 ? '여러 번 틀렸어요. 잠시 뒤에 다시 시도해주세요.'
+                 : err.status === 503 ? '아직 준비가 되지 않았어요. 관리자에게 알려주세요.'
                  : '연결하지 못했어요. 잠시 뒤에 다시 시도해주세요.');
   } finally {
     btn.disabled = false; btn.textContent = '들어가기';

@@ -53,6 +53,18 @@ alter table public.devotion enable row level security;
 
 `SUPABASE_URL` 과 `SUPABASE_SERVICE_ROLE_KEY` 는 자동으로 들어가므로 넣지 않는다.
 
+터미널에서 넣는 게 더 빠르다. **프로젝트 폴더 안에서** 실행한다.
+
+```bash
+npx supabase secrets set TEAM_PASSCODE=1004 PUBLIC_OPEN=false
+```
+
+Secrets 는 **다시 배포하지 않아도 바로 적용된다.**
+
+> 이걸 빠뜨리면 어떤 암호를 넣어도 들어가지 못한다. 그때는
+> "아직 준비가 되지 않았어요" 라고 뜬다 — 암호가 틀렸다는 뜻이 아니라
+> `TEAM_PASSCODE` 가 비어 있다는 뜻이다.
+
 ## 3. 함수 배포
 
 **반드시 프로젝트 폴더 안에서 실행한다.** 홈 디렉터리(`~`)에서 돌리면

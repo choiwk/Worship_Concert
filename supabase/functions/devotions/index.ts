@@ -104,7 +104,14 @@ Deno.serve(async (req) => {
   const given = String(body.passcode ?? '');
 
   if (locked(ip)) return json({ error: '잠시 뒤에 다시 시도해주세요' }, 429);
-  if (!expected || !sameSecret(given, expected)) {
+
+  // 암호가 아예 설정되지 않은 것과 틀린 것은 다른 문제다.
+  // 같은 말로 답하면 설정을 빠뜨렸을 때 팀 전체가 '암호가 틀렸나' 하고 헤맨다.
+  if (!expected) {
+    return json({ error: '아직 준비가 되지 않았어요. 관리자에게 알려주세요.', setup: 'TEAM_PASSCODE 가 설정되지 않았습니다' }, 503);
+  }
+
+  if (!sameSecret(given, expected)) {
     noteFail(ip);
     await sleep(600);
     return json({ error: '암호가 맞지 않습니다' }, 401);
