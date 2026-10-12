@@ -14,7 +14,7 @@
      #/main  #/songs  #/artists  #/story  #/songs/02
 ══════════════════════════════════ */
 
-const TABS = ['main', 'songs', 'artists', 'story'];
+const TABS = ['main', 'songs', 'word', 'artists', 'story'];
 
 let _prevRoute = null;
 let _songListScroll = 0;
@@ -62,6 +62,7 @@ function route() {
     _showPage('page-song', 'songs');
   } else {
     _showPage('page-' + r.tab, r.tab);
+    if (r.tab === 'word') loadWord();
   }
 
   // 곡 상세에서 목록으로 돌아온 경우에만 보던 자리를 복원하고,
@@ -780,7 +781,8 @@ const OVERLAYS = {
   donate: { backdrop: 'donateBackdrop', panel: 'donateModal' },
   verse:  { backdrop: 'verseBackdrop',  panel: 'verseModal'  },
   member: { backdrop: 'memberBackdrop', panel: 'memberSheet'  },
-  rsvp:   { backdrop: 'rsvpBackdrop',   panel: 'rsvpSheet'   }
+  rsvp:   { backdrop: 'rsvpBackdrop',   panel: 'rsvpSheet'   },
+  word:   { backdrop: 'wordBackdrop',   panel: 'wordSheet'   }
 };
 
 let _openOverlays = [];   // 여러 개가 겹쳐도 스크롤 잠금이 어긋나지 않게 스택으로
@@ -1169,6 +1171,274 @@ function _rsvpStore(mode) {
 
 
 /* ══════════════════════════════════
+   word.js — 말씀 나눔
+
+   읽기도 쓰기도 Edge Function 을 거친다. 사이트에 박힌 anon 키로는
+   이 표에 아무 권한이 없어서, 암호를 모르면 읽을 수도 쓸 수도 없다.
+
+   edit_token 은 글을 쓸 때 브라우저가 만들어 들고 있는 열쇠다.
+   서버는 목록을 내려줄 때 이 값을 빼고 보내므로, 남의 글은 지울 수 없다.
+══════════════════════════════════ */
+
+const WORD = {
+  get endpoint() { return RSVP.url.replace(/\/+$/, '') + '/functions/v1/devotions'; },
+  passKey: 'word-pass',
+  mineKey: 'word-mine'
+};
+
+/* ── 브라우저에 두는 것 ─────────────────────────────── */
+
+function _wordStore(key, value) {
+  try {
+    if (value === undefined) return localStorage.getItem(key);
+    if (value === null) { localStorage.removeItem(key); return null; }
+    localStorage.setItem(key, value);
+    return value;
+  } catch (e) { return null; }
+}
+
+/** 내가 쓴 글: { 글id: 열쇠 } */
+function _wordMine(update) {
+  let map = {};
+  try { map = JSON.parse(_wordStore(WORD.mineKey) || '{}'); } catch (e) { map = {}; }
+  if (update) { Object.assign(map, update); _wordStore(WORD.mineKey, JSON.stringify(map)); }
+  return map;
+}
+
+function _wordToken() {
+  if (crypto.randomUUID) return crypto.randomUUID() + crypto.randomUUID().slice(0, 8);
+  return String(Date.now()) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+}
+
+/* ── 서버와 이야기하기 ──────────────────────────────── */
+
+async function _wordCall(action, extra) {
+  const res = await fetch(WORD.endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': RSVP.key,
+      'Authorization': 'Bearer ' + RSVP.key
+    },
+    body: JSON.stringify(Object.assign({ action: action, passcode: _wordStore(WORD.passKey) || '' }, extra || {}))
+  });
+  let data = {};
+  try { data = await res.json(); } catch (e) { /* 본문이 없을 수 있다 */ }
+  if (!res.ok) throw Object.assign(new Error(data.error || ('HTTP ' + res.status)), { status: res.status });
+  return data;
+}
+
+/* ── 잠금 화면 ──────────────────────────────────────── */
+
+function _wordShowLock(msg) {
+  document.getElementById('wordLock').hidden = false;
+  document.getElementById('wordMain').hidden = true;
+  const err = document.getElementById('wordLockError');
+  err.textContent = msg || '';
+  err.hidden = !msg;
+}
+
+async function _wordUnlock(e) {
+  if (e) e.preventDefault();
+  const input = document.getElementById('wordPass');
+  const btn = document.getElementById('wordLockBtn');
+  const value = input.value.trim();
+  if (!value) { _wordShowLock('암호를 넣어주세요.'); input.focus(); return; }
+
+  btn.disabled = true; btn.textContent = '확인하는 중…';
+  const before = _wordStore(WORD.passKey);
+  _wordStore(WORD.passKey, value);
+  try {
+    await _wordCall('list');          // 통과하면 암호가 맞다
+    input.value = '';
+    await loadWord();
+  } catch (err) {
+    _wordStore(WORD.passKey, before);  // 틀렸으면 되돌린다
+    _wordShowLock(err.status === 401 ? '암호가 맞지 않아요.'
+                 : err.status === 429 ? '여러 번 틀렸어요. 잠시 뒤에 다시 시도해주세요.'
+                 : '연결하지 못했어요. 잠시 뒤에 다시 시도해주세요.');
+  } finally {
+    btn.disabled = false; btn.textContent = '들어가기';
+  }
+}
+
+/* ── 목록 ───────────────────────────────────────────── */
+
+function _wordState(msg) {
+  const el = document.getElementById('wordState');
+  el.textContent = msg || '';
+  el.hidden = !msg;
+}
+
+async function loadWord() {
+  if (!_wordStore(WORD.passKey)) { _wordShowLock(''); return; }
+
+  document.getElementById('wordLock').hidden = true;
+  document.getElementById('wordMain').hidden = false;
+  _wordState('불러오는 중…');
+  try {
+    const data = await _wordCall('list');
+    _renderWord(data.items || []);
+  } catch (err) {
+    if (err.status === 401) { _wordStore(WORD.passKey, null); _wordShowLock('암호가 바뀐 것 같아요. 다시 넣어주세요.'); return; }
+    document.getElementById('wordList').innerHTML = '';
+    _wordState('불러오지 못했어요. 잠시 뒤에 다시 열어주세요.');
+  }
+}
+
+/** 그 주의 월요일 (서버와 같은 기준) */
+function _wordThisWeek(d) {
+  const kst = new Date((d || new Date()).getTime() + 9 * 3600 * 1000);
+  const day = (kst.getUTCDay() + 6) % 7;
+  kst.setUTCDate(kst.getUTCDate() - day);
+  return kst.toISOString().slice(0, 10);
+}
+
+function _wordWeekLabel(week) {
+  const now = _wordThisWeek();
+  if (week === now) return '이번 주';
+  const last = new Date(now); last.setUTCDate(last.getUTCDate() - 7);
+  if (week === last.toISOString().slice(0, 10)) return '지난 주';
+  const d = new Date(week + 'T00:00:00Z');
+  return (d.getUTCMonth() + 1) + '월 ' + d.getUTCDate() + '일 주간';
+}
+
+function _renderWord(items) {
+  const wrap = document.getElementById('wordList');
+  wrap.innerHTML = '';
+
+  if (!items.length) {
+    _wordState('');
+    const empty = _el('div', 'word-empty');
+    empty.appendChild(_el('p', 'word-empty-title', '아직 나눈 말씀이 없어요'));
+    empty.appendChild(_el('p', 'word-empty-text', '첫 묵상을 남겨보세요. 몇 문장이면 충분해요.'));
+    wrap.appendChild(empty);
+    return;
+  }
+  _wordState('');
+
+  const mine = _wordMine();
+  const weeks = [];
+  items.forEach(it => {
+    let g = weeks.find(w => w.week === it.week);
+    if (!g) { g = { week: it.week, rows: [] }; weeks.push(g); }
+    g.rows.push(it);
+  });
+
+  weeks.forEach(group => {
+    const sec = _el('section', 'word-week');
+    const head = _el('p', 'word-week-label', _wordWeekLabel(group.week));
+    head.appendChild(_el('span', 'word-week-count', group.rows.length + '개'));
+    sec.appendChild(head);
+
+    group.rows.forEach(row => {
+      const card = _el('article', 'word-card');
+
+      if (row.verse_ref) {
+        const ref = _el('p', 'word-card-ref');
+        ref.appendChild(_el('span', 'word-card-ref-mark', '♥'));
+        ref.appendChild(_el('span', null, row.verse_ref));
+        card.appendChild(ref);
+      }
+
+      card.appendChild(_el('p', 'word-card-body', row.body));
+
+      const foot = _el('p', 'word-card-foot');
+      foot.appendChild(_el('span', 'word-card-name', row.display_name || '익명'));
+      if (row.share_later) foot.appendChild(_el('span', 'word-card-open', '공개 동의'));
+      if (mine[row.id]) {
+        const del = _el('button', 'word-card-del', '지우기');
+        del.type = 'button';
+        del.onclick = () => _wordRemove(row.id);
+        foot.appendChild(del);
+      }
+      card.appendChild(foot);
+      sec.appendChild(card);
+    });
+
+    wrap.appendChild(sec);
+  });
+}
+
+async function _wordRemove(id) {
+  const token = _wordMine()[id];
+  if (!token) return;
+  if (!confirm('이 글을 지울까요? 되돌릴 수 없어요.')) return;
+  try {
+    await _wordCall('remove', { id: id, edit_token: token });
+    const map = _wordMine(); delete map[id];
+    _wordStore(WORD.mineKey, JSON.stringify(map));
+    await loadWord();
+  } catch (err) {
+    _wordState('지우지 못했어요. 잠시 뒤에 다시 시도해주세요.');
+  }
+}
+
+/* ── 쓰기 창 ────────────────────────────────────────── */
+
+function openWordWrite() {
+  const form = document.getElementById('wordForm');
+  const done = document.getElementById('wordDone');
+  form.hidden = false; done.hidden = true;
+  _wordFormError('');
+  _wordFormBusy(false);
+  openOverlay('word');
+  requestAnimationFrame(() => document.getElementById('wordVerse').focus());
+}
+
+function closeWordWrite() { closeOverlay('word'); }
+
+function _wordFormError(msg) {
+  const el = document.getElementById('wordError');
+  el.textContent = msg || '';
+  el.hidden = !msg;
+}
+
+function _wordFormBusy(on) {
+  const btn = document.getElementById('wordSubmit');
+  btn.disabled = on;
+  btn.textContent = on ? '보내는 중…' : '나누기';
+}
+
+async function _wordSubmit(e) {
+  e.preventDefault();
+  _wordFormError('');
+
+  const body = document.getElementById('wordBody').value.trim();
+  if (!body) { _wordFormError('묵상을 적어주세요.'); document.getElementById('wordBody').focus(); return; }
+
+  const scope = document.querySelector('input[name="wordScope"]:checked');
+  const token = _wordToken();
+
+  _wordFormBusy(true);
+  try {
+    const data = await _wordCall('create', {
+      verse_ref: document.getElementById('wordVerse').value.trim(),
+      body: body,
+      display_name: document.getElementById('wordName').value.trim(),
+      share_later: !!scope && scope.value === 'later',
+      edit_token: token
+    });
+    if (data.item && data.item.id) _wordMine({ [data.item.id]: token });
+
+    document.getElementById('wordForm').hidden = true;
+    document.getElementById('wordDone').hidden = false;
+    requestAnimationFrame(() => document.querySelector('#wordDone .rsvp-done-close').focus());
+
+    // 글을 비우고 목록을 새로 그린다
+    document.getElementById('wordVerse').value = '';
+    document.getElementById('wordBody').value = '';
+    document.getElementById('wordCount').textContent = '0';
+    await loadWord();
+  } catch (err) {
+    _wordFormError(err.status === 401 ? '암호가 바뀐 것 같아요. 창을 닫고 다시 들어와주세요.'
+                                      : '보내지 못했어요. 인터넷 연결을 확인하고 다시 시도해주세요.');
+    _wordFormBusy(false);
+  }
+}
+
+
+/* ══════════════════════════════════
    4. donate.js — 후원 모달
 ══════════════════════════════════ */
 
@@ -1390,6 +1660,13 @@ renderSongList();
 _updateLP();
 _rsvpBindCount();
 document.getElementById('rsvpForm').addEventListener('submit', _rsvpSubmit);
+document.getElementById('wordForm').addEventListener('submit', _wordSubmit);
+document.getElementById('wordLockForm').addEventListener('submit', _wordUnlock);
+(function () {
+  const ta = document.getElementById('wordBody');
+  const out = document.getElementById('wordCount');
+  ta.addEventListener('input', () => { out.textContent = ta.value.length; });
+})();
 updateDday();
 setInterval(updateDday, 60000);
 route();

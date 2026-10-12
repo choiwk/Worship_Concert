@@ -370,6 +370,13 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   white-space: nowrap;
 }
 
+/* 탭이 다섯이라 좁은 화면에서는 한 칸이 75px 남짓이 된다.
+   라벨을 한 단계 줄이고 자간을 없애야 '곡 리스트'·'말씀 나눔' 이 안 눌린다. */
+@media (max-width: 400px) {
+  .tab-label { font-size: 11.5px; letter-spacing: 0; }
+  .tab-icon { width: 19px; height: 19px; }
+}
+
 /* 검은 원형 FAB은 이 사이트의 종이·손글씨 톤과 겉돌아서
    종이 바탕에 클레이 테두리를 두른 원형 버튼으로 바꿨다. */
 .share-fab {
@@ -2541,6 +2548,240 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   transition: background .2s, border-color .2s;
 }
 .rsvp-done-close:hover { background: var(--paper-warm); border-color: var(--clay); }
+
+
+/* ══════════════════════════════════
+   7-3. 말씀 나눔
+
+   팀끼리만 보는 공간이라 화면도 조용하게 둔다. 카드는 테두리 없이
+   종이색만 다르게 깔고, 말씀 구절만 강조색으로 집는다.
+══════════════════════════════════ */
+
+/* ── 암호 잠금 ── */
+.word-lock {
+  margin: clamp(10px, 3vw, 20px) clamp(16px, 5.5vw, 28px) 0;
+  padding: clamp(28px, 7vw, 40px) clamp(20px, 5.5vw, 28px);
+  background: var(--paper-warm);
+  border-radius: 16px;
+  text-align: center;
+}
+.word-lock[hidden] { display: none; }
+
+/* 글자(✶)로 두면 이 손글씨 폰트에 없어서 503KB 폴백 폰트를 끌어온다 */
+.word-lock-mark {
+  display: block;
+  width: clamp(26px, 7vw, 32px);
+  height: clamp(26px, 7vw, 32px);
+  margin: 0 auto 14px;
+  color: var(--clay-wash);
+}
+
+.word-lock-title {
+  font-size: clamp(16px, 4.2vw, 19px);
+  color: var(--ink);
+  margin-bottom: 10px;
+  -webkit-text-stroke: var(--stroke-md) var(--ink);
+  paint-order: stroke fill;
+}
+
+.word-lock-text {
+  font-size: clamp(13px, 3.4vw, 15px);
+  line-height: 1.9;
+  color: var(--ink-soft);
+  margin-bottom: clamp(20px, 5vw, 26px);
+  word-break: keep-all;
+}
+
+.word-lock-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 300px;
+  margin: 0 auto;
+  text-align: left;
+}
+.word-lock-form .rsvp-input { text-align: center; letter-spacing: .3em; }
+
+/* ── 목록 ── */
+.word-main {
+  padding: clamp(10px, 3vw, 20px) clamp(16px, 5.5vw, 28px) 0;
+}
+.word-main[hidden] { display: none; }
+
+.word-write {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  padding: 14px;
+  background: var(--clay);
+  color: #fdfbf6;
+  border: none;
+  border-radius: 14px;
+  font-size: clamp(15px, 4vw, 17px);
+  letter-spacing: .02em;
+  cursor: pointer;
+  transition: background .25s, transform .15s;
+}
+.word-write:active { background: #94452b; transform: scale(.98); }
+.word-write-plus { font-size: 1.15em; line-height: 1; }
+
+.word-state {
+  margin-top: clamp(20px, 5vw, 28px);
+  text-align: center;
+  font-size: clamp(13px, 3.4vw, 15px);
+  color: var(--ink-faint);
+}
+.word-state[hidden] { display: none; }
+
+.word-week { margin-top: clamp(26px, 6vw, 34px); }
+
+.word-week-label {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: clamp(14px, 3.6vw, 16px);
+  color: var(--ink);
+}
+.word-week-count { font-size: clamp(12px, 3vw, 13px); color: var(--ink-faint); }
+
+.word-card {
+  padding: clamp(16px, 4.5vw, 20px) 0;
+  border-bottom: 1px solid var(--line);
+}
+.word-card:last-child { border-bottom: 0; }
+
+.word-card-ref {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 9px;
+  font-size: clamp(13px, 3.4vw, 15px);
+  color: var(--clay);
+}
+.word-card-ref-mark { color: var(--clay-wash); font-size: .9em; }
+
+.word-card-body {
+  font-size: clamp(14px, 3.8vw, 16px);
+  line-height: 2;
+  color: var(--ink-soft);
+  white-space: pre-wrap;
+  word-break: keep-all;
+}
+
+.word-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 11px;
+  font-size: clamp(12px, 3.1vw, 13px);
+  color: var(--ink-faint);
+}
+.word-card-name { color: var(--ink-soft); }
+
+.word-card-open {
+  padding: 2px 8px 3px;
+  border: 1px solid var(--clay-wash);
+  border-radius: 999px;
+  font-size: .92em;
+}
+
+.word-card-del {
+  margin-left: auto;
+  min-height: 32px;
+  padding: 4px 10px;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 1em;
+  /* 강조색 그대로면 종이 위에서 4.5:1 을 못 넘긴다 */
+  color: #7d3a20;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 4px;
+}
+
+.word-empty {
+  margin-top: clamp(30px, 8vw, 44px);
+  text-align: center;
+}
+.word-empty-title {
+  font-size: clamp(15px, 4vw, 17px);
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.word-empty-text {
+  font-size: clamp(13px, 3.4vw, 15px);
+  line-height: 1.9;
+  color: var(--ink-faint);
+  word-break: keep-all;
+}
+
+/* ── 쓰기 창 ── */
+.word-guide {
+  list-style: none;
+  margin: 0 0 9px;
+  padding: 11px 13px;
+  background: var(--paper-warm);
+  border-radius: 10px;
+  font-size: clamp(12px, 3.1vw, 13.5px);
+  line-height: 1.85;
+  color: var(--ink-faint);
+  word-break: keep-all;
+}
+.word-guide li { padding-left: 11px; position: relative; }
+.word-guide li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: .78em;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--clay-wash);
+}
+
+.word-scope {
+  margin: clamp(16px, 4.5vw, 20px) 0;
+  padding: 0;
+  border: 0;
+}
+.word-scope-title {
+  padding: 0 0 10px;
+  font-size: clamp(13px, 3.4vw, 15px);
+  color: var(--ink);
+}
+
+.word-scope-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  padding: 9px 0;
+  cursor: pointer;
+}
+.word-scope-opt input {
+  flex-shrink: 0;
+  width: 18px; height: 18px;
+  margin-top: 3px;
+  accent-color: var(--clay);
+  cursor: pointer;
+}
+.word-scope-text { display: flex; flex-direction: column; gap: 3px; }
+.word-scope-text b {
+  font-size: clamp(13.5px, 3.5vw, 15px);
+  color: var(--ink);
+  font-weight: normal;
+}
+.word-scope-text span {
+  font-size: clamp(12px, 3.1vw, 13px);
+  line-height: 1.7;
+  color: var(--ink-faint);
+  word-break: keep-all;
+}
 
 
 /* ══════════════════════════════════

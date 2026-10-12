@@ -1,0 +1,161 @@
+/* ══════════════════════════════════════════════════════════
+   devotions — 말씀 나눔 통로
+
+   사이트에 박힌 anon 키로는 devotion 표에 아무 권한이 없다.
+   읽기도 쓰기도 전부 이 함수를 거치고, 이 함수가 팀 암호를 확인한다.
+   표에 손대는 것은 이 함수가 가진 service_role 키뿐이다.
+
+   필요한 비밀값 (Supabase → Edge Functions → Secrets)
+     TEAM_PASSCODE   팀 암호
+     PUBLIC_OPEN     'true' 면 공개 통로가 열린다 (공연 뒤에 켠다)
+   SUPABASE_URL 과 SUPABASE_SERVICE_ROLE_KEY 는 자동으로 들어온다.
+══════════════════════════════════════════════════════════ */
+
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
+
+const TABLE = 'devotion';
+
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
+
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...CORS, 'Content-Type': 'application/json' },
+  });
+
+const db = () =>
+  createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  );
+
+/* ── 암호 때려맞히기 늦추기 ────────────────────────────────
+   팀 암호가 짧아서(숫자 네 자리) 자동으로 돌려 보는 공격에 약하다.
+   틀리면 일부러 늦게 답하고, 같은 주소에서 연달아 틀리면 잠시 막는다.
+   함수가 새로 뜨면 기억이 사라지므로 완벽한 방패는 아니다. 암호를
+   길게 바꾸는 것이 근본 해결이고, 이건 시간을 버는 장치다. */
+const fails = new Map<string, { n: number; until: number }>();
+const LOCK_AFTER = 8;          // 이만큼 틀리면
+const LOCK_MS = 10 * 60 * 1000; // 10분 막는다
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+function locked(ip: string) {
+  const f = fails.get(ip);
+  return !!f && f.until > Date.now();
+}
+
+function noteFail(ip: string) {
+  const f = fails.get(ip) ?? { n: 0, until: 0 };
+  f.n += 1;
+  if (f.n >= LOCK_AFTER) { f.until = Date.now() + LOCK_MS; f.n = 0; }
+  fails.set(ip, f);
+}
+
+/** 길이가 달라도 같은 시간이 걸리게 비교한다 */
+function sameSecret(a: string, b: string) {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+/** 그 주의 월요일 (주차로 묶어 보여주려고) */
+function weekOf(d = new Date()) {
+  const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+  const day = (kst.getUTCDay() + 6) % 7;             // 월요일 = 0
+  kst.setUTCDate(kst.getUTCDate() - day);
+  return kst.toISOString().slice(0, 10);
+}
+
+const str = (v: unknown, max: number) => {
+  const s = typeof v === 'string' ? v.trim() : '';
+  return s ? s.slice(0, max) : null;
+};
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
+  if (req.method !== 'POST') return json({ error: 'POST 만 받습니다' }, 405);
+
+  let body: Record<string, unknown>;
+  try { body = await req.json(); } catch { return json({ error: '잘못된 요청' }, 400); }
+
+  const action = String(body.action ?? '');
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'unknown';
+
+  // 공개 통로 — 암호 없이, 공개에 동의한 글만. 공연 뒤에 켠다.
+  if (action === 'public') {
+    if (Deno.env.get('PUBLIC_OPEN') !== 'true') return json({ open: false, items: [] });
+    const { data, error } = await db()
+      .from(TABLE)
+      .select('id, created_at, week, display_name, verse_ref, body')
+      .eq('hidden', false).eq('share_later', true)
+      .order('created_at', { ascending: false });
+    if (error) return json({ error: '불러오지 못했습니다' }, 500);
+    return json({ open: true, items: data });
+  }
+
+  // 여기서부터는 팀 암호가 필요하다
+  const expected = Deno.env.get('TEAM_PASSCODE') ?? '';
+  const given = String(body.passcode ?? '');
+
+  if (locked(ip)) return json({ error: '잠시 뒤에 다시 시도해주세요' }, 429);
+  if (!expected || !sameSecret(given, expected)) {
+    noteFail(ip);
+    await sleep(600);
+    return json({ error: '암호가 맞지 않습니다' }, 401);
+  }
+  fails.delete(ip);
+
+  const sb = db();
+
+  if (action === 'list') {
+    // edit_token 은 돌려주지 않는다. 내 글인지는 브라우저가 스스로 안다.
+    const { data, error } = await sb
+      .from(TABLE)
+      .select('id, created_at, week, display_name, verse_ref, body, share_later')
+      .eq('hidden', false)
+      .order('created_at', { ascending: false })
+      .limit(500);
+    if (error) return json({ error: '불러오지 못했습니다' }, 500);
+    return json({ items: data });
+  }
+
+  if (action === 'create') {
+    const text = str(body.body, 2000);
+    if (!text) return json({ error: '묵상을 적어주세요' }, 400);
+    const token = String(body.edit_token ?? '');
+    if (token.length < 20) return json({ error: '잘못된 요청' }, 400);
+
+    const row = {
+      week: weekOf(),
+      display_name: str(body.display_name, 20),   // 비어 있으면 익명
+      verse_ref: str(body.verse_ref, 60),
+      body: text,
+      share_later: body.share_later === true,
+      edit_token: token,
+    };
+    const { data, error } = await sb.from(TABLE).insert(row).select('id, created_at, week').single();
+    if (error) return json({ error: '저장하지 못했습니다' }, 500);
+    return json({ item: data });
+  }
+
+  if (action === 'remove') {
+    const id = String(body.id ?? '');
+    const token = String(body.edit_token ?? '');
+    if (!id || token.length < 20) return json({ error: '잘못된 요청' }, 400);
+    // 본인이 가진 열쇠가 맞을 때만 지워진다
+    const { error, count } = await sb
+      .from(TABLE).delete({ count: 'exact' })
+      .eq('id', id).eq('edit_token', token);
+    if (error) return json({ error: '지우지 못했습니다' }, 500);
+    if (!count) return json({ error: '내가 쓴 글만 지울 수 있습니다' }, 403);
+    return json({ ok: true });
+  }
+
+  return json({ error: '알 수 없는 요청' }, 400);
+});
