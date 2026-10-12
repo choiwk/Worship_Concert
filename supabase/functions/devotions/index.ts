@@ -15,10 +15,15 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 
 const TABLE = 'devotion';
 
+/* 브라우저는 본 요청 전에 '이 헤더 보내도 되냐' 고 먼저 묻는다(preflight).
+   여기 적지 않은 헤더가 하나라도 있으면 본 요청을 아예 보내지 않는다.
+   우리는 apikey 와 authorization 도 함께 보내므로 셋 다 적어야 한다.
+   (터미널 curl 은 이 절차가 없어서, 빠뜨려도 거기서는 멀쩡해 보인다.) */
 const CORS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'content-type',
+  'Access-Control-Allow-Headers': 'content-type, apikey, authorization, x-client-info',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Max-Age': '86400',
 };
 
 const json = (body: unknown, status = 200) =>
