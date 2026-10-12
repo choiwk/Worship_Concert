@@ -1276,6 +1276,15 @@ async function loadWord() {
 
   document.getElementById('wordLock').hidden = true;
   document.getElementById('wordMain').hidden = false;
+
+  // 지난번에 고른 보기 방식으로 버튼을 맞춰 둔다
+  const mode = _wordViewMode();
+  document.querySelectorAll('.word-view').forEach(b => {
+    const on = b.dataset.view === mode;
+    b.classList.toggle('is-on', on);
+    b.setAttribute('aria-selected', String(on));
+  });
+
   _wordState('불러오는 중…');
   try {
     const data = await _wordCall('list');
@@ -1304,11 +1313,122 @@ function _wordWeekLabel(week) {
   return (d.getUTCMonth() + 1) + '월 ' + d.getUTCDate() + '일 주간';
 }
 
+/* ── 보기 방식 ──────────────────────────────────────────
+   글이 쌓이면 한 줄로 늘어놓는 것만으로는 읽을 수 없게 된다.
+   세 가지로 줄인다.
+     · 묵상은 네 줄까지만 보이고 나머지는 눌러서 편다
+     · 지난 주는 접어 둔다 (이번 주만 펼침)
+     · 주차별 / 사람별 중에 골라 본다
+══════════════════════════════════════════════════════ */
+
+let _wordItems = [];
+
+function _wordViewMode() { return _wordStore('word-view') === 'person' ? 'person' : 'week'; }
+
+function switchWordView(mode) {
+  _wordStore('word-view', mode);
+  document.querySelectorAll('.word-view').forEach(b => {
+    const on = b.dataset.view === mode;
+    b.classList.toggle('is-on', on);
+    b.setAttribute('aria-selected', String(on));
+  });
+  _renderWord(_wordItems);
+}
+
+/** 묵상 본문을 네 줄로 접고, 넘칠 때만 '더 읽기' 를 붙인다.
+    line-clamp 이 걸린 뒤에는 scrollHeight 도 잘린 높이로 나와서
+    넘치는지 알 수 없다. 자르기 전에 전체 높이를 먼저 잰다. */
+function _wordClampAll() {
+  document.querySelectorAll('.word-card-body').forEach(el => {
+    const btn = el.nextElementSibling;
+    if (!btn || !btn.classList.contains('word-more')) return;
+    el.classList.remove('is-clamped');
+    const full = el.scrollHeight;
+    el.classList.add('is-clamped');
+    // 화면에 아직 안 올라왔으면(높이 0) 버튼을 그리지 않는다
+    btn.hidden = !el.clientHeight || el.clientHeight >= full - 1;
+  });
+}
+
+function toggleWordMore(btn) {
+  const body = btn.previousElementSibling;
+  const open = body.classList.toggle('is-clamped');
+  btn.textContent = open ? '더 읽기' : '접기';
+}
+
+/** 글 한 장 */
+function _wordCard(row, mine, opts) {
+  const card = _el('article', 'word-card');
+
+  const top = _el('p', 'word-card-top');
+  if (opts && opts.showDate) top.appendChild(_el('span', 'word-card-date', _wordDate(row.created_at)));
+  if (row.verse_ref) {
+    const ref = _el('span', 'word-card-ref');
+    ref.appendChild(_el('span', 'word-card-ref-mark', '♥'));
+    ref.appendChild(_el('span', null, row.verse_ref));
+    top.appendChild(ref);
+  }
+  if (top.children.length) card.appendChild(top);
+
+  const body = _el('p', 'word-card-body is-clamped', row.body);
+  card.appendChild(body);
+
+  const more = _el('button', 'word-more', '더 읽기');
+  more.type = 'button';
+  more.hidden = true;
+  more.onclick = () => toggleWordMore(more);
+  card.appendChild(more);
+
+  const foot = _el('p', 'word-card-foot');
+  if (!opts || !opts.hideName) foot.appendChild(_el('span', 'word-card-name', row.display_name || '익명'));
+  if (row.share_later) foot.appendChild(_el('span', 'word-card-open', '공개 동의'));
+  if (mine[row.id]) {
+    const del = _el('button', 'word-card-del', '지우기');
+    del.type = 'button';
+    del.onclick = () => _wordRemove(row.id);
+    foot.appendChild(del);
+  }
+  if (foot.children.length) card.appendChild(foot);
+  return card;
+}
+
+function _wordDate(iso) {
+  const d = new Date(iso);
+  return (d.getMonth() + 1) + '/' + d.getDate();
+}
+
+/** 접었다 폈다 하는 묶음 */
+function _wordGroup(title, count, rows, mine, opts, openByDefault) {
+  const sec = _el('section', 'word-group' + (openByDefault ? ' is-open' : ''));
+
+  const head = _el('button', 'word-group-head');
+  head.type = 'button';
+  head.setAttribute('aria-expanded', String(!!openByDefault));
+  head.appendChild(_el('span', 'word-group-title', title));
+  head.appendChild(_el('span', 'word-group-count', count + '개'));
+  const mark = _el('span', 'word-group-mark');
+  mark.setAttribute('aria-hidden', 'true');
+  head.appendChild(mark);
+  sec.appendChild(head);
+
+  const box = _el('div', 'word-group-body');
+  rows.forEach(r => box.appendChild(_wordCard(r, mine, opts)));
+  sec.appendChild(box);
+
+  head.onclick = () => {
+    const open = sec.classList.toggle('is-open');
+    head.setAttribute('aria-expanded', String(open));
+    if (open) _wordClampAll();
+  };
+  return sec;
+}
+
 function _renderWord(items) {
+  _wordItems = items || [];
   const wrap = document.getElementById('wordList');
   wrap.innerHTML = '';
 
-  if (!items.length) {
+  if (!_wordItems.length) {
     _wordState('');
     const empty = _el('div', 'word-empty');
     empty.appendChild(_el('p', 'word-empty-title', '아직 나눈 말씀이 없어요'));
@@ -1319,46 +1439,48 @@ function _renderWord(items) {
   _wordState('');
 
   const mine = _wordMine();
+  if (_wordViewMode() === 'person') _renderWordByPerson(wrap, mine);
+  else                              _renderWordByWeek(wrap, mine);
+
+  requestAnimationFrame(_wordClampAll);
+}
+
+function _renderWordByWeek(wrap, mine) {
   const weeks = [];
-  items.forEach(it => {
+  _wordItems.forEach(it => {
     let g = weeks.find(w => w.week === it.week);
     if (!g) { g = { week: it.week, rows: [] }; weeks.push(g); }
     g.rows.push(it);
   });
-
-  weeks.forEach(group => {
-    const sec = _el('section', 'word-week');
-    const head = _el('p', 'word-week-label', _wordWeekLabel(group.week));
-    head.appendChild(_el('span', 'word-week-count', group.rows.length + '개'));
-    sec.appendChild(head);
-
-    group.rows.forEach(row => {
-      const card = _el('article', 'word-card');
-
-      if (row.verse_ref) {
-        const ref = _el('p', 'word-card-ref');
-        ref.appendChild(_el('span', 'word-card-ref-mark', '♥'));
-        ref.appendChild(_el('span', null, row.verse_ref));
-        card.appendChild(ref);
-      }
-
-      card.appendChild(_el('p', 'word-card-body', row.body));
-
-      const foot = _el('p', 'word-card-foot');
-      foot.appendChild(_el('span', 'word-card-name', row.display_name || '익명'));
-      if (row.share_later) foot.appendChild(_el('span', 'word-card-open', '공개 동의'));
-      if (mine[row.id]) {
-        const del = _el('button', 'word-card-del', '지우기');
-        del.type = 'button';
-        del.onclick = () => _wordRemove(row.id);
-        foot.appendChild(del);
-      }
-      card.appendChild(foot);
-      sec.appendChild(card);
-    });
-
-    wrap.appendChild(sec);
+  // 이번 주만 펼치고 지난 주는 접어 둔다
+  weeks.forEach((g, i) => {
+    wrap.appendChild(_wordGroup(_wordWeekLabel(g.week), g.rows.length, g.rows, mine, { showDate: true }, i === 0));
   });
+}
+
+function _renderWordByPerson(wrap, mine) {
+  const people = [];
+  const anon = [];
+  _wordItems.forEach(it => {
+    const name = (it.display_name || '').trim();
+    if (!name) { anon.push(it); return; }
+    let g = people.find(p => p.name === name);
+    if (!g) { g = { name: name, rows: [] }; people.push(g); }
+    g.rows.push(it);
+  });
+  people.sort((a, b) => b.rows.length - a.rows.length);
+
+  people.forEach((g, i) => {
+    wrap.appendChild(_wordGroup(g.name, g.rows.length, g.rows, mine, { showDate: true, hideName: true }, i === 0));
+  });
+
+  // 익명 글은 한 사람으로 묶지 않는다. 서로 다른 사람의 글일 수 있다.
+  if (anon.length) {
+    const sec = _wordGroup('익명으로 나눈 글', anon.length, anon, mine, { showDate: true, hideName: true }, !people.length);
+    const note = _el('p', 'word-group-note', '이름을 적지 않은 글이에요. 여러 사람의 글일 수 있어요.');
+    sec.querySelector('.word-group-body').prepend(note);
+    wrap.appendChild(sec);
+  }
 }
 
 async function _wordRemove(id) {

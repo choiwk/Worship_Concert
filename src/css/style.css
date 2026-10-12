@@ -2636,30 +2636,107 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 }
 .word-state[hidden] { display: none; }
 
-.word-week { margin-top: clamp(26px, 6vw, 34px); }
-
-.word-week-label {
+/* ── 보기 전환 ── */
+.word-views {
   display: flex;
-  align-items: baseline;
+  gap: 6px;
+  margin-top: clamp(16px, 4.5vw, 22px);
+}
+
+.word-view {
+  flex: 1;
+  min-height: 40px;
+  padding: 9px 12px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font: inherit;
+  font-size: clamp(13px, 3.3vw, 14px);
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+}
+.word-view.is-on {
+  background: var(--paper-warm);
+  border-color: var(--clay-wash);
+  color: #7d3a20;
+}
+
+/* ── 접었다 펴는 묶음 ── */
+.word-group { margin-top: clamp(20px, 5vw, 26px); }
+
+.word-group-head {
+  display: flex;
+  align-items: center;
   gap: 9px;
-  padding-bottom: 10px;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 0;
+  background: none;
+  border: 0;
   border-bottom: 1px solid var(--line);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.word-group-title {
   font-size: clamp(14px, 3.6vw, 16px);
   color: var(--ink);
 }
-.word-week-count { font-size: clamp(12px, 3vw, 13px); color: var(--ink-faint); }
+.word-group-count {
+  font-size: clamp(12px, 3vw, 13px);
+  color: var(--ink-faint);
+}
 
+/* 펼침 표시 — 글꼴에 없는 화살표 대신 테두리로 그린다 */
+.word-group-mark {
+  margin-left: auto;
+  width: 8px; height: 8px;
+  border-right: 1.5px solid var(--clay);
+  border-bottom: 1.5px solid var(--clay);
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform .25s;
+}
+.word-group.is-open .word-group-mark {
+  transform: rotate(-135deg) translate(-2px, -2px);
+}
+
+.word-group-body { display: none; }
+.word-group.is-open .word-group-body { display: block; }
+
+.word-group-note {
+  padding: 12px 0 2px;
+  font-size: clamp(12px, 3.1vw, 13px);
+  line-height: 1.7;
+  color: var(--ink-faint);
+  word-break: keep-all;
+}
+
+/* ── 글 한 장 ── */
 .word-card {
-  padding: clamp(16px, 4.5vw, 20px) 0;
+  padding: clamp(15px, 4.2vw, 19px) 0;
   border-bottom: 1px solid var(--line);
 }
 .word-card:last-child { border-bottom: 0; }
 
-.word-card-ref {
+.word-card-top {
   display: flex;
   align-items: center;
-  gap: 7px;
+  flex-wrap: wrap;
+  gap: 5px 10px;
   margin-bottom: 9px;
+}
+
+.word-card-date {
+  font-size: clamp(12px, 3vw, 13px);
+  color: var(--ink-faint);
+}
+
+.word-card-ref {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: clamp(13px, 3.4vw, 15px);
   color: var(--clay);
 }
@@ -2672,12 +2749,32 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   white-space: pre-wrap;
   word-break: keep-all;
 }
+/* 네 줄까지만 보이고 나머지는 눌러서 편다 */
+.word-card-body.is-clamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
+
+.word-more {
+  margin-top: 5px;
+  padding: 5px 0;
+  min-height: 30px;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: clamp(12px, 3.1vw, 13.5px);
+  color: #7d3a20;
+  cursor: pointer;
+}
+.word-more[hidden] { display: none; }
 
 .word-card-foot {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 11px;
+  margin-top: 10px;
   font-size: clamp(12px, 3.1vw, 13px);
   color: var(--ink-faint);
 }
@@ -2698,7 +2795,6 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   border: 0;
   font: inherit;
   font-size: 1em;
-  /* 강조색 그대로면 종이 위에서 4.5:1 을 못 넘긴다 */
   color: #7d3a20;
   cursor: pointer;
   text-decoration: underline;
