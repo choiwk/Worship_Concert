@@ -1324,7 +1324,10 @@ function _wordWeekLabel(week) {
 
 let _wordItems = [];
 
-function _wordViewMode() { return _wordStore('word-view') === 'person' ? 'person' : 'week'; }
+function _wordViewMode() {
+  const v = _wordStore('word-view');
+  return (v === 'person' || v === 'saved') ? v : 'week';
+}
 
 function switchWordView(mode) {
   _wordStore('word-view', mode);
@@ -1404,9 +1407,29 @@ function openWordRead(id) {
 
   document.getElementById('wordReadName').textContent = row.display_name || '익명';
 
+  // 구절 줄 — 적힌 표기 그대로 보여주고, 읽어낼 수 있으면 링크와 저장을 붙인다
   const v = document.getElementById('wordReadVerse');
-  v.textContent = row.verse_ref || '';
   v.hidden = !row.verse_ref;
+  document.getElementById('wordReadRef').textContent = row.verse_ref || '';
+
+  const link = document.getElementById('wordReadLink');
+  const save = document.getElementById('wordSaveBtn');
+  const parsed = row.verse_ref ? parseVerseRef(row.verse_ref) : null;
+
+  _wordReadRef = parsed ? { ref: row.verse_ref, usfm: parsed.usfm, url: parsed.url } : null;
+
+  if (parsed) {
+    link.hidden = false;
+    link.href = parsed.url;
+    link.setAttribute('aria-label', row.verse_ref + ' 본문 보기 (새 탭에서 열림)');
+    save.hidden = false;
+    _wordSavePaint();
+  } else {
+    // 구절을 읽어내지 못했다. 엉뚱한 곳으로 보내느니 링크를 안 만든다.
+    link.hidden = true;
+    link.removeAttribute('href');
+    save.hidden = true;
+  }
 
   document.getElementById('wordReadBody').textContent = row.body;
   document.getElementById('wordReadDate').textContent = _wordFullDate(row.created_at);
@@ -1417,6 +1440,97 @@ function openWordRead(id) {
 }
 
 function closeWordRead() { closeOverlay('wordRead'); }
+
+/* ── 말씀 저장 ───────────────────────────────────────────
+   브라우저에만 담는다. 서버에 둘 이유가 없다 — 내가 다시 읽으려고
+   표시해 두는 것이지 팀과 나누는 내용이 아니다. 사생활 보호 모드처럼
+   저장이 막힌 곳에서도 터지지 않게 감싼다. */
+
+let _wordReadRef = null;
+
+function _wordSavedList() {
+  try { return JSON.parse(_wordStore('word-saved') || '[]'); } catch (e) { return []; }
+}
+
+function _wordSavedPut(list) {
+  _wordStore('word-saved', JSON.stringify(list));
+}
+
+function _wordIsSaved(usfm) {
+  return _wordSavedList().some(x => x.usfm === usfm);
+}
+
+/** 저장 버튼의 모양을 지금 상태에 맞춘다 */
+function _wordSavePaint() {
+  const btn = document.getElementById('wordSaveBtn');
+  const label = document.getElementById('wordSaveLabel');
+  if (!btn || !_wordReadRef) return;
+  const on = _wordIsSaved(_wordReadRef.usfm);
+  btn.classList.toggle('is-saved', on);
+  btn.setAttribute('aria-pressed', String(on));
+  label.textContent = on ? '저장됨' : '저장';
+}
+
+function toggleWordSave() {
+  if (!_wordReadRef) return;
+  const list = _wordSavedList();
+  const at = list.findIndex(x => x.usfm === _wordReadRef.usfm);
+
+  if (at >= 0) {
+    list.splice(at, 1);
+    showToast('저장을 해제했어요');
+  } else {
+    list.unshift({
+      ref: _wordReadRef.ref,
+      usfm: _wordReadRef.usfm,
+      url: _wordReadRef.url,
+      at: Date.now()
+    });
+    showToast('저장했어요');
+  }
+  _wordSavedPut(list);
+  _wordSavePaint();
+  if (_wordViewMode() === 'saved') _renderWord(_wordItems);
+}
+
+function _wordUnsave(usfm) {
+  _wordSavedPut(_wordSavedList().filter(x => x.usfm !== usfm));
+  _renderWord(_wordItems);
+  showToast('저장을 해제했어요');
+}
+
+/** 저장한 말씀 목록 */
+function _renderWordSaved(wrap) {
+  const list = _wordSavedList();
+  if (!list.length) {
+    const empty = _el('div', 'word-empty');
+    empty.appendChild(_el('p', 'word-empty-title', '저장한 말씀이 없어요'));
+    empty.appendChild(_el('p', 'word-empty-text',
+      '묵상을 열어 구절 옆의 저장을 누르면 여기에 모여요.'));
+    wrap.appendChild(empty);
+    return;
+  }
+
+  const sec = _el('section', 'word-saved-list');
+  list.forEach(item => {
+    const row = _el('article', 'word-saved-item');
+
+    const main = _el('div', 'word-saved-main');
+    main.appendChild(_el('p', 'word-saved-ref', item.ref));
+    const go = _extLink(item.url, '말씀 보기', 'word-saved-link', item.ref + ' 본문 보기');
+    main.appendChild(go);
+    row.appendChild(main);
+
+    const off = _el('button', 'word-saved-off', '해제');
+    off.type = 'button';
+    off.setAttribute('aria-label', item.ref + ' 저장 해제');
+    off.onclick = () => _wordUnsave(item.usfm);
+    row.appendChild(off);
+
+    sec.appendChild(row);
+  });
+  wrap.appendChild(sec);
+}
 
 function _wordFullDate(iso) {
   const d = new Date(iso);
@@ -1459,7 +1573,7 @@ function _renderWord(items) {
   const wrap = document.getElementById('wordList');
   wrap.innerHTML = '';
 
-  if (!_wordItems.length) {
+  if (!_wordItems.length && _wordViewMode() !== 'saved') {
     _wordState('');
     const empty = _el('div', 'word-empty');
     empty.appendChild(_el('p', 'word-empty-title', '아직 나눈 말씀이 없어요'));
@@ -1470,8 +1584,10 @@ function _renderWord(items) {
   _wordState('');
 
   const mine = _wordMine();
-  if (_wordViewMode() === 'person') _renderWordByPerson(wrap, mine);
-  else                              _renderWordByWeek(wrap, mine);
+  const mode = _wordViewMode();
+  if (mode === 'saved')       _renderWordSaved(wrap);
+  else if (mode === 'person') _renderWordByPerson(wrap, mine);
+  else                        _renderWordByWeek(wrap, mine);
 
   requestAnimationFrame(_wordClampAll);
 }

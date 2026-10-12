@@ -1,11 +1,12 @@
-const CACHE_NAME = 'worship-concert-v57';
+const CACHE_NAME = 'worship-concert-v58';
 const ASSETS = [
   './',
   './index.html',
-  './src/css/style.css?v=57',
-  './src/js/app.js?v=57',
-  './src/js/songs.js?v=57',
-  './src/js/members.js?v=57',
+  './src/css/style.css?v=58',
+  './src/js/app.js?v=58',
+  './src/js/bible.js?v=58',
+  './src/js/songs.js?v=58',
+  './src/js/members.js?v=58',
   './manifest.json',
   './public/fonts/Sarang-site.woff2',
   './public/audio/bgm.mp3',
