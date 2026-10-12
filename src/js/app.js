@@ -782,7 +782,8 @@ const OVERLAYS = {
   verse:  { backdrop: 'verseBackdrop',  panel: 'verseModal'  },
   member: { backdrop: 'memberBackdrop', panel: 'memberSheet'  },
   rsvp:   { backdrop: 'rsvpBackdrop',   panel: 'rsvpSheet'   },
-  word:   { backdrop: 'wordBackdrop',   panel: 'wordSheet'   }
+  word:   { backdrop: 'wordBackdrop',   panel: 'wordSheet'   },
+  wordRead: { backdrop: 'wordReadBackdrop', panel: 'wordReadModal' }
 };
 
 let _openOverlays = [];   // 여러 개가 겹쳐도 스크롤 잠금이 어긋나지 않게 스택으로
@@ -1350,15 +1351,16 @@ function _wordClampAll() {
   });
 }
 
-function toggleWordMore(btn) {
-  const body = btn.previousElementSibling;
-  const open = body.classList.toggle('is-clamped');
-  btn.textContent = open ? '더 읽기' : '접기';
-}
-
-/** 글 한 장 */
+/** 글 한 장 — 이름을 맨 위에 두고, 본문은 네 줄까지만 보인다 */
 function _wordCard(row, mine, opts) {
+  _wordById[row.id] = row;
+
   const card = _el('article', 'word-card');
+
+  // 이름이 먼저. 누가 나눴는지가 글보다 앞선다.
+  if (!opts || !opts.hideName) {
+    card.appendChild(_el('p', 'word-card-name', row.display_name || '익명'));
+  }
 
   const top = _el('p', 'word-card-top');
   if (opts && opts.showDate) top.appendChild(_el('span', 'word-card-date', _wordDate(row.created_at)));
@@ -1370,17 +1372,17 @@ function _wordCard(row, mine, opts) {
   }
   if (top.children.length) card.appendChild(top);
 
-  const body = _el('p', 'word-card-body is-clamped', row.body);
-  card.appendChild(body);
+  card.appendChild(_el('p', 'word-card-body is-clamped', row.body));
 
+  // 길면 팝업으로 전문을 본다 (곡 상세의 말씀 창과 같은 방식)
   const more = _el('button', 'word-more', '더 읽기');
   more.type = 'button';
   more.hidden = true;
-  more.onclick = () => toggleWordMore(more);
+  more.setAttribute('aria-haspopup', 'dialog');
+  more.onclick = () => openWordRead(row.id);
   card.appendChild(more);
 
   const foot = _el('p', 'word-card-foot');
-  if (!opts || !opts.hideName) foot.appendChild(_el('span', 'word-card-name', row.display_name || '익명'));
   if (row.share_later) foot.appendChild(_el('span', 'word-card-open', '공개 동의'));
   if (mine[row.id]) {
     const del = _el('button', 'word-card-del', '지우기');
@@ -1390,6 +1392,35 @@ function _wordCard(row, mine, opts) {
   }
   if (foot.children.length) card.appendChild(foot);
   return card;
+}
+
+/* ── 묵상 전문 팝업 ── */
+
+const _wordById = {};
+
+function openWordRead(id) {
+  const row = _wordById[id];
+  if (!row) return;
+
+  document.getElementById('wordReadName').textContent = row.display_name || '익명';
+
+  const v = document.getElementById('wordReadVerse');
+  v.textContent = row.verse_ref || '';
+  v.hidden = !row.verse_ref;
+
+  document.getElementById('wordReadBody').textContent = row.body;
+  document.getElementById('wordReadDate').textContent = _wordFullDate(row.created_at);
+
+  document.getElementById('wordReadBody').scrollTop = 0;
+  openOverlay('wordRead');
+  requestAnimationFrame(() => document.querySelector('#wordReadModal .verse-close').focus());
+}
+
+function closeWordRead() { closeOverlay('wordRead'); }
+
+function _wordFullDate(iso) {
+  const d = new Date(iso);
+  return d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일';
 }
 
 function _wordDate(iso) {

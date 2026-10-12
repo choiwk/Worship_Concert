@@ -2757,17 +2757,21 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   overflow: hidden;
 }
 
+/* 팝업을 여는 버튼. 곡 상세의 '말씀 보기' 와 같은 생김새로 맞췄다. */
 .word-more {
-  margin-top: 5px;
-  padding: 5px 0;
-  min-height: 30px;
-  background: none;
-  border: 0;
+  margin-top: 9px;
+  padding: 6px 13px 7px;
+  min-height: 34px;
+  background: transparent;
+  border: 1px solid var(--clay-wash);
+  border-radius: 999px;
   font: inherit;
   font-size: clamp(12px, 3.1vw, 13.5px);
   color: #7d3a20;
   cursor: pointer;
+  transition: background .2s, border-color .2s;
 }
+.word-more:hover { background: var(--paper-warm); border-color: var(--clay); }
 .word-more[hidden] { display: none; }
 
 .word-card-foot {
@@ -2778,7 +2782,15 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   font-size: clamp(12px, 3.1vw, 13px);
   color: var(--ink-faint);
 }
-.word-card-name { color: var(--ink-soft); }
+/* 이름이 카드 맨 위에 선다. 누가 나눴는지가 글보다 먼저 읽히도록
+   본문(14~16px)보다 한 단계 크게 잡았다. */
+.word-card-name {
+  font-size: clamp(16px, 4.3vw, 18px);
+  color: var(--ink);
+  margin-bottom: 7px;
+  -webkit-text-stroke: var(--stroke-md) var(--ink);
+  paint-order: stroke fill;
+}
 
 .word-card-open {
   padding: 2px 8px 3px;
@@ -2816,6 +2828,37 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   line-height: 1.9;
   color: var(--ink-faint);
   word-break: keep-all;
+}
+
+/* ── 묵상 전문 팝업 ── */
+.word-read .verse-ref {
+  font-size: clamp(17px, 4.6vw, 20px);
+  color: var(--ink);
+}
+
+/* 아래 선은 .verse-body 가 이미 윗선으로 갖고 있다. 여기서 또 그으면 겹친다. */
+.word-read-verse {
+  margin-bottom: clamp(12px, 3.5vw, 16px);
+  font-size: clamp(13px, 3.4vw, 15px);
+  color: var(--clay);
+}
+.word-read-verse[hidden] { display: none; }
+
+.word-read .verse-body {
+  font-size: clamp(14px, 3.8vw, 16px);
+  line-height: 2;
+  color: var(--ink-soft);
+  white-space: pre-wrap;
+  word-break: keep-all;
+}
+
+.word-read-date {
+  margin-top: clamp(14px, 4vw, 18px);
+  padding-top: clamp(10px, 3vw, 13px);
+  border-top: 1px solid var(--line);
+  font-size: clamp(12px, 3vw, 13px);
+  color: var(--ink-faint);
+  text-align: right;
 }
 
 /* ── 쓰기 창 ── */

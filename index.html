@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=56" rel="stylesheet"/>
+<link href="src/css/style.css?v=57" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -657,12 +657,30 @@
 <span>전체 장 읽기</span><span class="ext-mark" aria-hidden="true">→</span>
 </a>
 </div>
+<!-- ════════════════════════════════
+     묵상 전문 팝업 — 곡 상세의 말씀 창과 같은 모양
+════════════════════════════════ -->
+<div class="modal-backdrop" id="wordReadBackdrop" onclick="closeWordRead()"></div>
+<div class="verse-modal word-read" id="wordReadModal" role="dialog" aria-modal="true" aria-labelledby="wordReadName">
+<div class="verse-head">
+<p class="verse-ref" id="wordReadName"></p>
+<button class="verse-close" onclick="closeWordRead()" aria-label="묵상 창 닫기">
+<svg fill="none" height="14" stroke="currentColor" stroke-width="1.8" viewbox="0 0 14 14" width="14" aria-hidden="true">
+<line x1="1" x2="13" y1="1" y2="13"></line>
+<line x1="13" x2="1" y1="1" y2="13"></line>
+</svg>
+</button>
+</div>
+<p class="word-read-verse" id="wordReadVerse" hidden=""></p>
+<div class="verse-body" id="wordReadBody"></div>
+<p class="word-read-date" id="wordReadDate"></p>
+</div>
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/songs.js?v=56" defer></script>
-<script src="src/js/members.js?v=56" defer></script>
-<script src="src/js/app.js?v=56" defer></script>
+<script src="src/js/songs.js?v=57" defer></script>
+<script src="src/js/members.js?v=57" defer></script>
+<script src="src/js/app.js?v=57" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
