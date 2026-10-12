@@ -5,3 +5,8 @@
 # 웹폰트 원본 TTF (배포에는 woff2만 사용)
 public/fonts/*.ttf
 
+# Supabase CLI 가 link 할 때 만드는 임시 파일 (프로젝트 참조·토큰 캐시)
+supabase/.temp/
+supabase/.branches/
+.env
+.env.local

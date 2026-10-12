@@ -55,11 +55,23 @@ alter table public.devotion enable row level security;
 
 ## 3. 함수 배포
 
+**반드시 프로젝트 폴더 안에서 실행한다.** 홈 디렉터리(`~`)에서 돌리면
+`supabase/functions/devotions/index.ts` 를 못 찾아 아래처럼 실패한다.
+
+```
+WARN: failed to read file: open supabase/functions/devotions/index.ts: no such file or directory
+unexpected deploy status 400: Entrypoint path does not exist
+```
+
 ```bash
+cd ~/Documents/GitHub/Worship_Concert
 npx supabase login
 npx supabase link --project-ref kjlaluzoeygsqojnioce
 npx supabase functions deploy devotions
 ```
+
+`WARNING: Docker is not running` 은 무시해도 된다. 함수는 서버에서 묶이므로
+배포에 Docker 가 필요하지 않다.
 
 배포되면 주소는 이렇게 된다.
 
