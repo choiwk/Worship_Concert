@@ -42,6 +42,19 @@ alter table public.devotion enable row level security;
 > 참여 신청(`rsvp`) 때와 달리 **정책을 안 만드는 것이 맞다.** 거기서는 anon 이
 > 넣을 수 있어야 했지만, 여기서는 anon 이 아무것도 못 해야 한다.
 
+### 나중에 더한 칸 — 모두에게 공개
+
+'모두에게 공개' 를 고른 글은 암호 없이 누구나 읽는다. 이미 표를 만든 뒤라면
+SQL Editor 에서 이 한 줄을 실행한다. (처음 만드는 경우라면 위 SQL 에 이미 없으니
+이것도 함께 실행한다.)
+
+```sql
+alter table public.devotion
+  add column if not exists share_now boolean not null default false;
+```
+
+기본값이 false 라 기존 글은 그대로 비공개로 남는다.
+
 ## 2. 암호를 비밀값으로 등록
 
 **Edge Functions → Secrets** 에서 두 개를 넣는다.

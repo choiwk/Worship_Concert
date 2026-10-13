@@ -92,13 +92,26 @@ Deno.serve(async (req) => {
   const action = String(body.action ?? '');
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'unknown';
 
-  // 공개 통로 — 암호 없이, 공개에 동의한 글만. 공연 뒤에 켠다.
+  // 모두에게 공개한 글 — 암호 없이 언제나 열린다.
+  // 쓴 사람이 글마다 직접 고른 것이라 PUBLIC_OPEN 과 상관없다.
+  if (action === 'open') {
+    const { data, error } = await db()
+      .from(TABLE)
+      .select('id, created_at, week, display_name, verse_ref, body')
+      .eq('hidden', false).eq('share_now', true)
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) return json({ error: '불러오지 못했습니다' }, 500);
+    return json({ items: data });
+  }
+
+  // 공연 뒤 공개 통로 — '공연이 끝나면 공개' 를 고른 글. 공연 뒤에 켠다.
   if (action === 'public') {
     if (Deno.env.get('PUBLIC_OPEN') !== 'true') return json({ open: false, items: [] });
     const { data, error } = await db()
       .from(TABLE)
       .select('id, created_at, week, display_name, verse_ref, body')
-      .eq('hidden', false).eq('share_later', true)
+      .eq('hidden', false).or('share_later.eq.true,share_now.eq.true')
       .order('created_at', { ascending: false });
     if (error) return json({ error: '불러오지 못했습니다' }, 500);
     return json({ open: true, items: data });
@@ -129,7 +142,7 @@ Deno.serve(async (req) => {
     // edit_token 은 돌려주지 않는다. 내 글인지는 브라우저가 스스로 안다.
     const { data, error } = await sb
       .from(TABLE)
-      .select('id, created_at, week, display_name, verse_ref, body, share_later')
+      .select('id, created_at, week, display_name, verse_ref, body, share_later, share_now')
       .eq('hidden', false)
       .order('created_at', { ascending: false })
       .limit(500);
@@ -149,6 +162,7 @@ Deno.serve(async (req) => {
       verse_ref: str(body.verse_ref, 60),
       body: text,
       share_later: body.share_later === true,
+      share_now: body.share_now === true,
       edit_token: token,
     };
     const { data, error } = await sb.from(TABLE).insert(row).select('id, created_at, week').single();

@@ -1181,13 +1181,52 @@ function _rsvpStore(mode) {
    서버는 목록을 내려줄 때 이 값을 빼고 보내므로, 남의 글은 지울 수 없다.
 ══════════════════════════════════ */
 
+/** 팝업에서 다시 꺼내 쓰려고 들고 있는 글들 */
+const _wordById = {};
+
 const WORD = {
   get endpoint() { return RSVP.url.replace(/\/+$/, '') + '/functions/v1/devotions'; },
   passKey: 'word-pass',
   mineKey: 'word-mine'
 };
 
+/* 암호를 얼마나 기억할까
+   팀끼리만 보는 글이라 한 번 넣으면 영원히 열리는 것은 곤란하다.
+   기기를 빌려주거나 잃어버렸을 때 그대로 열린다.
+
+     · sessionStorage 에 둔다 → 브라우저(탭)를 닫으면 사라진다
+     · 거기에 더해 시간 제한   → 탭을 며칠씩 열어 두는 경우를 막는다
+
+   '내 글' 표시(word-mine)는 암호와 상관없으니 localStorage 에 그대로 둔다. */
+const WORD_PASS_HOURS = 12;
+
 /* ── 브라우저에 두는 것 ─────────────────────────────── */
+
+/* 예전에는 암호를 localStorage 에 두어서, 한 번 들어온 기기에는 그대로
+   남아 있다. 새 방식으로 넘어오면서 그 값을 지운다. */
+(function () {
+  try { localStorage.removeItem('word-pass'); } catch (e) { /* 저장이 막혀 있어도 그만 */ }
+})();
+
+/** 암호는 세션에만, 그리고 12시간까지만 */
+function _wordPass(value) {
+  try {
+    if (value === null) { sessionStorage.removeItem(WORD.passKey); return null; }
+    if (value !== undefined) {
+      sessionStorage.setItem(WORD.passKey, JSON.stringify({ v: value, at: Date.now() }));
+      return value;
+    }
+    const raw = sessionStorage.getItem(WORD.passKey);
+    if (!raw) return null;
+    const box = JSON.parse(raw);
+    if (!box || !box.v) return null;
+    if (Date.now() - box.at > WORD_PASS_HOURS * 3600 * 1000) {
+      sessionStorage.removeItem(WORD.passKey);   // 시간이 지났다
+      return null;
+    }
+    return box.v;
+  } catch (e) { return null; }
+}
 
 function _wordStore(key, value) {
   try {
@@ -1221,7 +1260,7 @@ async function _wordCall(action, extra) {
       'apikey': RSVP.key,
       'Authorization': 'Bearer ' + RSVP.key
     },
-    body: JSON.stringify(Object.assign({ action: action, passcode: _wordStore(WORD.passKey) || '' }, extra || {}))
+    body: JSON.stringify(Object.assign({ action: action, passcode: _wordPass() || '' }, extra || {}))
   });
   let data = {};
   try { data = await res.json(); } catch (e) { /* 본문이 없을 수 있다 */ }
@@ -1229,11 +1268,64 @@ async function _wordCall(action, extra) {
   return data;
 }
 
+/* ── 모두에게 공개한 묵상 ────────────────────────────────
+   암호 없이 보이는 자리라 잠금 화면 아래에 둔다. 글이 길어지면 화면을
+   잡아먹으므로 세로로 쌓지 않고 카드를 가로로 넘겨 보게 했다.
+   한 장이 화면 폭의 80% 라 옆 카드가 살짝 보이고, 그게 '더 있다' 는
+   신호가 된다. */
+
+async function loadWordOpen() {
+  const sec = document.getElementById('wordOpen');
+  const rail = document.getElementById('wordOpenRail');
+  if (!sec || !rail) return;
+
+  let items = [];
+  try {
+    const res = await fetch(WORD.endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': RSVP.key,
+        'Authorization': 'Bearer ' + RSVP.key
+      },
+      body: JSON.stringify({ action: 'open' })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    items = (await res.json()).items || [];
+  } catch (e) {
+    sec.hidden = true;      // 못 불러오면 조용히 접는다. 잠금 화면은 그대로 쓴다.
+    return;
+  }
+
+  if (!items.length) { sec.hidden = true; return; }
+
+  rail.innerHTML = '';
+  items.forEach(row => {
+    _wordById[row.id] = row;
+
+    const card = _el('button', 'word-open-card');
+    card.type = 'button';
+    card.setAttribute('aria-haspopup', 'dialog');
+    card.setAttribute('aria-label',
+      (row.display_name || '익명') + '님의 묵상 읽기' + (row.verse_ref ? ' — ' + row.verse_ref : ''));
+    card.onclick = () => openWordRead(row.id);
+
+    card.appendChild(_el('span', 'word-open-name', row.display_name || '익명'));
+    if (row.verse_ref) card.appendChild(_el('span', 'word-open-ref', row.verse_ref));
+    card.appendChild(_el('span', 'word-open-body', row.body));
+    card.appendChild(_el('span', 'word-open-more', '읽어보기'));
+
+    rail.appendChild(card);
+  });
+  sec.hidden = false;
+}
+
 /* ── 잠금 화면 ──────────────────────────────────────── */
 
 function _wordShowLock(msg) {
   document.getElementById('wordLock').hidden = false;
   document.getElementById('wordMain').hidden = true;
+  loadWordOpen();          // 암호가 없어도 공개 묵상은 읽을 수 있다
   const err = document.getElementById('wordLockError');
   err.textContent = msg || '';
   err.hidden = !msg;
@@ -1247,14 +1339,14 @@ async function _wordUnlock(e) {
   if (!value) { _wordShowLock('암호를 넣어주세요.'); input.focus(); return; }
 
   btn.disabled = true; btn.textContent = '확인하는 중…';
-  const before = _wordStore(WORD.passKey);
-  _wordStore(WORD.passKey, value);
+  const before = _wordPass();
+  _wordPass(value);
   try {
     await _wordCall('list');          // 통과하면 암호가 맞다
     input.value = '';
     await loadWord();
   } catch (err) {
-    _wordStore(WORD.passKey, before);  // 틀렸으면 되돌린다
+    _wordPass(before);  // 틀렸으면 되돌린다
     _wordShowLock(err.status === 401 ? '암호가 맞지 않아요.'
                  : err.status === 429 ? '여러 번 틀렸어요. 잠시 뒤에 다시 시도해주세요.'
                  : err.status === 503 ? '아직 준비가 되지 않았어요. 관리자에게 알려주세요.'
@@ -1273,10 +1365,12 @@ function _wordState(msg) {
 }
 
 async function loadWord() {
-  if (!_wordStore(WORD.passKey)) { _wordShowLock(''); return; }
+  if (!_wordPass()) { _wordShowLock(''); return; }
 
   document.getElementById('wordLock').hidden = true;
   document.getElementById('wordMain').hidden = false;
+  // 들어오면 아래 목록에 다 들어 있으므로 따로 띄우지 않는다
+  document.getElementById('wordOpen').hidden = true;
 
   // 지난번에 고른 보기 방식으로 버튼을 맞춰 둔다
   const mode = _wordViewMode();
@@ -1291,7 +1385,7 @@ async function loadWord() {
     const data = await _wordCall('list');
     _renderWord(data.items || []);
   } catch (err) {
-    if (err.status === 401) { _wordStore(WORD.passKey, null); _wordShowLock('암호가 바뀐 것 같아요. 다시 넣어주세요.'); return; }
+    if (err.status === 401) { _wordPass(null); _wordShowLock('암호가 바뀐 것 같아요. 다시 넣어주세요.'); return; }
     document.getElementById('wordList').innerHTML = '';
     _wordState('불러오지 못했어요. 잠시 뒤에 다시 열어주세요.');
   }
@@ -1324,10 +1418,7 @@ function _wordWeekLabel(week) {
 
 let _wordItems = [];
 
-function _wordViewMode() {
-  const v = _wordStore('word-view');
-  return (v === 'person' || v === 'saved') ? v : 'week';
-}
+function _wordViewMode() { return _wordStore('word-view') === 'person' ? 'person' : 'week'; }
 
 function switchWordView(mode) {
   _wordStore('word-view', mode);
@@ -1399,7 +1490,7 @@ function _wordCard(row, mine, opts) {
 
 /* ── 묵상 전문 팝업 ── */
 
-const _wordById = {};
+
 
 function openWordRead(id) {
   const row = _wordById[id];
@@ -1413,22 +1504,16 @@ function openWordRead(id) {
   document.getElementById('wordReadRef').textContent = row.verse_ref || '';
 
   const link = document.getElementById('wordReadLink');
-  const save = document.getElementById('wordSaveBtn');
   const parsed = row.verse_ref ? parseVerseRef(row.verse_ref) : null;
-
-  _wordReadRef = parsed ? { ref: row.verse_ref, usfm: parsed.usfm, url: parsed.url } : null;
 
   if (parsed) {
     link.hidden = false;
     link.href = parsed.url;
     link.setAttribute('aria-label', row.verse_ref + ' 본문 보기 (새 탭에서 열림)');
-    save.hidden = false;
-    _wordSavePaint();
   } else {
     // 구절을 읽어내지 못했다. 엉뚱한 곳으로 보내느니 링크를 안 만든다.
     link.hidden = true;
     link.removeAttribute('href');
-    save.hidden = true;
   }
 
   document.getElementById('wordReadBody').textContent = row.body;
@@ -1440,97 +1525,6 @@ function openWordRead(id) {
 }
 
 function closeWordRead() { closeOverlay('wordRead'); }
-
-/* ── 말씀 저장 ───────────────────────────────────────────
-   브라우저에만 담는다. 서버에 둘 이유가 없다 — 내가 다시 읽으려고
-   표시해 두는 것이지 팀과 나누는 내용이 아니다. 사생활 보호 모드처럼
-   저장이 막힌 곳에서도 터지지 않게 감싼다. */
-
-let _wordReadRef = null;
-
-function _wordSavedList() {
-  try { return JSON.parse(_wordStore('word-saved') || '[]'); } catch (e) { return []; }
-}
-
-function _wordSavedPut(list) {
-  _wordStore('word-saved', JSON.stringify(list));
-}
-
-function _wordIsSaved(usfm) {
-  return _wordSavedList().some(x => x.usfm === usfm);
-}
-
-/** 저장 버튼의 모양을 지금 상태에 맞춘다 */
-function _wordSavePaint() {
-  const btn = document.getElementById('wordSaveBtn');
-  const label = document.getElementById('wordSaveLabel');
-  if (!btn || !_wordReadRef) return;
-  const on = _wordIsSaved(_wordReadRef.usfm);
-  btn.classList.toggle('is-saved', on);
-  btn.setAttribute('aria-pressed', String(on));
-  label.textContent = on ? '저장됨' : '저장';
-}
-
-function toggleWordSave() {
-  if (!_wordReadRef) return;
-  const list = _wordSavedList();
-  const at = list.findIndex(x => x.usfm === _wordReadRef.usfm);
-
-  if (at >= 0) {
-    list.splice(at, 1);
-    showToast('저장을 해제했어요');
-  } else {
-    list.unshift({
-      ref: _wordReadRef.ref,
-      usfm: _wordReadRef.usfm,
-      url: _wordReadRef.url,
-      at: Date.now()
-    });
-    showToast('저장했어요');
-  }
-  _wordSavedPut(list);
-  _wordSavePaint();
-  if (_wordViewMode() === 'saved') _renderWord(_wordItems);
-}
-
-function _wordUnsave(usfm) {
-  _wordSavedPut(_wordSavedList().filter(x => x.usfm !== usfm));
-  _renderWord(_wordItems);
-  showToast('저장을 해제했어요');
-}
-
-/** 저장한 말씀 목록 */
-function _renderWordSaved(wrap) {
-  const list = _wordSavedList();
-  if (!list.length) {
-    const empty = _el('div', 'word-empty');
-    empty.appendChild(_el('p', 'word-empty-title', '저장한 말씀이 없어요'));
-    empty.appendChild(_el('p', 'word-empty-text',
-      '묵상을 열어 구절 옆의 저장을 누르면 여기에 모여요.'));
-    wrap.appendChild(empty);
-    return;
-  }
-
-  const sec = _el('section', 'word-saved-list');
-  list.forEach(item => {
-    const row = _el('article', 'word-saved-item');
-
-    const main = _el('div', 'word-saved-main');
-    main.appendChild(_el('p', 'word-saved-ref', item.ref));
-    const go = _extLink(item.url, '말씀 보기', 'word-saved-link', item.ref + ' 본문 보기');
-    main.appendChild(go);
-    row.appendChild(main);
-
-    const off = _el('button', 'word-saved-off', '해제');
-    off.type = 'button';
-    off.setAttribute('aria-label', item.ref + ' 저장 해제');
-    off.onclick = () => _wordUnsave(item.usfm);
-    row.appendChild(off);
-
-    sec.appendChild(row);
-  });
-  wrap.appendChild(sec);
-}
 
 function _wordFullDate(iso) {
   const d = new Date(iso);
@@ -1573,7 +1567,7 @@ function _renderWord(items) {
   const wrap = document.getElementById('wordList');
   wrap.innerHTML = '';
 
-  if (!_wordItems.length && _wordViewMode() !== 'saved') {
+  if (!_wordItems.length) {
     _wordState('');
     const empty = _el('div', 'word-empty');
     empty.appendChild(_el('p', 'word-empty-title', '아직 나눈 말씀이 없어요'));
@@ -1584,10 +1578,8 @@ function _renderWord(items) {
   _wordState('');
 
   const mine = _wordMine();
-  const mode = _wordViewMode();
-  if (mode === 'saved')       _renderWordSaved(wrap);
-  else if (mode === 'person') _renderWordByPerson(wrap, mine);
-  else                        _renderWordByWeek(wrap, mine);
+  if (_wordViewMode() === 'person') _renderWordByPerson(wrap, mine);
+  else                              _renderWordByWeek(wrap, mine);
 
   requestAnimationFrame(_wordClampAll);
 }
@@ -1682,11 +1674,13 @@ async function _wordSubmit(e) {
 
   _wordFormBusy(true);
   try {
+    const pick = scope ? scope.value : 'team';
     const data = await _wordCall('create', {
       verse_ref: document.getElementById('wordVerse').value.trim(),
       body: body,
       display_name: document.getElementById('wordName').value.trim(),
-      share_later: !!scope && scope.value === 'later',
+      share_now: pick === 'now',       // 암호 없이 누구나
+      share_later: pick === 'later',   // 공연 뒤에 공개
       edit_token: token
     });
     if (data.item && data.item.id) _wordMine({ [data.item.id]: token });
