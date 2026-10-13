@@ -1693,13 +1693,16 @@ function _renderWordByPerson(wrap, mine) {
   });
   people.sort((a, b) => b.rows.length - a.rows.length);
 
-  people.forEach((g, i) => {
-    wrap.appendChild(_wordGroup(g.name, g.rows.length, g.rows, mine, { showDate: true, hideName: true }, i === 0));
+  // 사람별에서는 전부 접은 채로 시작한다. 한 사람 것만 펼쳐 두면
+  // 다른 이름들이 그 아래로 밀려나 누가 있는지 한눈에 안 들어온다.
+  // 이 화면의 쓸모는 '누가 무엇을 나눴나' 를 훑는 것이라 목차처럼 둔다.
+  people.forEach(g => {
+    wrap.appendChild(_wordGroup(g.name, g.rows.length, g.rows, mine, { showDate: true, hideName: true }, false));
   });
 
   // 익명 글은 한 사람으로 묶지 않는다. 서로 다른 사람의 글일 수 있다.
   if (anon.length) {
-    const sec = _wordGroup('익명으로 나눈 글', anon.length, anon, mine, { showDate: true, hideName: true }, !people.length);
+    const sec = _wordGroup('익명으로 나눈 글', anon.length, anon, mine, { showDate: true, hideName: true }, false);
     const note = _el('p', 'word-group-note', '이름을 적지 않은 글이에요. 여러 사람의 글일 수 있어요.');
     sec.querySelector('.word-group-body').prepend(note);
     wrap.appendChild(sec);
