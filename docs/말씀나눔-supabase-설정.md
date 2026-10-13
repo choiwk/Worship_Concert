@@ -55,6 +55,32 @@ alter table public.devotion
 
 기본값이 false 라 기존 글은 그대로 비공개로 남는다.
 
+### 조회수와 좋아요
+
+세는 칸 두 개와, 숫자를 안전하게 올리는 함수 두 개를 만든다.
+
+```sql
+alter table public.devotion
+  add column if not exists views int not null default 0,
+  add column if not exists likes int not null default 0;
+
+-- 숫자를 올릴 때는 '읽고 더해서 쓰기' 를 하면 안 된다.
+-- 두 사람이 동시에 누르면 하나가 묻힌다. 데이터베이스 안에서 한 번에 처리한다.
+create or replace function public.devotion_view(p_id uuid)
+returns void language sql as $$
+  update public.devotion set views = views + 1 where id = p_id;
+$$;
+
+create or replace function public.devotion_like(p_id uuid, p_delta int)
+returns int language sql as $$
+  update public.devotion set likes = greatest(0, likes + p_delta)
+  where id = p_id returning likes;
+$$;
+```
+
+이 함수들에는 anon 권한을 주지 않는다. 암호를 확인한 Edge Function 만
+service_role 로 부른다.
+
 ## 2. 암호를 비밀값으로 등록
 
 **Edge Functions → Secrets** 에서 두 개를 넣는다.

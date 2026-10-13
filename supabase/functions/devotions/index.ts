@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
   if (action === 'open') {
     const { data, error } = await db()
       .from(TABLE)
-      .select('id, created_at, week, display_name, verse_ref, body')
+      .select('id, created_at, week, display_name, verse_ref, body, views, likes')
       .eq('hidden', false).eq('share_now', true)
       .order('created_at', { ascending: false })
       .limit(50);
@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
     if (Deno.env.get('PUBLIC_OPEN') !== 'true') return json({ open: false, items: [] });
     const { data, error } = await db()
       .from(TABLE)
-      .select('id, created_at, week, display_name, verse_ref, body')
+      .select('id, created_at, week, display_name, verse_ref, body, views, likes')
       .eq('hidden', false).or('share_later.eq.true,share_now.eq.true')
       .order('created_at', { ascending: false });
     if (error) return json({ error: '불러오지 못했습니다' }, 500);
@@ -142,7 +142,7 @@ Deno.serve(async (req) => {
     // edit_token 은 돌려주지 않는다. 내 글인지는 브라우저가 스스로 안다.
     const { data, error } = await sb
       .from(TABLE)
-      .select('id, created_at, week, display_name, verse_ref, body, share_later, share_now')
+      .select('id, created_at, week, display_name, verse_ref, body, share_later, share_now, views, likes')
       .eq('hidden', false)
       .order('created_at', { ascending: false })
       .limit(500);
@@ -168,6 +168,24 @@ Deno.serve(async (req) => {
     const { data, error } = await sb.from(TABLE).insert(row).select('id, created_at, week').single();
     if (error) return json({ error: '저장하지 못했습니다' }, 500);
     return json({ item: data });
+  }
+
+  if (action === 'view') {
+    const id = String(body.id ?? '');
+    if (!id) return json({ error: '잘못된 요청' }, 400);
+    // 같은 사람이 여러 번 열어도 한 번만 센다(브라우저가 판단해 보낸다)
+    const { error } = await sb.rpc('devotion_view', { p_id: id });
+    if (error) return json({ error: '기록하지 못했습니다' }, 500);
+    return json({ ok: true });
+  }
+
+  if (action === 'like') {
+    const id = String(body.id ?? '');
+    if (!id) return json({ error: '잘못된 요청' }, 400);
+    const delta = body.on === true ? 1 : -1;
+    const { data, error } = await sb.rpc('devotion_like', { p_id: id, p_delta: delta });
+    if (error) return json({ error: '기록하지 못했습니다' }, 500);
+    return json({ likes: data });
   }
 
   if (action === 'remove') {

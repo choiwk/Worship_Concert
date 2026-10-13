@@ -1313,7 +1313,14 @@ async function loadWordOpen() {
     card.appendChild(_el('span', 'word-open-name', row.display_name || '익명'));
     if (row.verse_ref) card.appendChild(_el('span', 'word-open-ref', row.verse_ref));
     card.appendChild(_el('span', 'word-open-body', row.body));
-    card.appendChild(_el('span', 'word-open-more', '읽어보기'));
+
+    const foot = _el('span', 'word-open-foot');
+    const n = _el('span', 'word-open-count');
+    n.appendChild(_el('span', 'word-like-mark', '♡'));
+    n.appendChild(_el('span', null, String(row.likes || 0)));
+    foot.appendChild(n);
+    foot.appendChild(_el('span', 'word-open-more', '읽어보기'));
+    card.appendChild(foot);
 
     rail.appendChild(card);
   });
@@ -1452,8 +1459,14 @@ function _wordCard(row, mine, opts) {
   const card = _el('article', 'word-card');
 
   // 이름이 먼저. 누가 나눴는지가 글보다 앞선다.
+  // '공개 동의' 같은 표시는 그 이름 옆에 붙는다 — 누가 어디까지 열었는지가
+  // 한 덩어리로 읽힌다.
   if (!opts || !opts.hideName) {
-    card.appendChild(_el('p', 'word-card-name', row.display_name || '익명'));
+    const nameRow = _el('p', 'word-card-name');
+    nameRow.appendChild(_el('span', null, row.display_name || '익명'));
+    if (row.share_now)        nameRow.appendChild(_el('span', 'word-card-open is-now', '모두 공개'));
+    else if (row.share_later) nameRow.appendChild(_el('span', 'word-card-open', '공개 동의'));
+    card.appendChild(nameRow);
   }
 
   const top = _el('p', 'word-card-top');
@@ -1477,7 +1490,8 @@ function _wordCard(row, mine, opts) {
   card.appendChild(more);
 
   const foot = _el('p', 'word-card-foot');
-  if (row.share_later) foot.appendChild(_el('span', 'word-card-open', '공개 동의'));
+  foot.appendChild(_wordLikeBtn(row));
+  foot.appendChild(_el('span', 'word-card-views', '조회 ' + (row.views || 0)));
   if (mine[row.id]) {
     const del = _el('button', 'word-card-del', '지우기');
     del.type = 'button';
@@ -1486,6 +1500,74 @@ function _wordCard(row, mine, opts) {
   }
   if (foot.children.length) card.appendChild(foot);
   return card;
+}
+
+/* ── 좋아요와 조회 ───────────────────────────────────────
+   좋아요는 누른 사람 이름을 남기지 않는다. 숫자만 쌓인다. 수줍은 사람도
+   부담 없이 누르고, 쓴 사람은 혼자가 아니란 걸 안다.
+   누가 눌렀는지는 브라우저만 기억한다(서버에는 숫자뿐).
+
+   조회는 같은 기기에서 여러 번 열어도 한 번만 센다. 한 사람이 다시
+   읽을 때마다 올라가면 '몇 명이 읽었나' 를 알 수 없다.
+
+   둘 다 암호를 넣고 들어온 사람만 센다. 공개 카드를 지나가며 본 사람까지
+   세면 숫자를 부풀리기 너무 쉽다. */
+
+function _wordFlags(key, id, set) {
+  let map = {};
+  try { map = JSON.parse(_wordStore(key) || '{}'); } catch (e) { map = {}; }
+  if (set === undefined) return !!map[id];
+  if (set) map[id] = 1; else delete map[id];
+  _wordStore(key, JSON.stringify(map));
+  return set;
+}
+
+const _wordLiked  = (id, set) => _wordFlags('word-liked', id, set);
+const _wordViewed = (id, set) => _wordFlags('word-viewed', id, set);
+
+function _wordLikeBtn(row) {
+  const btn = _el('button', 'word-like');
+  btn.type = 'button';
+  const paint = () => {
+    const on = _wordLiked(row.id);
+    btn.classList.toggle('is-on', on);
+    btn.setAttribute('aria-pressed', String(on));
+    btn.setAttribute('aria-label', '좋아요 ' + (row.likes || 0) + '개' + (on ? ', 누름' : ''));
+    btn.innerHTML = '';
+    const heart = _el('span', 'word-like-mark', on ? '♥' : '♡');
+    heart.setAttribute('aria-hidden', 'true');
+    btn.appendChild(heart);
+    btn.appendChild(_el('span', 'word-like-n', String(row.likes || 0)));
+  };
+  paint();
+
+  btn.onclick = async (e) => {
+    e.stopPropagation();
+    if (!_wordPass()) return;              // 로그인한 사람만
+    const next = !_wordLiked(row.id);
+    // 먼저 화면을 바꾸고 보낸다. 실패하면 되돌린다.
+    row.likes = Math.max(0, (row.likes || 0) + (next ? 1 : -1));
+    _wordLiked(row.id, next);
+    paint();
+    try {
+      const r = await _wordCall('like', { id: row.id, on: next });
+      if (typeof r.likes === 'number') { row.likes = r.likes; paint(); }
+    } catch (err) {
+      row.likes = Math.max(0, (row.likes || 0) + (next ? -1 : 1));
+      _wordLiked(row.id, !next);
+      paint();
+      showToast('기록하지 못했어요');
+    }
+  };
+  return btn;
+}
+
+/** 처음 열어 본 글만 조회로 센다 */
+function _wordCountView(row) {
+  if (!row || _wordViewed(row.id) || !_wordPass()) return;
+  _wordViewed(row.id, true);
+  row.views = (row.views || 0) + 1;
+  _wordCall('view', { id: row.id }).catch(() => { /* 못 세도 읽는 데는 지장 없다 */ });
 }
 
 /* ── 묵상 전문 팝업 ── */
@@ -1518,6 +1600,8 @@ function openWordRead(id) {
 
   document.getElementById('wordReadBody').textContent = row.body;
   document.getElementById('wordReadDate').textContent = _wordFullDate(row.created_at);
+
+  _wordCountView(row);
 
   document.getElementById('wordReadBody').scrollTop = 0;
   openOverlay('wordRead');
