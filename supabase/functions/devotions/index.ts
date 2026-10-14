@@ -14,6 +14,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 
 const TABLE = 'devotion';
+const WEEKLY = 'weekly_verse';
 
 /* 브라우저는 본 요청 전에 '이 헤더 보내도 되냐' 고 먼저 묻는다(preflight).
    여기 적지 않은 헤더가 하나라도 있으면 본 요청을 아예 보내지 않는다.
@@ -147,7 +148,15 @@ Deno.serve(async (req) => {
       .order('created_at', { ascending: false })
       .limit(500);
     if (error) return json({ error: '불러오지 못했습니다' }, 500);
-    return json({ items: data });
+
+    // 이번 주에 함께 읽기로 걸어 둔 말씀 (없으면 null)
+    const { data: wk } = await sb
+      .from(WEEKLY)
+      .select('week, verse_ref, note')
+      .eq('week', weekOf())
+      .maybeSingle();
+
+    return json({ items: data, weekly: wk ?? null });
   }
 
   if (action === 'create') {

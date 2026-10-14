@@ -1368,6 +1368,39 @@ async function _wordUnlock(e) {
   }
 }
 
+/* ── 이번 주 함께 읽는 말씀 ──────────────────────────────
+   빈 화면 앞에서 '뭘 쓰지' 하는 것이 가장 큰 장벽이다. 관리자가 한 구절을
+   걸어 두면 거기서 시작할 수 있고, 같은 말씀을 각자 다르게 받은 것을
+   보는 재미도 생긴다. 걸려 있지 않으면 영역째 접는다. */
+
+let _wordWeekly = null;
+
+function _renderWeekly(wk) {
+  _wordWeekly = wk;
+  const sec = document.getElementById('wordWeekly');
+  if (!sec) return;
+  if (!wk || !wk.verse_ref) { sec.hidden = true; return; }
+
+  document.getElementById('wordWeeklyRef').textContent = wk.verse_ref;
+
+  const note = document.getElementById('wordWeeklyNote');
+  note.textContent = wk.note || '';
+  note.hidden = !wk.note;
+
+  // 구절을 읽어낼 수 있을 때만 본문 링크를 건다
+  const link = document.getElementById('wordWeeklyLink');
+  const parsed = parseVerseRef(wk.verse_ref);
+  if (parsed) {
+    link.hidden = false;
+    link.href = parsed.url;
+    link.setAttribute('aria-label', wk.verse_ref + ' 본문 보기 (새 탭에서 열림)');
+  } else {
+    link.hidden = true;
+    link.removeAttribute('href');
+  }
+  sec.hidden = false;
+}
+
 /* ── 목록 ───────────────────────────────────────────── */
 
 function _wordState(msg) {
@@ -1395,6 +1428,7 @@ async function loadWord() {
   _wordState('불러오는 중…');
   try {
     const data = await _wordCall('list');
+    _renderWeekly(data.weekly || null);
     _renderWord(data.items || []);
   } catch (err) {
     if (err.status === 401) { _wordPass(null); _wordShowLock('암호가 바뀐 것 같아요. 다시 넣어주세요.'); return; }
@@ -1603,7 +1637,7 @@ function openWordRead(id) {
     link.removeAttribute('href');
   }
 
-  document.getElementById('wordReadBody').textContent = row.body;
+  _wordParagraphs(document.getElementById('wordReadBody'), row.body);
   document.getElementById('wordReadDate').textContent = _wordFullDate(row.created_at);
 
   _wordCountView(row);
@@ -1614,6 +1648,26 @@ function openWordRead(id) {
 }
 
 function closeWordRead() { closeOverlay('wordRead'); }
+
+/** 묵상을 문단으로 끊어 넣는다.
+    빈 줄로 나뉜 덩어리는 각각 한 문단이 되고, 문단 안의 줄바꿈은 그대로 둔다.
+    통째로 textContent 에 넣으면 줄바꿈이 다 뭉개져 한 덩어리로 붙어 버린다. */
+function _wordParagraphs(box, text) {
+  box.innerHTML = '';
+  String(text || '')
+    .replace(/\r\n?/g, '\n')
+    .split(/\n\s*\n+/)            // 빈 줄 하나 이상 = 문단 경계
+    .map(t => t.trim())
+    .filter(Boolean)
+    .forEach(chunk => {
+      const p = _el('p', 'word-read-p');
+      chunk.split('\n').forEach((line, i) => {
+        if (i) p.appendChild(document.createElement('br'));
+        p.appendChild(document.createTextNode(line));
+      });
+      box.appendChild(p);
+    });
+}
 
 function _wordFullDate(iso) {
   const d = new Date(iso);
@@ -1734,6 +1788,13 @@ function openWordWrite() {
   const form = document.getElementById('wordForm');
   const done = document.getElementById('wordDone');
   form.hidden = false; done.hidden = true;
+
+  // 이번 주 말씀이 걸려 있으면 구절 칸을 미리 채워 둔다. 지우고 다른 구절을
+  // 적어도 된다. 비어 있을 때만 넣어 쓰던 글을 덮지 않는다.
+  const verse = document.getElementById('wordVerse');
+  if (_wordWeekly && _wordWeekly.verse_ref && !verse.value) {
+    verse.value = _wordWeekly.verse_ref;
+  }
   _wordFormError('');
   _wordFormBusy(false);
   openOverlay('word');

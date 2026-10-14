@@ -66,7 +66,8 @@ const PEOPLE = {
     }
   },
   'lee-hanbin':    { name: '이한빈', icon: '♪' },
-  'go-un':         { name: '고운',   icon: '♪' },
+  'choi-goun':     { name: '최고운', icon: '♪' },
+  'han-gahee':     { name: '한가희', icon: '♪' },
 
   'han-yuhee':     { name: '한유희', icon: '🎹' },
   'ryu-danbi':     { name: '류단비', icon: '🎹' },
@@ -112,7 +113,8 @@ const MEMBERS = [
       { id: 'kwon-yeseul' },
       { id: 'hwang-yuchan' },
       { id: 'lee-hanbin' },
-      { id: 'go-un' }
+      { id: 'choi-goun' },
+      { id: 'han-gahee' }
     ]
   },
   {

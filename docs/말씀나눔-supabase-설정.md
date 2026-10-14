@@ -81,6 +81,34 @@ $$;
 이 함수들에는 anon 권한을 주지 않는다. 암호를 확인한 Edge Function 만
 service_role 로 부른다.
 
+### 이번 주 함께 읽는 말씀
+
+관리자가 주마다 한 구절을 걸어 둔다. 빈 화면 앞에서 '뭘 쓰지' 하는
+막막함이 사라지고, 같은 말씀을 각자 다르게 받은 것을 보는 재미가 생긴다.
+
+```sql
+create table if not exists public.weekly_verse (
+  week      date primary key,
+  verse_ref text not null,
+  note      text
+);
+
+alter table public.weekly_verse enable row level security;
+```
+
+정책은 만들지 않는다. devotion 과 같이 Edge Function 만 손댄다.
+
+**거는 방법** — 매주 SQL Editor 에서 한 줄. `week` 는 그 주의 **월요일** 날짜다.
+
+```sql
+insert into public.weekly_verse (week, verse_ref, note)
+values ('2026-10-13', '요한1서 4장 7-12절', '서로 사랑하라 하신 말씀을 함께 읽어요')
+on conflict (week) do update
+  set verse_ref = excluded.verse_ref, note = excluded.note;
+```
+
+`note` 는 비워도 된다. 같은 주에 다시 넣으면 덮어쓴다.
+
 ## 2. 암호를 비밀값으로 등록
 
 **Edge Functions → Secrets** 에서 두 개를 넣는다.
