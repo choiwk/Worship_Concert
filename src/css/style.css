@@ -2629,6 +2629,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   color: var(--ink-faint);
   margin-left: auto;
 }
+.word-open-hint[hidden] { display: none; }
 
 .word-open-rail {
   display: flex;

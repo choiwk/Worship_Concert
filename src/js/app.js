@@ -1324,6 +1324,11 @@ async function loadWordOpen() {
 
     rail.appendChild(card);
   });
+
+  // 넘길 것이 없으면 안내를 감춘다
+  const hint = sec.querySelector('.word-open-hint');
+  if (hint) hint.hidden = items.length < 2;
+
   sec.hidden = false;
 }
 
