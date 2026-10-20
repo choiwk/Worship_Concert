@@ -377,6 +377,90 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   .tab-icon { width: 19px; height: 19px; }
 }
 
+/* ── 언어 고르기 ────────────────────────────────────────
+   처음 온 사람이 바로 찾아야 해서 화면 위 오른쪽에 고정해 둔다.
+   종이 톤을 깨지 않게 테두리만 두른 작은 알약으로. */
+/* 재생바 글씨가 언어 버튼 밑으로 파고들지 않도록 오른쪽을 비워 둔다.
+   지금은 10px 쯤 떨어져 있지만, 재생 중인 곡 제목이 길어지면 부딪힌다. */
+.now-playing { padding-right: 104px; }
+
+.lang-pick {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  right: max(14px, env(safe-area-inset-right) + 14px);
+  z-index: 1200;
+}
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 6px 12px 7px;
+  background: rgba(255, 253, 248, .92);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font: inherit;
+  font-size: clamp(12px, 3vw, 13px);
+  color: var(--ink-soft);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: border-color .2s;
+}
+.lang-btn:hover { border-color: var(--clay-wash); }
+.lang-btn svg {
+  width: 14px; height: 14px;
+  fill: none;
+  stroke: var(--clay);
+  stroke-width: 1.5;
+}
+
+.lang-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 132px;
+  padding: 5px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(50, 44, 37, .16);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lang-menu[hidden] { display: none; }
+
+.lang-opt {
+  min-height: 38px;
+  padding: 8px 12px;
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: clamp(13px, 3.2vw, 14px);
+  color: var(--ink-soft);
+  text-align: left;
+  cursor: pointer;
+  transition: background .15s;
+}
+.lang-opt:hover { background: var(--paper-warm); }
+.lang-opt.is-on { background: var(--paper-warm); color: #7d3a20; }
+
+/* 크메르 글자는 손글씨 폰트에 없다. 캄보디아어일 때만 전용 폰트를 앞에 세운다.
+   손글씨 느낌은 줄지만, 글자가 네모로 깨지는 것보다 낫다. */
+html.is-km body,
+html.is-km .tab-label,
+html.is-km .lang-btn,
+html.is-km .lang-opt {
+  font-family: 'Noto Sans Khmer', 'Sarang', 'Apple SD Gothic Neo', sans-serif;
+}
+html.is-km .ph-title,
+html.is-km .word-weekly-ref,
+html.is-km .rsvp-title {
+  -webkit-text-stroke: 0;
+}
+
 /* 검은 원형 FAB은 이 사이트의 종이·손글씨 톤과 겉돌아서
    종이 바탕에 클레이 테두리를 두른 원형 버튼으로 바꿨다. */
 .share-fab {

@@ -185,8 +185,8 @@ function renderSongList() {
     // 안에 무엇이 들어 있는지 미리 알려준다.
     // 말씀은 12곡 중 일부에만 있어서 장식이 아니라 실제 정보가 된다.
     const meta = _el('span', 'song-meta');
-    meta.appendChild(_metaTag('icon-lyrics', '가사'));
-    if (song.parts.some(p => p.bible)) meta.appendChild(_metaTag('icon-verse', '말씀'));
+    meta.appendChild(_metaTag('icon-lyrics', t('songs.lyrics', '가사')));
+    if (song.parts.some(p => p.bible)) meta.appendChild(_metaTag('icon-verse', t('songs.verse', '말씀')));
     mid.appendChild(meta);
 
     a.appendChild(mid);
@@ -490,7 +490,7 @@ function renderDetailGrid() {
     grid.appendChild(c);
   };
 
-  card('날짜', c => {
+  card(t('main.label.date', '날짜'), c => {
     CONCERT.dates.forEach((d, i) => {
       const v = _el('p', 'card-value');
       if (i > 0) v.appendChild(_el('span', 'card-note', '또는 '));
@@ -500,13 +500,13 @@ function renderDetailGrid() {
     if (!CONCERT.confirmed) c.appendChild(_el('p', 'card-note card-note-block', '두 날짜 중 하나로 확정될 예정이에요'));
   }, 'is-date');
 
-  card('시간', c => {
+  card(t('main.label.time', '시간'), c => {
     const v = _el('p', 'card-value');
     v.appendChild(_el('span', 'card-strong', CONCERT.time.text));
     c.appendChild(v);
   });
 
-  card('장소', c => {
+  card(t('main.label.place', '장소'), c => {
     CONCERT.venues.forEach((place, i) => {
       const v = _el('p', 'card-value');
       if (i > 0) v.appendChild(_el('span', 'card-note', '또는 '));
@@ -522,6 +522,13 @@ function renderDetailGrid() {
 
 /* ── 멤버 소개 (src/js/members.js 데이터로 렌더) ── */
 
+/** 팀 이름은 옮기고, 사람 이름은 고유명사라 그대로 둔다 */
+const TEAM_KEY = {
+  '싱어': 'team.singer', '악기팀': 'team.band', '마케팅팀': 'team.marketing',
+  '촬영팀': 'team.film', '스텝팀': 'team.staff', '소품팀': 'team.props'
+};
+const _teamName = g => t(TEAM_KEY[g] || '', g);
+
 function renderMembers() {
   const wrap = document.getElementById('memberList');
   if (!wrap || typeof MEMBERS === 'undefined') return;
@@ -529,7 +536,7 @@ function renderMembers() {
 
   MEMBERS.forEach((section, gi) => {
     const block = _el('div', 'artist-section-block');
-    block.appendChild(_el('h3', 'artist-group-label', section.group));
+    block.appendChild(_el('h3', 'artist-group-label', _teamName(section.group)));
 
     const grid = _el('div', 'artist-grid');
     section.people.forEach((entry, pi) => {
@@ -606,7 +613,7 @@ function openMember(groupIndex, personIndex) {
 
   document.getElementById('memberName').textContent = person.name;
   const role = document.getElementById('memberRole');
-  role.textContent = person.role || section.group;
+  role.textContent = person.role || _teamName(section.group);
 
   // 한마디 — 없으면 영역째 감춘다
   document.getElementById('memberBio').textContent = person.bio || '';
@@ -910,7 +917,8 @@ function openVerse(slug, partIndex) {
   });
 
   const full = document.getElementById('verseFull');
-  full.href = bible.url;
+  // 곡에 딸린 말씀도 지금 언어판 성경으로 보낸다
+  full.href = bibleUrlFor(bible.url.split('/').pop());
   full.setAttribute('aria-label', bible.ref + ' 전체 장 읽기 (새 탭에서 열림)');
 
   body.scrollTop = 0;
@@ -1307,10 +1315,10 @@ async function loadWordOpen() {
     card.type = 'button';
     card.setAttribute('aria-haspopup', 'dialog');
     card.setAttribute('aria-label',
-      (row.display_name || '익명') + '님의 묵상 읽기' + (row.verse_ref ? ' — ' + row.verse_ref : ''));
+      (row.display_name || t('word.anon', '익명')) + '님의 묵상 읽기' + (row.verse_ref ? ' — ' + row.verse_ref : ''));
     card.onclick = () => openWordRead(row.id);
 
-    card.appendChild(_el('span', 'word-open-name', row.display_name || '익명'));
+    card.appendChild(_el('span', 'word-open-name', row.display_name || t('word.anon', '익명')));
     if (row.verse_ref) card.appendChild(_el('span', 'word-open-ref', row.verse_ref));
     card.appendChild(_el('span', 'word-open-body', row.body));
 
@@ -1392,7 +1400,7 @@ function _renderWeekly(wk) {
   const parsed = parseVerseRef(wk.verse_ref);
   if (parsed) {
     link.hidden = false;
-    link.href = parsed.url;
+    link.href = bibleUrlFor(parsed.usfm);
     link.setAttribute('aria-label', wk.verse_ref + ' 본문 보기 (새 탭에서 열림)');
   } else {
     link.hidden = true;
@@ -1447,9 +1455,9 @@ function _wordThisWeek(d) {
 
 function _wordWeekLabel(week) {
   const now = _wordThisWeek();
-  if (week === now) return '이번 주';
+  if (week === now) return t('word.thisWeek', '이번 주');
   const last = new Date(now); last.setUTCDate(last.getUTCDate() - 7);
-  if (week === last.toISOString().slice(0, 10)) return '지난 주';
+  if (week === last.toISOString().slice(0, 10)) return t('word.lastWeek', '지난 주');
   const d = new Date(week + 'T00:00:00Z');
   return (d.getUTCMonth() + 1) + '월 ' + d.getUTCDate() + '일 주간';
 }
@@ -1502,7 +1510,7 @@ function _wordCard(row, mine, opts) {
   // 한 덩어리로 읽힌다.
   if (!opts || !opts.hideName) {
     const nameRow = _el('p', 'word-card-name');
-    nameRow.appendChild(_el('span', null, row.display_name || '익명'));
+    nameRow.appendChild(_el('span', null, row.display_name || t('word.anon', '익명')));
     if (row.share_now)        nameRow.appendChild(_el('span', 'word-card-open is-now', '모두 공개'));
     else if (row.share_later) nameRow.appendChild(_el('span', 'word-card-open', '공개 동의'));
     card.appendChild(nameRow);
@@ -1617,7 +1625,7 @@ function openWordRead(id) {
   const row = _wordById[id];
   if (!row) return;
 
-  document.getElementById('wordReadName').textContent = row.display_name || '익명';
+  document.getElementById('wordReadName').textContent = row.display_name || t('word.anon', '익명');
 
   // 구절 줄 — 적힌 표기 그대로 보여주고, 읽어낼 수 있으면 링크와 저장을 붙인다
   const v = document.getElementById('wordReadVerse');
@@ -1629,7 +1637,7 @@ function openWordRead(id) {
 
   if (parsed) {
     link.hidden = false;
-    link.href = parsed.url;
+    link.href = bibleUrlFor(parsed.usfm);
     link.setAttribute('aria-label', row.verse_ref + ' 본문 보기 (새 탭에서 열림)');
   } else {
     // 구절을 읽어내지 못했다. 엉뚱한 곳으로 보내느니 링크를 안 만든다.
@@ -2067,6 +2075,27 @@ function _fallbackCopy(text, callback) {
 
 
 /* ══════════════════════════════════
+   언어 전환 — 자바스크립트가 그려 넣은 화면 다시 그리기
+
+   data-i18n 이 붙은 정적인 글은 i18n.js 가 알아서 바꾼다.
+   목록·카드처럼 코드가 만들어 넣은 것은 여기서 다시 그려야 한다.
+══════════════════════════════════ */
+
+function onLangChange() {
+  renderDetailGrid();
+  renderMembers();
+  renderSongList();
+  _updateLP();
+  updateDday();
+  const r = parseHash();
+  if (r.tab === 'songs' && r.slug) renderSongDetail(r.slug);
+  if (r.tab === 'word' && !document.getElementById('wordMain').hidden) {
+    _renderWord(_wordItems);
+  }
+}
+
+
+/* ══════════════════════════════════
    boot — 최초 렌더 및 라우팅 시작
 ══════════════════════════════════ */
 
@@ -2086,4 +2115,5 @@ document.getElementById('wordLockForm').addEventListener('submit', _wordUnlock);
 })();
 updateDday();
 setInterval(updateDday, 60000);
+setLang(currentLang());   // 저장된 언어(또는 브라우저 언어)로 맞춘다
 route();
