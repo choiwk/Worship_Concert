@@ -147,7 +147,8 @@ function renderSongList() {
     play.href = SETLIST_PLAYLIST;
     play.setAttribute('aria-label',
       '곡 전체 듣기 — 유튜브 재생목록 ' + SONGS.length + '곡 (새 탭에서 열림)');
-    document.getElementById('setlistPlaySub').textContent = SONGS.length + '곡';
+    document.getElementById('setlistPlaySub').textContent =
+      t('songs.count', '{n}곡').replace('{n}', SONGS.length);
   }
 
   SONGS.forEach(song => {
@@ -172,8 +173,14 @@ function renderSongList() {
     // 이어 부르는 곡은 아래 줄에 들여 쓴다. 제목에 '/' 를 길게 늘어놓는
     // 것보다 공연 순서가 그대로 읽힌다.
     head.appendChild(_el('span', 'song-title-text', song.parts[0].label || song.title));
-    if (song.tag) head.appendChild(_el('span', 'song-badge tag-' + tagKind(song.tag), song.tag));
+    if (song.tag) head.appendChild(_el('span', 'song-badge tag-' + tagKind(song.tag), _tagName(song.tag)));
     mid.appendChild(head);
+
+    // 한국어가 아닐 때는 제목을 소리 나는 대로 적어 둔다.
+    // 찬양곡 가사와 제목은 저작권이 있어 옮기지 않는다. 대신 읽고 찾을 수 있게 돕는다.
+    if (currentLang() !== 'ko' && song.roman) {
+      mid.appendChild(_el('span', 'song-roman', song.roman));
+    }
 
     subs.forEach(part => {
       const sub = _el('span', 'song-sub');
@@ -234,7 +241,7 @@ function renderSongDetail(slug) {
   const backIcon = _el('span', 'song-back-icon', '←');
   backIcon.setAttribute('aria-hidden', 'true');
   back.appendChild(backIcon);
-  back.appendChild(_el('span', 'song-back-label', '곡 리스트'));
+  back.appendChild(_el('span', 'song-back-label', t('songs.back', '곡 리스트')));
   wrap.appendChild(back);
 
   /* 머리말 */
@@ -242,9 +249,12 @@ function renderSongDetail(slug) {
   head.appendChild(_el('p', 'song-head-num', song.no));
   const h1 = _el('h1', 'song-head-title', song.title);
   head.appendChild(h1);
+  const roman = _el('p', 'song-head-roman');
+  roman.dataset.roman = song.roman || '';
+  head.appendChild(roman);
   if (song.artist) head.appendChild(_el('p', 'song-head-artist', song.artist));
   if (song.tag) {
-    head.appendChild(_el('span', 'song-badge tag-' + tagKind(song.tag), song.tag));
+    head.appendChild(_el('span', 'song-badge tag-' + tagKind(song.tag), _tagName(song.tag)));
   }
   if (song.tag === '기도') {
     head.appendChild(_el('p', 'song-head-note', '기도하며 함께 드리는 곡입니다'));
@@ -254,7 +264,7 @@ function renderSongDetail(slug) {
 
   /* 유튜브 — 제목 바로 아래, 가사 시작 전 */
   if (song.youtube) {
-    const yt = _extLink(song.youtube, 'YouTube에서 듣기', 'song-yt', song.title + ' 유튜브에서 듣기');
+    const yt = _extLink(song.youtube, t('songs.youtube', 'YouTube에서 듣기'), 'song-yt', song.title + ' 유튜브에서 듣기');
     const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     icon.setAttribute('width', '16'); icon.setAttribute('height', '16');
     icon.setAttribute('fill', 'white'); icon.setAttribute('aria-hidden', 'true');
@@ -264,6 +274,12 @@ function renderSongDetail(slug) {
     yt.insertBefore(icon, yt.firstChild);
     wrap.appendChild(yt);
   }
+
+  /* 가사는 저작권이 있는 찬양곡이라 옮기지 않는다. 대신 한국어라고 알려 준다.
+     노드는 언제나 만들어 두고 _updateKoNotice() 가 언어에 맞춰 채운다.
+     언어를 한국어로 되돌렸을 때 외국어 안내문이 남지 않도록. */
+  wrap.appendChild(_el('p', 'song-ko-notice'));
+  _updateKoNotice();
 
   /* 가사 + 말씀 (한 곡에 두 곡이 이어지면 파트마다 반복) */
   song.parts.forEach((part, i) => {
@@ -277,12 +293,12 @@ function renderSongDetail(slug) {
       // 이어 부르는 곡은 자기 영상이 따로 있다. 위 큰 버튼은 첫 곡 것이라
       // 여기서 따로 걸어 준다.
       if (part.youtube) {
-        const link = _extLink(part.youtube, 'YouTube에서 듣기', 'song-part-yt',
+        const link = _extLink(part.youtube, t('songs.youtube', 'YouTube에서 듣기'), 'song-part-yt',
                               part.label + ' 유튜브에서 듣기');
         sec.appendChild(link);
       }
     }
-    else if (i === 0) sec.appendChild(_el('h2', 'song-part-label sr-only', '가사'));
+    else if (i === 0) sec.appendChild(_el('h2', 'song-part-label sr-only', t('songs.lyrics', '가사')));
 
     sec.appendChild(_el('p', 'song-lyrics', part.lyrics));
 
@@ -291,7 +307,7 @@ function renderSongDetail(slug) {
       word.appendChild(_el('p', 'song-word-label', '이 곡과 함께 묵상할 말씀'));
       word.appendChild(_el('p', 'song-word-ref', part.bible.ref));
 
-      const btn = _el('button', 'song-word-link', '말씀 보기');
+      const btn = _el('button', 'song-word-link', t('songs.readVerse', '말씀 보기'));
       btn.type = 'button';
       btn.setAttribute('aria-label', part.bible.ref + ' 본문 보기');
       btn.setAttribute('aria-haspopup', 'dialog');
@@ -312,7 +328,8 @@ function renderSongDetail(slug) {
     const a = _el('a', 'song-nav-btn ' + cls);
     a.href = '#/songs/' + target.slug;
     a.setAttribute('aria-label', dir + ': ' + target.no + '번 ' + target.title);
-    a.appendChild(_el('span', 'song-nav-dir', cls === 'prev' ? '← 이전 곡' : '다음 곡 →'));
+    a.appendChild(_el('span', 'song-nav-dir',
+      cls === 'prev' ? t('songs.prev', '← 이전 곡') : t('songs.next', '다음 곡 →')));
     a.appendChild(_el('span', 'song-nav-title', target.title));
     return a;
   };
@@ -494,7 +511,7 @@ function renderDetailGrid() {
     CONCERT.dates.forEach((d, i) => {
       const v = _el('p', 'card-value');
       if (i > 0) v.appendChild(_el('span', 'card-note', '또는 '));
-      v.appendChild(_el('span', 'card-strong', d.ko + ' ' + d.dow));
+      v.appendChild(_el('span', 'card-strong', t('main.date', d.ko + ' ' + d.dow)));
       c.appendChild(v);
     });
     if (!CONCERT.confirmed) c.appendChild(_el('p', 'card-note card-note-block', '두 날짜 중 하나로 확정될 예정이에요'));
@@ -502,7 +519,7 @@ function renderDetailGrid() {
 
   card(t('main.label.time', '시간'), c => {
     const v = _el('p', 'card-value');
-    v.appendChild(_el('span', 'card-strong', CONCERT.time.text));
+    v.appendChild(_el('span', 'card-strong', t('main.time', CONCERT.time.text)));
     c.appendChild(v);
   });
 
@@ -510,9 +527,9 @@ function renderDetailGrid() {
     CONCERT.venues.forEach((place, i) => {
       const v = _el('p', 'card-value');
       if (i > 0) v.appendChild(_el('span', 'card-note', '또는 '));
-      v.appendChild(_el('span', 'card-strong venue-highlight', place.name));
+      v.appendChild(_el('span', 'card-strong venue-highlight', t('main.venue', place.name)));
       c.appendChild(v);
-      if (place.address) c.appendChild(_el('p', 'card-value card-sub', place.address));
+      if (place.address) c.appendChild(_el('p', 'card-value card-sub', t('main.address', place.address)));
     });
     if (!CONCERT.venueConfirmed) {
       c.appendChild(_el('p', 'card-note card-note-block', '두 장소 중 하나로 확정될 예정이에요'));
@@ -575,7 +592,7 @@ function renderMembers() {
       card.appendChild(avatar);
 
       card.appendChild(_el('p', 'artist-card-name', person.name));
-      if (person.role) card.appendChild(_el('p', 'artist-card-role', person.role));
+      if (person.role) card.appendChild(_el('p', 'artist-card-role', _roleName(person.role)));
 
       grid.appendChild(card);
     });
@@ -971,7 +988,7 @@ function _updateLP() {
   if (song.youtube) {
     yt.hidden = false;
     yt.href = song.youtube;
-    yt.setAttribute('aria-label', song.title + ' YouTube에서 듣기 (새 탭에서 열림)');
+    yt.setAttribute('aria-label', song.title + ' ' + t('songs.youtube', 'YouTube에서 듣기'));
   } else {
     yt.hidden = true;
     yt.removeAttribute('href');
@@ -1028,7 +1045,7 @@ function toggleSetlistNote() {
     });
   }
 
-  btn.textContent = opening ? '접기' : '더 읽기';
+  btn.textContent = opening ? t('songs.less', '접기') : t('songs.more', '더 읽기');
   btn.setAttribute('aria-expanded', String(opening));
 }
 
@@ -1372,7 +1389,7 @@ async function _wordUnlock(e) {
                  : err.status === 503 ? '아직 준비가 되지 않았어요. 관리자에게 알려주세요.'
                  : '연결하지 못했어요. 잠시 뒤에 다시 시도해주세요.');
   } finally {
-    btn.disabled = false; btn.textContent = '들어가기';
+    btn.disabled = false; btn.textContent = t('word.enter', '들어가기');
   }
 }
 
@@ -1529,7 +1546,7 @@ function _wordCard(row, mine, opts) {
   card.appendChild(_el('p', 'word-card-body is-clamped', row.body));
 
   // 길면 팝업으로 전문을 본다 (곡 상세의 말씀 창과 같은 방식)
-  const more = _el('button', 'word-more', '더 읽기');
+  const more = _el('button', 'word-more', t('word.more', '더 읽기'));
   more.type = 'button';
   more.hidden = true;
   more.setAttribute('aria-haspopup', 'dialog');
@@ -2081,7 +2098,42 @@ function _fallbackCopy(text, callback) {
    목록·카드처럼 코드가 만들어 넣은 것은 여기서 다시 그려야 한다.
 ══════════════════════════════════ */
 
+/* 곡 가사 안내문을 현재 언어에 맞춘다.
+   한국어일 때는 비워서 감춘다 — 글자가 남아 있으면 그 글자 때문에
+   손글씨 폴백 글꼴(503KB)까지 내려받게 된다. */
+/* 곡 배지(주제곡·앵콜·기도) 이름을 현재 언어로 */
+const TAG_I18N = { '주제곡': 'songs.tagLead', '앵콜': 'songs.tagEncore', '기도': 'songs.tagPray' };
+function _tagName(tag) {
+  const k = TAG_I18N[tag];
+  return k ? t(k, tag) : tag;
+}
+
+/* 악기·역할 이름을 현재 언어로. 사전에 없으면 한국어 그대로 둔다. */
+const ROLE_KEY = {
+  '드럼': 'role.drums', '베이스': 'role.bass', '일렉': 'role.guitar',
+  '피아노 (메인)': 'role.pianoMain', '피아노 (세컨)': 'role.pianoSecond'
+};
+function _roleName(role) {
+  const k = ROLE_KEY[role];
+  return k ? t(k, role) : role;
+}
+
+function _updateKoNotice() {
+  const ko = currentLang() === 'ko';
+  document.querySelectorAll('.song-ko-notice').forEach(el => {
+    el.textContent = ko ? '' : t('songs.koNotice', '');
+    el.hidden = ko;
+  });
+  /* 제목 소리 적기도 한국어에서는 감춘다 */
+  document.querySelectorAll('.song-head-roman').forEach(el => {
+    const r = el.dataset.roman || '';
+    el.textContent = (ko || !r) ? '' : r;
+    el.hidden = ko || !r;
+  });
+}
+
 function onLangChange() {
+  _updateKoNotice();
   renderDetailGrid();
   renderMembers();
   renderSongList();

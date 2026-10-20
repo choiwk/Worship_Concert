@@ -48,6 +48,7 @@ const SONGS = [
     no: '01',
     slug: '01',
     title: '하나님이 너를 엄청 사랑하신대',
+    roman: 'Hananimi neoreul eomcheong saranghasindae',
     tag: null,
     youtube: 'https://youtu.be/Fxtmq-1tipo?si=qaVhzjxqfrN6tKuU',
     parts: [
@@ -72,6 +73,7 @@ const SONGS = [
     no: '02',
     slug: '02',
     title: '주를 바라보며 / 주를 찾는 모든 자들이',
+    roman: 'Jureul barabomyeo / Jureul channeun modeun jadeuri',
     tag: null,
     youtube: 'https://youtu.be/bgdU5_BbACM?si=YKqGbKfV1RXgJtSq',
     parts: [
@@ -117,6 +119,7 @@ const SONGS = [
     no: '03',
     slug: '03',
     title: '주와 함께 걸어가네',
+    roman: 'Juwa hamkke georeoganne',
     tag: null,
     youtube: 'https://youtu.be/H56xVRKQ2Ag?si=NGX8c_vy2BCeGtwZ',
     parts: [
@@ -160,6 +163,7 @@ const SONGS = [
     no: '04',
     slug: '04',
     title: '길을 찾는 너를 위해',
+    roman: 'Gireul channeun neoreul wihae',
     tag: null,
     youtube: 'https://youtu.be/3RbST8rkuao?si=svRVkU50dgOHg9tF',
     parts: [
@@ -188,6 +192,7 @@ const SONGS = [
     no: '05',
     slug: '05',
     title: '온 땅의 주인 / 비 준비하시니',
+    roman: 'On ttangui juin / Bi junbihasini',
     tag: null,
     youtube: 'https://youtu.be/wFooiln1gIc?si=hgJJet7VKzWS1b3G',
     parts: [
@@ -230,6 +235,7 @@ const SONGS = [
     no: '06',
     slug: '06',
     title: '주 예수 나의 산 소망',
+    roman: 'Ju Yesu naui san somang',
     tag: null,
     youtube: 'https://youtu.be/jt2qxbrexwg?si=-HLwd8TUZlrO87Ba',
     parts: [
@@ -274,6 +280,7 @@ const SONGS = [
     no: '07',
     slug: '07',
     title: '하나님께서 세상을 사랑하사',
+    roman: 'Hananimkkeseo sesangeul saranghasa',
     tag: null,
     youtube: 'https://youtu.be/-n24d45myCg?si=WQ2MzZIECBkxWQTt',
     parts: [
@@ -314,6 +321,7 @@ const SONGS = [
     no: '08',
     slug: '08',
     title: '주님의 선하심',
+    roman: 'Junimui seonhasim',
     tag: null,
     youtube: 'https://youtu.be/ErqijpGQmO4?si=gdO3-cREdzZYjZlA',
     parts: [
@@ -347,6 +355,7 @@ const SONGS = [
     no: '09',
     slug: '09',
     title: '우리가 서로 사랑하자 / 우리 살아가는 모든 날들이',
+    roman: 'Uriga seoro saranghaja / Uri saraganeun modeun naldeuri',
     tag: '주제곡',
     youtube: 'https://youtu.be/5RGMkWIFrmU?si=cqChPScfN8B_UMBz',
     parts: [
@@ -395,6 +404,7 @@ const SONGS = [
     no: '10',
     slug: '10',
     title: '친구여 함께 노래해',
+    roman: 'Chinguyeo hamkke noraehae',
     tag: null,
     youtube: 'https://youtu.be/xs1G1mJS_Vw?si=Lr28L_if_jqTEbFE',
     parts: [
@@ -430,6 +440,7 @@ const SONGS = [
     no: '11',
     slug: '11',
     title: '달리기',
+    roman: 'Dalligi',
     artist: '웨이홈',
     tag: null,
     youtube: 'https://youtu.be/wmS1Ng_71Jc?si=2GzHQVeer9jjtXow',
@@ -467,6 +478,7 @@ const SONGS = [
     no: '12',
     slug: '12',
     title: '우리가 주를 더욱 사랑하고',
+    roman: 'Uriga jureul deouk saranghago',
     tag: null,
     youtube: 'https://youtu.be/AEQAG9uoEJ0?si=cEHveIq1wNf6msdI',
     parts: [
@@ -502,6 +514,7 @@ const SONGS = [
     no: '13',
     slug: '13',
     title: '사랑의 계절',
+    roman: 'Sarangui gyejeol',
     artist: 'WELOVE',
     tag: '앵콜',
     youtube: 'https://youtu.be/ufkYcQsrt4c?si=_UbjZcLl8FIac88G',

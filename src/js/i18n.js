@@ -50,7 +50,8 @@ const I18N = {
     'main.label.date': 'Date', 'main.label.time': 'Time', 'main.label.place': 'Place',
     'main.venue': 'Hyangsang Church, 3F Gymnasium',
     'main.date': 'Saturday, December 19, 2026',
-    'main.time': '7:30 – 9:00 PM',
+    'main.address': '140 Eondong-ro, Giheung-gu, Yongin',
+    'main.time': '7:30 - 9:00 PM',
 
     /* 곡 리스트 */
     'songs.eyebrow': 'Setlist', 'songs.title': 'Songs',
@@ -63,6 +64,10 @@ const I18N = {
     'songs.prev': '← Previous', 'songs.next': 'Next →',
     'songs.note.lead': 'About the order',
     'songs.more': 'Read more', 'songs.less': 'Show less',
+    'songs.count': '{n} songs',
+    'songs.tagLead': 'Theme song', 'songs.tagEncore': 'Encore', 'songs.tagPray': 'Prayer',
+    'role.drums': 'Drums', 'role.bass': 'Bass', 'role.guitar': 'Electric guitar',
+    'role.pianoMain': 'Piano (lead)', 'role.pianoSecond': 'Piano (second)',
 
     /* 멤버 */
     'artists.eyebrow': 'Members', 'artists.title': 'Our team',
@@ -113,6 +118,16 @@ const I18N = {
     'word.empty': 'No devotions yet', 'word.emptyText': 'Be the first. A few sentences is plenty.',
     'word.openBadge': 'Public', 'word.laterBadge': 'Share later',
 
+    /* 메인 아래 말씀 — 저작권이 없는 공개 번역본(World English Bible)을 쓴다.
+       다른 영어 번역본은 대부분 저작권이 있어 임의로 실을 수 없다. */
+    'msg.lead': 'Let us love one another',
+    'msg.p1': 'Beloved, let us love one another,<br>for love is of God;<br>and everyone who loves has been born of God,<br>and knows God.',
+    'msg.p2': 'He who doesn\u2019t love doesn\u2019t know God,<br>for <em>God is love</em>.',
+    'msg.ref': '1 John 4:7-8, World English Bible',
+
+    /* 곡 — 가사는 옮기지 않는다 (저작권이 있는 찬양곡) */
+    'songs.koNotice': 'Lyrics are shown in Korean. Song titles include a romanization to help you search for them.',
+
     /* 팀 소개 — 사장님이 쓰신 글을 옮긴 것이라 검토가 필요합니다 */
     'story.title': 'Young adults<br>who gather<br>for worship',
     'story.sub': 'The story of why we came together',
@@ -123,7 +138,7 @@ const I18N = {
     'story.h2': 'And then one day<br>a thought came to us',
     'story.b2': 'In a world this busy,<br>are we forgetting God<br>far too easily?',
     'story.ch3': '03. Deciding',
-    'story.h3': 'And young adults especially —<br>are we slowly losing our <em>worship</em><br>toward God?',
+    'story.h3': 'And young adults especially -<br>are we slowly losing our <em>worship</em><br>toward God?',
     'story.b3': 'So we began.<br>We found the lights ourselves and carried the instruments.<br>We had nothing, but we had the heart.',
     'story.ch4': '04. A small beginning',
     'story.ch5': '05. Worship begins',
@@ -142,7 +157,7 @@ const I18N = {
     'note.p2': 'We did not want those words to end as a resolution, or as a confession made only on that one day. So before that confession, we built the set list so that we would first look at the fact that God loved us first.',
     'note.p3': 'We remember the love shown through the cross and the resurrection, and the love that holds us even in our weakest moments. In that love we rise again and walk with Him. We love one another not because we have enough strength to love, but because we were loved first.',
     'note.p4': 'We hope that love opens our hearts, that we listen to one another, and that it turns into small acts of care for whoever is worn out. And we hope that love does not stay among us alone, but flows out to friends, to family, and to one person who does not yet know Him.',
-    'note.p5': 'We hope that "Let us love one another," sung together today, carries on after the concert ends — and even when we stumble while walking together — as a confession of a life that leans on the God who began a good work among us.',
+    'note.p5': 'We hope that "Let us love one another," sung together today, carries on after the concert ends - and even when we stumble while walking together - as a confession of a life that leans on the God who began a good work among us.',
 
     /* 공유 · 후원 */
     'share.title': 'Share', 'share.copy': 'Copy link', 'share.copied': 'Link copied',
@@ -167,7 +182,8 @@ const I18N = {
     'main.label.date': 'កាលបរិច្ឆេទ', 'main.label.time': 'ម៉ោង', 'main.label.place': 'ទីកន្លែង',
     'main.venue': 'ព្រះវិហារ Hyangsang ជាន់ទី៣',
     'main.date': 'ថ្ងៃសៅរ៍ ទី១៩ ខែធ្នូ ឆ្នាំ២០២៦',
-    'main.time': 'ម៉ោង ៧:៣០ – ៩:០០ ល្ងាច',
+    'main.address': '140 Eondong-ro, Giheung-gu, Yongin',
+    'main.time': 'ម៉ោង ៧:៣០ - ៩:០០ ល្ងាច',
 
     'songs.eyebrow': 'Setlist', 'songs.title': 'បទចម្រៀង',
     'songs.hint': 'ចុចលើបទចម្រៀង ដើម្បីមើលអត្ថបទ និងខព្រះគម្ពីរ',
@@ -179,6 +195,10 @@ const I18N = {
     'songs.prev': '← មុន', 'songs.next': 'បន្ទាប់ →',
     'songs.note.lead': 'អំពីលំដាប់បទ',
     'songs.more': 'អានបន្ថែម', 'songs.less': 'បង្រួម',
+    'songs.count': 'បទចម្រៀង {n}',
+    'songs.tagLead': 'បទចម្បង', 'songs.tagEncore': 'បទបន្ថែម', 'songs.tagPray': 'ការអធិស្ឋាន',
+    'role.drums': 'ស្គរ', 'role.bass': 'បាស', 'role.guitar': 'ហ្គីតាអគ្គិសនី',
+    'role.pianoMain': 'ព្យាណូ (មេ)', 'role.pianoSecond': 'ព្យាណូ (ទីពីរ)',
 
     'artists.eyebrow': 'Members', 'artists.title': 'ក្រុមរបស់យើង',
     'team.singer': 'អ្នកចម្រៀង', 'team.band': 'ក្រុមតន្ត្រី', 'team.marketing': 'ផ្សព្វផ្សាយ',
@@ -225,6 +245,14 @@ const I18N = {
     'word.doneText': 'យើងនឹងអាន និងអធិស្ឋានជាមួយអ្នក',
     'word.empty': 'មិនទាន់មានការរំពឹងគិតទេ', 'word.emptyText': 'សរសេរជាដំបូង។ ប្រយោគពីរបីក៏គ្រប់គ្រាន់។',
     'word.openBadge': 'សាធារណៈ', 'word.laterBadge': 'បើកក្រោយ',
+
+    /* 메인 아래 말씀은 캄보디아어 대신 영어로 둔다 (요청) */
+    'msg.lead': 'Let us love one another',
+    'msg.p1': 'Beloved, let us love one another,<br>for love is of God;<br>and everyone who loves has been born of God,<br>and knows God.',
+    'msg.p2': 'He who doesn\u2019t love doesn\u2019t know God,<br>for <em>God is love</em>.',
+    'msg.ref': '1 John 4:7-8, World English Bible',
+
+    'songs.koNotice': 'អត្ថបទចម្រៀងបង្ហាញជាភាសាកូរ៉េ។ ឈ្មោះបទមានអក្សរឡាតាំង ដើម្បីងាយស្រួលស្វែងរក។',
 
     'story.title': 'យុវជន<br>ដែលជួបជុំគ្នា<br>ដោយស្រឡាញ់ការសរសើរតម្កើង',
     'story.sub': 'រឿងរ៉ាវនៃការជួបជុំគ្នារបស់យើង',
@@ -307,7 +335,8 @@ function _ensureKhmerFont() {
 }
 
 /** data-i18n 이 붙은 모든 곳을 지금 언어로 바꾼다 */
-function applyLang() {
+/* data-i18n* 속성이 달린 마크업만 현재 언어로 바꾼다 */
+function _applyAttrs() {
   document.documentElement.lang = _lang;
   document.documentElement.classList.toggle('is-km', _lang === 'km');
   if (_lang === 'km') _ensureKhmerFont();
@@ -336,8 +365,17 @@ function applyLang() {
       _lang === 'ko' ? _origin.get(el) : t(el.dataset.i18nAria, _origin.get(el)));
   });
 
-  // 자바스크립트가 그려 넣은 화면도 다시 그린다
-  if (typeof onLangChange === 'function') onLangChange(_lang);
+}
+
+function applyLang() {
+  _applyAttrs();
+  // 자바스크립트가 그려 넣은 화면도 다시 그린다.
+  // 그 과정에서 위에서 번역해 둔 마크업이 다시 그려질 수 있으므로
+  // 끝난 뒤 한 번 더 적용한다. (_applyAttrs 는 onLangChange 를 부르지 않아 되돌지 않는다)
+  if (typeof onLangChange === 'function') {
+    onLangChange(_lang);
+    _applyAttrs();
+  }
 }
 
 function setLang(code) {

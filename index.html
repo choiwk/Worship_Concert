@@ -51,7 +51,7 @@
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
 <link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=67" rel="stylesheet"/>
+<link href="src/css/style.css?v=68" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -128,19 +128,19 @@
 </section>
 <!-- Message -->
 <section class="sec-message reveal">
-<p class="message-lead">우리가 서로 사랑하자</p>
-<p class="message-text">
+<p class="message-lead" data-i18n="msg.lead">우리가 서로 사랑하자</p>
+<p class="message-text" data-i18n-html="msg.p1">
       사랑하는 자들아 우리가 서로 사랑하자<br/>
       사랑은 하나님께 속한 것이니<br/>
       사랑하는 자마다 하나님으로부터 나서<br/>
       하나님을 알고
     </p>
-<p class="message-text">
+<p class="message-text" data-i18n-html="msg.p2">
       사랑하지 아니하는 자는<br/>
       하나님을 알지 못하나니<br/>
       이는 <em>하나님은 사랑이심이라</em>
     </p>
-<p class="message-ref">요한1서 4장 7-8절</p>
+<p class="message-ref" data-i18n="msg.ref">요한1서 4장 7-8절</p>
 </section>
 <footer class="footer">
 <p class="footer-text">찬양이 좋아서 모인 청년들, 2026</p>
@@ -179,7 +179,7 @@
 <p class="setlist-note-body" data-i18n-html="note.p4">그 사랑으로 마음을 열고, 서로의 이야기를 듣고, 지친 사람을 돌아보는 작은 실천으로 이어졌으면 합니다. 그리고 그 사랑이 우리 안에만 머무르지 않고, 친구와 가족, 아직 주님을 모르는 한 사람에게까지 흘러가기를 소망합니다.</p>
 <p class="setlist-note-body" data-i18n-html="note.p5">오늘 함께 부른 “우리가 서로 사랑하자”가 콘서트가 끝난 뒤에도, 함께 걷다가 넘어질 때에도, 우리 가운데 선한 일을 시작하신 주님을 의지하는 삶의 고백으로 이어지기를 바랍니다.</p>
 </div>
-<button class="setlist-note-toggle" id="setlistNoteToggle" type="button" onclick="toggleSetlistNote()" aria-expanded="false" aria-controls="setlistNoteRest">더 읽기</button>
+<button class="setlist-note-toggle" id="setlistNoteToggle" type="button" onclick="toggleSetlistNote()" aria-expanded="false" aria-controls="setlistNoteRest" data-i18n="songs.more">더 읽기</button>
 </section>
 <div class="song-detail-section">
 <span class="detail-section-label" data-i18n="songs.sectionLabel">곡 소개 및 미리듣기</span>
@@ -240,11 +240,11 @@
 <path d="M8 10.5V7.5a4 4 0 018 0v3" stroke="currentColor" stroke-width="1.6"></path>
 </svg>
 <p class="word-lock-title" data-i18n="word.lockTitle">팀원끼리만 보는 공간이에요</p>
-<p class="word-lock-text">단톡방에 공유된 암호를 넣어주세요.<br/>한 번 넣으면 이 기기는 기억합니다.</p>
+<p class="word-lock-text" data-i18n-html="word.lockText">단톡방에 공유된 암호를 넣어주세요.<br/>한 번 넣으면 이 기기는 기억합니다.</p>
 <form class="word-lock-form" id="wordLockForm">
 <input class="rsvp-input" id="wordPass" type="password" inputmode="numeric" autocomplete="off" placeholder="팀 암호" aria-label="팀 암호"/ data-i18n-ph="word.passPh">
 <p class="rsvp-error" id="wordLockError" role="alert" hidden=""></p>
-<button class="rsvp-submit" id="wordLockBtn" type="submit">들어가기</button>
+<button class="rsvp-submit" id="wordLockBtn" type="submit" data-i18n="word.enter">들어가기</button>
 </form>
 </div>
 
@@ -265,7 +265,7 @@
 <p class="word-weekly-ref" id="wordWeeklyRef"></p>
 <p class="word-weekly-note" id="wordWeeklyNote" hidden=""></p>
 <a class="word-weekly-link" id="wordWeeklyLink" rel="noopener noreferrer" target="_blank" hidden="">
-<span>말씀 보기</span><span class="ext-mark" aria-hidden="true">→</span>
+<span data-i18n="songs.readVerse">말씀 보기</span><span class="ext-mark" aria-hidden="true">→</span>
 </a>
 </section>
 <button class="word-write" type="button" onclick="openWordWrite()">
@@ -274,7 +274,7 @@
 </button>
 <div class="word-views" role="tablist" aria-label="보기 방식">
 <button class="word-view is-on" type="button" role="tab" aria-selected="true" data-view="week" onclick="switchWordView('week')" data-i18n="word.byWeek">주차별</button>
-<button class="word-view" type="button" role="tab" aria-selected="false" data-view="person" onclick="switchWordView('person')">사람별</button>
+<button class="word-view" type="button" role="tab" aria-selected="false" data-view="person" onclick="switchWordView('person')" data-i18n="word.byPerson">사람별</button>
 </div>
 <p class="word-state" id="wordState" hidden=""></p>
 <div id="wordList"></div>
@@ -712,7 +712,7 @@
 <span class="word-read-ref" id="wordReadRef"></span>
 <span class="word-read-acts">
 <a class="word-read-link" id="wordReadLink" rel="noopener noreferrer" target="_blank" hidden="">
-<span>말씀 보기</span><span class="ext-mark" aria-hidden="true">→</span>
+<span data-i18n="songs.readVerse">말씀 보기</span><span class="ext-mark" aria-hidden="true">→</span>
 </a>
 </span>
 </div>
@@ -722,11 +722,11 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/i18n.js?v=67" defer></script>
-<script src="src/js/bible.js?v=67" defer></script>
-<script src="src/js/songs.js?v=67" defer></script>
-<script src="src/js/members.js?v=67" defer></script>
-<script src="src/js/app.js?v=67" defer></script>
+<script src="src/js/i18n.js?v=68" defer></script>
+<script src="src/js/bible.js?v=68" defer></script>
+<script src="src/js/songs.js?v=68" defer></script>
+<script src="src/js/members.js?v=68" defer></script>
+<script src="src/js/app.js?v=68" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
