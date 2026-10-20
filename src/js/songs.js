@@ -49,6 +49,7 @@ const SONGS = [
     slug: '01',
     title: '하나님이 너를 엄청 사랑하신대',
     roman: 'Hananimi neoreul eomcheong saranghasindae',
+    titleKm: 'ព្រះជាម្ចាស់ស្រឡាញ់អ្នកខ្លាំងណាស់',
     tag: null,
     youtube: 'https://youtu.be/Fxtmq-1tipo?si=qaVhzjxqfrN6tKuU',
     parts: [
@@ -74,6 +75,7 @@ const SONGS = [
     slug: '02',
     title: '주를 바라보며 / 주를 찾는 모든 자들이',
     roman: 'Jureul barabomyeo / Jureul channeun modeun jadeuri',
+    titleKm: 'អស់អ្នកដែលសម្លឹងមើលព្រះអម្ចាស់ និងស្វែងរកទ្រង់',
     tag: null,
     youtube: 'https://youtu.be/bgdU5_BbACM?si=YKqGbKfV1RXgJtSq',
     parts: [
@@ -120,6 +122,7 @@ const SONGS = [
     slug: '03',
     title: '주와 함께 걸어가네',
     roman: 'Juwa hamkke georeoganne',
+    titleKm: 'ដើរទៅជាមួយព្រះអម្ចាស់',
     tag: null,
     youtube: 'https://youtu.be/H56xVRKQ2Ag?si=NGX8c_vy2BCeGtwZ',
     parts: [
@@ -164,6 +167,7 @@ const SONGS = [
     slug: '04',
     title: '길을 찾는 너를 위해',
     roman: 'Gireul channeun neoreul wihae',
+    titleKm: 'សម្រាប់អ្នកដែលកំពុងស្វែងរកផ្លូវ',
     tag: null,
     youtube: 'https://youtu.be/3RbST8rkuao?si=svRVkU50dgOHg9tF',
     parts: [
@@ -193,11 +197,14 @@ const SONGS = [
     slug: '05',
     title: '온 땅의 주인 / 비 준비하시니',
     roman: 'On ttangui juin / Bi junbihasini',
+    titleKm: 'ម្ចាស់នៃផែនដីទាំងមូល / ព្រះអង្គរៀបចំភ្លៀង',
     tag: null,
     youtube: 'https://youtu.be/wFooiln1gIc?si=hgJJet7VKzWS1b3G',
     parts: [
       {
         label: '온 땅의 주인',
+
+        labelKm: 'ម្ចាស់នៃផែនដីទាំងមូល',
         lyrics: `온 땅의 주인 되신 주님이
 내 이름 아시며 상한 맘 돌보네
 어둠을 밝히시는 새벽 별
@@ -220,6 +227,8 @@ const SONGS = [
       },
       {
         label: '비 준비하시니',
+
+        labelKm: 'ព្រះអង្គរៀបចំភ្លៀង',
         note: '후렴',
         youtube: 'https://youtu.be/95vtJk3nEOQ?si=QQ92TiSVGPItSJGi&t=448',
         lyrics: `예루살렘아
@@ -236,6 +245,7 @@ const SONGS = [
     slug: '06',
     title: '주 예수 나의 산 소망',
     roman: 'Ju Yesu naui san somang',
+    titleKm: 'ព្រះយេស៊ូវ ជាសេចក្តីសង្ឃឹមដ៏រស់របស់ខ្ញុំ',
     tag: null,
     youtube: 'https://youtu.be/jt2qxbrexwg?si=-HLwd8TUZlrO87Ba',
     parts: [
@@ -281,6 +291,7 @@ const SONGS = [
     slug: '07',
     title: '하나님께서 세상을 사랑하사',
     roman: 'Hananimkkeseo sesangeul saranghasa',
+    titleKm: 'ដ្បិតព្រះជាម្ចាស់ស្រឡាញ់លោកិយ',
     tag: null,
     youtube: 'https://youtu.be/-n24d45myCg?si=WQ2MzZIECBkxWQTt',
     parts: [
@@ -322,6 +333,7 @@ const SONGS = [
     slug: '08',
     title: '주님의 선하심',
     roman: 'Junimui seonhasim',
+    titleKm: 'សេចក្តីល្អរបស់ព្រះអម្ចាស់',
     tag: null,
     youtube: 'https://youtu.be/ErqijpGQmO4?si=gdO3-cREdzZYjZlA',
     parts: [
@@ -356,11 +368,14 @@ const SONGS = [
     slug: '09',
     title: '우리가 서로 사랑하자 / 우리 살아가는 모든 날들이',
     roman: 'Uriga seoro saranghaja / Uri saraganeun modeun naldeuri',
+    titleKm: 'ចូរយើងស្រឡាញ់គ្នាទៅវិញទៅមក / គ្រប់ថ្ងៃនៃជីវិតរបស់យើង',
     tag: '주제곡',
     youtube: 'https://youtu.be/5RGMkWIFrmU?si=cqChPScfN8B_UMBz',
     parts: [
       {
         label: '우리가 서로 사랑하자',
+
+        labelKm: 'ចូរយើងស្រឡាញ់គ្នាទៅវិញទៅមក',
         lyrics: `여기 모인 우리 모두가
 마음 열어 서로를 사랑하고
 서로를 돌아보며 주의 사랑을
@@ -382,6 +397,8 @@ const SONGS = [
       },
       {
         label: '우리 살아가는 모든 날들이',
+
+        labelKm: 'គ្រប់ថ្ងៃនៃជីវិតរបស់យើង',
         note: '후렴',
         youtube: 'https://youtu.be/-xZZhbVnm_Q?si=lFN-Vj4wKBFrI_8U',
         lyrics: `우리 살아가는 모든 날들이
@@ -405,6 +422,7 @@ const SONGS = [
     slug: '10',
     title: '친구여 함께 노래해',
     roman: 'Chinguyeo hamkke noraehae',
+    titleKm: 'មិត្តអើយ ចូរយើងច្រៀងជាមួយគ្នា',
     tag: null,
     youtube: 'https://youtu.be/xs1G1mJS_Vw?si=Lr28L_if_jqTEbFE',
     parts: [
@@ -441,6 +459,7 @@ const SONGS = [
     slug: '11',
     title: '달리기',
     roman: 'Dalligi',
+    titleKm: 'ការរត់ប្រណាំង',
     artist: '웨이홈',
     tag: null,
     youtube: 'https://youtu.be/wmS1Ng_71Jc?si=2GzHQVeer9jjtXow',
@@ -479,6 +498,7 @@ const SONGS = [
     slug: '12',
     title: '우리가 주를 더욱 사랑하고',
     roman: 'Uriga jureul deouk saranghago',
+    titleKm: 'យើងស្រឡាញ់ព្រះអម្ចាស់កាន់តែខ្លាំងឡើង',
     tag: null,
     youtube: 'https://youtu.be/AEQAG9uoEJ0?si=cEHveIq1wNf6msdI',
     parts: [
@@ -515,6 +535,7 @@ const SONGS = [
     slug: '13',
     title: '사랑의 계절',
     roman: 'Sarangui gyejeol',
+    titleKm: 'រដូវកាលនៃសេចក្តីស្រឡាញ់',
     artist: 'WELOVE',
     tag: '앵콜',
     youtube: 'https://youtu.be/ufkYcQsrt4c?si=_UbjZcLl8FIac88G',

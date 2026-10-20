@@ -36,6 +36,22 @@ const BIBLE_LOCALE = {
 
 const I18N = {
   en: {
+    /* 이번에 연결하며 채운 것들 */
+    'common.or': 'or',
+    'share.kakao': 'KakaoTalk', 'share.instagram': 'Instagram DM',
+    'share.copyLink': 'Copy link', 'share.homepage': 'Website',
+    'member.expand': 'Show more',
+    'word.guide1': 'What you saw about God in the passage',
+    'word.guide2': 'The words that stayed with you, and why',
+    'word.guide3': 'What you want to live out, or pray for together',
+    'word.openMore': 'Read it',
+    'donate.bank': 'KB Kookmin Bank',
+    'donate.note': 'Your gift goes toward running costs for our team.',
+    'songs.readChapter': 'Read the whole chapter',
+    'songs.chorus': 'chorus', 'songs.interlude': 'interlude',
+    'story.quoteLead': 'Built together',
+    'story.quoteText': 'in whom the whole building, fitted together,<br>grows into a holy temple in the Lord;<br><br>in whom you also are<br><em>built together</em> for a dwelling place of God<br>in the Spirit.',
+    'story.quoteRef': 'Ephesians 2:21-22, World English Bible',
     /* 탭 */
     'tab.main': 'Home', 'tab.songs': 'Songs', 'tab.word': 'Devotions',
     'tab.artists': 'Members', 'tab.story': 'Our Story',
@@ -170,6 +186,23 @@ const I18N = {
   },
 
   km: {
+    /* 이번에 연결하며 채운 것들 */
+    'common.or': 'ឬ',
+    'share.kakao': 'KakaoTalk', 'share.instagram': 'Instagram DM',
+    'share.copyLink': 'ចម្លងតំណ', 'share.homepage': 'គេហទំព័រ',
+    'member.expand': 'មើលបន្ថែម',
+    'word.guide1': 'អ្វីដែលអ្នកបានឃើញអំពីព្រះក្នុងខគម្ពីរ',
+    'word.guide2': 'ពាក្យដែលនៅក្នុងចិត្តអ្នក និងមូលហេតុ',
+    'word.guide3': 'អ្វីដែលអ្នកចង់អនុវត្ត ឬអធិស្ឋានជាមួយគ្នា',
+    'word.openMore': 'អានមើល',
+    'donate.bank': 'KB Kookmin Bank',
+    'donate.note': 'ជំនួយរបស់អ្នកត្រូវប្រើសម្រាប់ដំណើរការក្រុមរបស់យើង។',
+    'songs.readChapter': 'អានជំពូកទាំងមូល',
+    'songs.chorus': 'បន្ទរ', 'songs.interlude': 'តន្ត្រីកណ្តាល',
+    /* ខគម្ពីរ — ប្រើការបកប្រែជាភាសាអង់គ្លេសដែលគ្មានកម្មសិទ្ធិបញ្ញា */
+    'story.quoteLead': 'Built together',
+    'story.quoteText': 'in whom the whole building, fitted together,<br>grows into a holy temple in the Lord;<br><br>in whom you also are<br><em>built together</em> for a dwelling place of God<br>in the Spirit.',
+    'story.quoteRef': 'Ephesians 2:21-22, World English Bible',
     'tab.main': 'ទំព័រដើម', 'tab.songs': 'បទចម្រៀង', 'tab.word': 'ការរំពឹងគិត',
     'tab.artists': 'សមាជិក', 'tab.story': 'រឿងរ៉ាវ',
 
