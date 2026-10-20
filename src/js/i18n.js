@@ -22,7 +22,10 @@ const I18N_LANGS = [
 
 /* 크메르 글자는 이 손글씨 폰트에 하나도 없다. 캄보디아어를 고를 때만
    구글 폰트를 불러온다. 쓰지 않는 사람에게 짐을 지우지 않으려는 것. */
-const KHMER_FONT = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;600&display=swap';
+/* Noto Sans Khmer 는 중립적인 고딕이라 이 사이트의 종이·손글씨 톤과 겉돈다.
+   Noto Serif Khmer 는 획에 맺음이 있어 본문 서체와 결이 맞는다.
+   가중치는 범위(400..700) 로 적어야 한다 — 세미콜론 형식은 400 을 돌려준다. */
+const KHMER_FONT = 'https://fonts.googleapis.com/css2?family=Noto+Serif+Khmer:wght@400..700&display=swap';
 
 /* 성경 사이트(YouVersion)의 언어별 주소와 번역본 번호 */
 const BIBLE_LOCALE = {
@@ -110,6 +113,37 @@ const I18N = {
     'word.empty': 'No devotions yet', 'word.emptyText': 'Be the first. A few sentences is plenty.',
     'word.openBadge': 'Public', 'word.laterBadge': 'Share later',
 
+    /* 팀 소개 — 사장님이 쓰신 글을 옮긴 것이라 검토가 필요합니다 */
+    'story.title': 'Young adults<br>who gather<br>for worship',
+    'story.sub': 'The story of why we came together',
+    'story.ch1': '01. Setting up',
+    'story.h1': 'We are living in a time<br>that changes far too quickly',
+    'story.b1': 'The world moves faster and faster,<br>and our eyes drift naturally<br>toward the things we can see.',
+    'story.ch2': '02. A question',
+    'story.h2': 'And then one day<br>a thought came to us',
+    'story.b2': 'In a world this busy,<br>are we forgetting God<br>far too easily?',
+    'story.ch3': '03. Deciding',
+    'story.h3': 'And young adults especially —<br>are we slowly losing our <em>worship</em><br>toward God?',
+    'story.b3': 'So we began.<br>We found the lights ourselves and carried the instruments.<br>We had nothing, but we had the heart.',
+    'story.ch4': '04. A small beginning',
+    'story.ch5': '05. Worship begins',
+    'story.ch6': '06. Together',
+    'story.ch7': '07. Community',
+    'story.h7': 'We believe',
+    'story.b7': 'that this small beginning becomes a time to look to God again,<br>and the start of more young adults who worship.',
+    'story.ch8': '08. A wider echo',
+    'story.h8': 'We hope our worship<br>echoes out<br>into the world',
+    'story.finale': 'May worship keep<br>echoing out<br><strong>into the world</strong>',
+    'story.seeInfo': 'See concert details',
+    'story.support': 'Support us',
+
+    /* 콘티 한마디 */
+    'note.p1': 'This year our theme song is <b>"Let us love one another."</b>',
+    'note.p2': 'We did not want those words to end as a resolution, or as a confession made only on that one day. So before that confession, we built the set list so that we would first look at the fact that God loved us first.',
+    'note.p3': 'We remember the love shown through the cross and the resurrection, and the love that holds us even in our weakest moments. In that love we rise again and walk with Him. We love one another not because we have enough strength to love, but because we were loved first.',
+    'note.p4': 'We hope that love opens our hearts, that we listen to one another, and that it turns into small acts of care for whoever is worn out. And we hope that love does not stay among us alone, but flows out to friends, to family, and to one person who does not yet know Him.',
+    'note.p5': 'We hope that "Let us love one another," sung together today, carries on after the concert ends — and even when we stumble while walking together — as a confession of a life that leans on the God who began a good work among us.',
+
     /* 공유 · 후원 */
     'share.title': 'Share', 'share.copy': 'Copy link', 'share.copied': 'Link copied',
     'donate.title': 'Thank you for supporting us',
@@ -192,6 +226,35 @@ const I18N = {
     'word.empty': 'មិនទាន់មានការរំពឹងគិតទេ', 'word.emptyText': 'សរសេរជាដំបូង។ ប្រយោគពីរបីក៏គ្រប់គ្រាន់។',
     'word.openBadge': 'សាធារណៈ', 'word.laterBadge': 'បើកក្រោយ',
 
+    'story.title': 'យុវជន<br>ដែលជួបជុំគ្នា<br>ដោយស្រឡាញ់ការសរសើរតម្កើង',
+    'story.sub': 'រឿងរ៉ាវនៃការជួបជុំគ្នារបស់យើង',
+    'story.ch1': '០១. ការរៀបចំ',
+    'story.h1': 'យើងកំពុងរស់នៅក្នុងសម័យ<br>ដែលផ្លាស់ប្តូរយ៉ាងលឿន',
+    'story.b1': 'ពិភពលោកដំណើរការកាន់តែលឿន<br>ហើយភ្នែករបស់យើងងាកទៅរក<br>អ្វីដែលមើលឃើញដោយធម្មជាតិ។',
+    'story.ch2': '០២. សំណួរ',
+    'story.h2': 'រួចមកថ្ងៃមួយ<br>គំនិតមួយបានចូលមកក្នុងយើង',
+    'story.b2': 'ក្នុងពិភពដ៏រវល់នេះ<br>តើយើងកំពុងភ្លេចព្រះ<br>យ៉ាងងាយស្រួលពេកឬទេ?',
+    'story.ch3': '០៣. ការសម្រេចចិត្ត',
+    'story.h3': 'ជាពិសេសយុវជន —<br>តើយើងកំពុងបាត់បង់ <em>ការសរសើរតម្កើង</em><br>ចំពោះព្រះបន្តិចម្តងៗឬទេ?',
+    'story.b3': 'ដូច្នេះយើងបានចាប់ផ្តើម។<br>យើងរកភ្លើងដោយខ្លួនឯង និងលីឧបករណ៍តន្ត្រី។<br>យើងគ្មានអ្វីទេ ប៉ុន្តែយើងមានចិត្ត។',
+    'story.ch4': '០៤. ការចាប់ផ្តើមតូច',
+    'story.ch5': '០៥. ការសរសើរតម្កើងចាប់ផ្តើម',
+    'story.ch6': '០៦. ជាមួយគ្នា',
+    'story.ch7': '០៧. សហគមន៍',
+    'story.h7': 'យើងជឿ',
+    'story.b7': 'ថាការចាប់ផ្តើមតូចនេះ នឹងក្លាយជាពេលវេលាមើលទៅព្រះម្តងទៀត<br>និងជាការចាប់ផ្តើមនៃយុវជនកាន់តែច្រើនដែលសរសើរតម្កើងព្រះ។',
+    'story.ch8': '០៨. សំឡេងកាន់តែធំ',
+    'story.h8': 'យើងសង្ឃឹមថាការសរសើរតម្កើងរបស់យើង<br>នឹងបន្លឺឡើង<br>នៅក្នុងពិភពលោក',
+    'story.finale': 'សូមឲ្យការសរសើរតម្កើង<br>បន្លឺឡើងជាបន្តបន្ទាប់<br><strong>នៅក្នុងពិភពលោក</strong>',
+    'story.seeInfo': 'មើលព័ត៌មានកម្មវិធី',
+    'story.support': 'គាំទ្រយើង',
+
+    'note.p1': 'បទចម្រៀងប្រធានបទឆ្នាំនេះគឺ <b>«ចូរយើងស្រឡាញ់គ្នាទៅវិញទៅមក»។</b>',
+    'note.p2': 'យើងមិនចង់ឲ្យពាក្យទាំងនេះបញ្ចប់ត្រឹមការសន្យា ឬជាការប្រកាសតែនៅថ្ងៃនោះទេ។ ដូច្នេះមុនការប្រកាសនោះ យើងបានរៀបចំលំដាប់បទ ដើម្បីឲ្យយើងមើលឃើញជាមុនថា ព្រះបានស្រឡាញ់យើងមុនគេ។',
+    'note.p3': 'យើងចងចាំសេចក្តីស្រឡាញ់ដែលបានបង្ហាញតាមរយៈឈើឆ្កាង និងការរស់ឡើងវិញ និងសេចក្តីស្រឡាញ់ដែលទ្រទ្រង់យើងសូម្បីក្នុងពេលទន់ខ្សោយ។ ក្នុងសេចក្តីស្រឡាញ់នោះ យើងក្រោកឡើងម្តងទៀត ហើយដើរជាមួយព្រះអង្គ។ យើងស្រឡាញ់គ្នាមិនមែនព្រោះយើងមានកម្លាំងគ្រប់គ្រាន់ទេ ប៉ុន្តែព្រោះយើងត្រូវបានស្រឡាញ់មុនគេ។',
+    'note.p4': 'យើងសង្ឃឹមថាសេចក្តីស្រឡាញ់នោះនឹងបើកចិត្តយើង ឲ្យយើងស្តាប់គ្នាទៅវិញទៅមក និងក្លាយជាទង្វើតូចៗនៃការយកចិត្តទុកដាក់ចំពោះអ្នកដែលហត់នឿយ។ ហើយយើងសង្ឃឹមថាសេចក្តីស្រឡាញ់នោះមិននៅត្រឹមយើងទេ តែហូរទៅដល់មិត្តភក្តិ គ្រួសារ និងមនុស្សម្នាក់ដែលមិនទាន់ស្គាល់ព្រះអង្គ។',
+    'note.p5': 'យើងសង្ឃឹមថា «ចូរយើងស្រឡាញ់គ្នាទៅវិញទៅមក» ដែលយើងច្រៀងជាមួយគ្នាថ្ងៃនេះ នឹងបន្តបន្ទាប់ពីកម្មវិធីបញ្ចប់ — និងសូម្បីពេលយើងជំពប់ដួលពេលដើរជាមួយគ្នា — ជាការប្រកាសនៃជីវិតដែលពឹងផ្អែកលើព្រះ ដែលបានចាប់ផ្តើមកិច្ចការល្អក្នុងចំណោមយើង។',
+
     'share.title': 'ចែករំលែក', 'share.copy': 'ចម្លងតំណ', 'share.copied': 'បានចម្លងតំណ',
     'donate.title': 'អរគុណសម្រាប់ការគាំទ្រ',
     'donate.label': 'គណនី', 'donate.copy': 'ចម្លងលេខគណនី',
@@ -252,6 +315,13 @@ function applyLang() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     if (!_origin.has(el)) _origin.set(el, el.textContent);
     el.textContent = _lang === 'ko' ? _origin.get(el) : t(el.dataset.i18n, _origin.get(el));
+  });
+
+  /* 줄바꿈이 리듬을 만드는 제목들은 <br> 를 살려야 한다.
+     여기 들어가는 글은 내가 적어 둔 번역문뿐이고 사용자가 넣은 글이 아니다. */
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    if (!_origin.has(el)) _origin.set(el, el.innerHTML);
+    el.innerHTML = _lang === 'ko' ? _origin.get(el) : t(el.dataset.i18nHtml, _origin.get(el));
   });
 
   document.querySelectorAll('[data-i18n-ph]').forEach(el => {

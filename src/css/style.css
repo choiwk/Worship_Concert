@@ -453,13 +453,17 @@ html.is-km body,
 html.is-km .tab-label,
 html.is-km .lang-btn,
 html.is-km .lang-opt {
-  font-family: 'Noto Sans Khmer', 'Sarang', 'Apple SD Gothic Neo', sans-serif;
+  font-family: 'Noto Serif Khmer', 'Sarang', 'Apple SD Gothic Neo', sans-serif;
 }
 html.is-km .ph-title,
 html.is-km .word-weekly-ref,
 html.is-km .rsvp-title {
   -webkit-text-stroke: 0;
 }
+/* 크메르 글자는 자음 위아래로 모음·기호가 쌓인다. 줄간격을 그대로 두면
+   윗줄과 아랫줄이 서로 닿는다. */
+html.is-km body { line-height: 1.95; }
+html.is-km .tab-label { font-size: 11px; }
 
 /* 검은 원형 FAB은 이 사이트의 종이·손글씨 톤과 겉돌아서
    종이 바탕에 클레이 테두리를 두른 원형 버튼으로 바꿨다. */
@@ -793,6 +797,25 @@ html.is-km .rsvp-title {
   letter-spacing: 0;
   line-height: 1.35;
   white-space: nowrap;
+}
+
+/* 한국어 팀 이름은 짧아서 한 줄에 들어가지만, 영어·크메르어로 옮기면
+   두세 배로 길어져 nowrap 때문에 화면 밖으로 뻗어 잘린다.
+   (측정: 화면 458px 일 때 영어 605px · 크메르 866px)
+   그 두 언어에서는 줄을 바꾸고 글자를 한 단계 줄인다. */
+html[lang="en"] .title-main .line-hand,
+html[lang="km"] .title-main .line-hand {
+  white-space: normal;
+  font-size: clamp(21px, 6.2vw, 31px);
+  line-height: 1.45;
+  text-wrap: balance;
+}
+html[lang="km"] .title-main .line-hand { line-height: 1.7; }
+
+html[lang="en"] .title-main .line-hand-sub,
+html[lang="km"] .title-main .line-hand-sub {
+  font-size: clamp(14px, 4vw, 19px);
+  text-wrap: balance;
 }
 
 .title-main .line-hand-sub {
