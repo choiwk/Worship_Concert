@@ -101,7 +101,8 @@ const PEOPLE = {
       ref: '사도행전 20장 24절'
     }
   },
-  'lee-gijun':     { name: '이기준', icon: '🤝' }
+  'lee-gijun':     { name: '이기준', icon: '🤝' },
+  'lee-kangjun':   { name: '이강준', icon: '🤝' }
 };
 
 const MEMBERS = [
@@ -148,7 +149,8 @@ const MEMBERS = [
       { id: 'kim-jaeseo',   icon: '🤝' },
       { id: 'choi-juhee',   icon: '🤝' },
       { id: 'kim-yeeun' },
-      { id: 'lee-gijun' }
+      { id: 'lee-gijun' },
+      { id: 'lee-kangjun' }
     ]
   },
   {

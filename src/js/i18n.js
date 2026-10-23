@@ -284,10 +284,10 @@ const I18N = {
     'word.openBadge': 'សាធារណៈ', 'word.laterBadge': 'បើកក្រោយ',
 
     /* 메인 아래 말씀은 캄보디아어 대신 영어로 둔다 (요청) */
-    'msg.lead': 'Let us love one another',
-    'msg.p1': 'Beloved, let us love one another,<br>for love is of God;<br>and everyone who loves has been born of God,<br>and knows God.',
-    'msg.p2': 'He who doesn\u2019t love doesn\u2019t know God,<br>for <em>God is love</em>.',
-    'msg.ref': '1 John 4:7-8, World English Bible',
+    'msg.lead': 'ចូរយើងស្រឡាញ់គ្នាទៅវិញទៅមក',
+    'msg.p1': 'បងប្អូនជាទីស្រឡាញ់អើយ ចូរយើងស្រឡាញ់គ្នាទៅវិញទៅមក<br>ដ្បិតសេចក្តីស្រឡាញ់មកពីព្រះជាម្ចាស់<br>អស់អ្នកដែលស្រឡាញ់ គឺកើតពីព្រះជាម្ចាស់<br>ហើយស្គាល់ព្រះអង្គ',
+    'msg.p2': 'អ្នកណាដែលមិនស្រឡាញ់ អ្នកនោះមិនស្គាល់ព្រះជាម្ចាស់ទេ<br>ដ្បិត <em>ព្រះជាម្ចាស់ជាសេចក្តីស្រឡាញ់</em>',
+    'msg.ref': 'យ៉ូហានទី១ ៤:៧-៨',
 
     'songs.koNotice': 'អត្ថបទចម្រៀងបង្ហាញជាភាសាកូរ៉េ។ ឈ្មោះបទមានអក្សរឡាតាំង ដើម្បីងាយស្រួលស្វែងរក។',
 
