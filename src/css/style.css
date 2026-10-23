@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=78') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=79') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=78') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=79') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -911,42 +911,6 @@ html[lang="km"] .title-main .line-hand-sub {
   text-align: left;
   background: var(--paper);
   position: relative;
-}
-
-/* ── 히어로의 '언제·어디' ──
-   D-day 는 형광펜 알약, 날짜는 그 옆, 장소는 아래 줄.
-   가운데 정렬은 히어로에만 쓴다. */
-.hero-when {
-  margin-top: clamp(16px, 5vw, 22px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-.hero-when:empty { display: none; }
-.hero-when-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-}
-.hero-dday {
-  display: inline-block;
-  padding: 2px 11px 3px;
-  border-radius: 999px;
-  background: var(--clay-wash);
-  color: #7d3a20;
-  font-size: clamp(14px, 3.8vw, 15px);
-  line-height: 1.5;
-  -webkit-text-stroke-width: var(--stroke-md);
-  font-variant-numeric: tabular-nums;
-}
-.hero-when-date,
-.hero-when-place {
-  font-size: clamp(14px, 3.8vw, 16px);
-  color: var(--ink-soft);
-  line-height: 1.6;
 }
 
 /* 장소 주소 옆 길찾기 */

@@ -781,23 +781,15 @@ function renderFinaleDate() {
 ══════════════════════════════════ */
 
 function updateDday() {
-  const el = document.getElementById('heroWhen');
+  const el = document.getElementById('ddayCounter');
   if (!el) return;
 
   const base = concertBaseDate();
-  // 공연 시작(19:30) 기준으로 센다. 예전에는 20:00 이라 당일 저녁에 30분 어긋났다.
+  // 공연 시작(19:30) 기준으로 센다
   const target = new Date(base.iso + 'T19:30:00+09:00');
   const diff = target - new Date();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-  /* D-day 는 형광펜 알약으로, 날짜와 장소는 그 옆·아래에 작게.
-     히어로가 '언제·어디' 를 한눈에 답하고, 자세한 것은 아래 정보 블록이 맡는다. */
-  el.innerHTML = '';
-  const row = _el('p', 'hero-when-row');
-  row.appendChild(_el('span', 'hero-dday', diff <= 0 ? t('main.today', 'TODAY') : 'D-' + days));
-  row.appendChild(_el('span', 'hero-when-date', t('main.heroWhen', '12월 19일 토요일 저녁 7:30')));
-  el.appendChild(row);
-  el.appendChild(_el('p', 'hero-when-place', t('main.venue', CONCERT.venues[0].name)));
+  el.textContent = diff <= 0 ? t('main.today', 'TODAY') : 'D-' + days;
 }
 
 function addToCalendar() {

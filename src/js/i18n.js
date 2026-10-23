@@ -40,7 +40,6 @@ const BIBLE_LOCALE = {
 
 const I18N = {
   en: {
-    'main.heroWhen': 'Sat, Dec 19, 7:30 PM',
     'main.today': 'TODAY',
     'main.directions': 'Directions',
     'word.loading': 'Loading...',
@@ -207,7 +206,6 @@ const I18N = {
   },
 
   km: {
-    'main.heroWhen': 'ថ្ងៃសៅរ៍ ទី១៩ ខែធ្នូ ម៉ោង ៧:៣០ ល្ងាច',
     'main.today': 'ថ្ងៃនេះ',
     'main.directions': 'ផ្លូវទៅ',
     'word.loading': 'កំពុងផ្ទុក...',
