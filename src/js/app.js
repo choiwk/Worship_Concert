@@ -174,7 +174,8 @@ function renderSongList() {
     // 것보다 공연 순서가 그대로 읽힌다.
     // 2부 구성이라도 그 파트의 크메르어 이름이 없으면 곡 제목을 쓴다.
     // (02 처럼 두 곡을 한 제목으로 적어 주신 경우)
-    const headText = (song.parts[0].label && (currentLang() !== 'km' || song.parts[0].labelKm))
+    const headText = (song.parts[0].label
+        && (currentLang() === 'ko' || _trField(song.parts[0], 'label')))
       ? _partLabel(song.parts[0])
       : _songTitle(song);
     head.appendChild(_el('span', 'song-title-text', headText));
@@ -187,8 +188,8 @@ function renderSongList() {
     if (subLine) mid.appendChild(_el('span', 'song-roman', subLine));
 
     subs.forEach(part => {
-      // 크메르어 이름이 없는 파트는 제목에 이미 합쳐져 있으므로 따로 적지 않는다
-      if (currentLang() === 'km' && !part.labelKm) return;
+      // 번역된 이름이 없는 파트는 제목에 이미 합쳐져 있으므로 따로 적지 않는다
+      if (currentLang() !== 'ko' && !_trField(part, 'label')) return;
       const sub = _el('span', 'song-sub');
       sub.appendChild(_el('span', 'song-sub-title', _partLabel(part)));
       if (part.note) sub.appendChild(_el('span', 'song-sub-note', '(' + _noteName(part.note) + ')'));
@@ -259,6 +260,7 @@ function renderSongDetail(slug) {
   roman.dataset.roman = song.roman || '';
   roman.dataset.ko = song.title;
   roman.dataset.km = song.titleKm || '';
+  roman.dataset.en = song.titleEn || '';
   head.appendChild(roman);
   if (song.artist) head.appendChild(_el('p', 'song-head-artist', song.artist));
   if (song.tag) {
@@ -2128,17 +2130,29 @@ function _lyrics(part) {
 /* 곡 제목을 현재 언어로. 크메르어 제목은 사장님이 직접 적어 주신 것이고,
    없으면 한국어 제목을 그대로 쓴다. 영어는 제목을 옮기지 않고 소리 적기로 돕는다. */
 function _songTitle(song) {
-  return (currentLang() === 'km' && song.titleKm) ? song.titleKm : song.title;
+  const t2 = _trField(song, 'title');
+  return t2 || song.title;
 }
 function _partLabel(part) {
-  return (currentLang() === 'km' && part.labelKm) ? part.labelKm : part.label;
+  const t2 = _trField(part, 'label');
+  return t2 || part.label;
+}
+/* songs.js 에 들어 있는 번역 값을 꺼낸다. titleKm / titleEn / labelKm / labelEn.
+   한국어이거나 번역이 없으면 빈 값을 돌려준다. */
+function _trField(obj, base) {
+  const lang = currentLang();
+  if (lang === 'ko') return '';
+  return obj[base + (lang === 'km' ? 'Km' : 'En')] || '';
 }
 /* 제목 아래 보조 줄: 크메르어에서는 한국어 원제(공연 순서지와 맞춰 보라고),
    영어에서는 소리 적기(유튜브 검색에 쓰라고) */
+/* 번역 제목 아래에 한국어 원제를 붙인다. 공연 순서지와 맞춰 볼 수 있게.
+   번역 제목이 없을 때만 소리 적기(로마자)로 대신한다. */
 function _songSubLine(song) {
-  if (currentLang() === 'km') return song.titleKm ? song.title : '';
-  if (currentLang() === 'en') return song.roman || '';
-  return '';
+  const lang = currentLang();
+  if (lang === 'ko') return '';
+  if (_trField(song, 'title')) return song.title;
+  return lang === 'en' ? (song.roman || '') : '';
 }
 
 /* 파트 꼬리말(후렴 등)을 현재 언어로 */
@@ -2175,8 +2189,10 @@ function _updateKoNotice() {
   const lang = currentLang();
   document.querySelectorAll('.song-head-roman').forEach(el => {
     let v = '';
-    if (lang === 'km') v = el.dataset.km ? (el.dataset.ko || '') : '';
-    else if (lang === 'en') v = el.dataset.roman || '';
+    if (lang !== 'ko') {
+      const tr = lang === 'km' ? el.dataset.km : el.dataset.en;
+      v = tr ? (el.dataset.ko || '') : (lang === 'en' ? (el.dataset.roman || '') : '');
+    }
     el.textContent = v;
     el.hidden = !v;
   });
