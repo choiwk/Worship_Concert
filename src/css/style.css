@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=77') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=78') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=77') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=78') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -913,6 +913,62 @@ html[lang="km"] .title-main .line-hand-sub {
   position: relative;
 }
 
+/* ── 히어로의 '언제·어디' ──
+   D-day 는 형광펜 알약, 날짜는 그 옆, 장소는 아래 줄.
+   가운데 정렬은 히어로에만 쓴다. */
+.hero-when {
+  margin-top: clamp(16px, 5vw, 22px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.hero-when:empty { display: none; }
+.hero-when-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.hero-dday {
+  display: inline-block;
+  padding: 2px 11px 3px;
+  border-radius: 999px;
+  background: var(--clay-wash);
+  color: #7d3a20;
+  font-size: clamp(14px, 3.8vw, 15px);
+  line-height: 1.5;
+  -webkit-text-stroke-width: var(--stroke-md);
+  font-variant-numeric: tabular-nums;
+}
+.hero-when-date,
+.hero-when-place {
+  font-size: clamp(14px, 3.8vw, 16px);
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+/* 장소 주소 옆 길찾기 */
+.card-addr {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+}
+.card-map {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 44px;        /* 손가락으로 누르기 좋은 높이 */
+  color: var(--clay);
+  font-size: clamp(13px, 3.4vw, 14px);
+  text-decoration: underline;
+  text-decoration-color: var(--clay-wash);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
 .dday-counter {
   font-size: clamp(14px, 3.8vw, 17px);
   color: var(--ink-faint);
@@ -1271,7 +1327,7 @@ html[lang="km"] .title-main .line-hand-sub {
    그 자리에 왜 비어 있는지 한 줄로 적는다. */
 .word-ko-only {
   padding: 14px 16px;
-  font-size: clamp(12px, 3.1vw, 13.5px);
+  font-size: clamp(13px, 3.4vw, 14px);
   line-height: 1.8;
   color: var(--ink-faint);
   word-break: keep-all;
@@ -1297,7 +1353,7 @@ html[lang="km"] .title-main .line-hand-sub {
   padding: 11px 14px;
   background: var(--paper-warm);
   border-radius: 10px;
-  font-size: clamp(12px, 3.1vw, 13.5px);
+  font-size: clamp(13px, 3.4vw, 14px);
   line-height: 1.75;
   color: var(--ink-faint);
   word-break: keep-all;
@@ -1333,7 +1389,7 @@ html[lang="km"] .title-main .line-hand-sub {
 /* '(후렴)' 처럼 그 곡을 어떻게 부르는지 — 곡 이름에 붙는 말이라
    알약으로 띄우지 않고 괄호 글씨 그대로 둔다 */
 .song-sub-note {
-  font-size: clamp(12px, 3vw, 13px);
+  font-size: clamp(13px, 3.3vw, 13.5px);
   color: var(--ink-faint);
   white-space: nowrap;
 }
@@ -1343,12 +1399,13 @@ html[lang="km"] .title-main .line-hand-sub {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  min-height: 44px;        /* 손가락으로 누르기 좋은 최소 높이 */
   margin-bottom: clamp(14px, 4vw, 18px);
-  padding: 7px 15px 8px;
+  padding: 7px 16px 8px;
   background: transparent;
   border: 1px solid var(--clay-wash);
   border-radius: 999px;
-  font-size: clamp(12px, 3.2vw, 14px);
+  font-size: clamp(13px, 3.4vw, 14px);
   color: var(--clay);
   text-decoration: none;
   transition: background .2s, border-color .2s;
@@ -1862,20 +1919,24 @@ html[lang="km"] .title-main .line-hand-sub {
 
 /* ── 유튜브 버튼 — 제목 바로 아래, 가사 시작 전 ── */
 .song-yt {
+  /* 채운 테라코타는 '참여하기' 하나에만 쓴다. 곡 화면의 주인공은 가사이므로
+     유튜브 버튼은 테두리만 두른 보조 버튼으로 한 단계 낮춘다. */
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
-  min-height: 52px;
-  padding: 13px 20px;
-  background: var(--clay);
-  color: #fdfbf6;
+  min-height: 50px;
+  padding: 12px 20px;
+  background: transparent;
+  color: var(--clay);
+  border: 1.5px solid var(--clay);
   border-radius: 14px;
-  font-size: clamp(16px, 4.2vw, 18px);
+  font-size: clamp(16px, 4.2vw, 17px);
   text-decoration: none;
   transition: background .2s, transform .12s;
 }
-.song-yt:active { background: #8e4128; transform: scale(.985); }
+.song-yt:hover  { background: var(--paper-warm); }
+.song-yt:active { background: var(--paper-warm); transform: scale(.985); }
 .song-yt:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .song-yt svg { flex-shrink: 0; }
 
@@ -2140,25 +2201,16 @@ html[lang="km"] .title-main .line-hand-sub {
 .artist-section-block:last-child { padding-bottom: 12px; }
 
 .artist-group-label {
-  font-size: clamp(13px, 2.4vw, 14px);
-  letter-spacing: 0.02em;
-  color: var(--ink-faint);
-  text-align: center;
-  margin-bottom: clamp(16px, 5vw, 24px);
-  display: block;
-  position: relative;
+  /* 가운데 정렬 + 양옆 헤어라인은 청첩장 문법이라 걷어냈다.
+     다른 구역 제목처럼 왼쪽에 두고, 형광펜을 살짝 깔아 팀 이름을 짚는다. */
+  display: inline-block;
+  font-size: clamp(15px, 4vw, 16px);
+  color: var(--ink);
+  margin-bottom: clamp(14px, 4.5vw, 20px);
+  padding: 0 4px;
+  background: linear-gradient(transparent 58%, var(--clay-wash) 58%, var(--clay-wash) 92%, transparent 92%);
+  -webkit-text-stroke-width: var(--stroke-md);
 }
-.artist-group-label::before,
-.artist-group-label::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: calc(50% - 55px);
-  height: 1px;
-  background: rgba(196, 168, 130, .3);
-}
-.artist-group-label::before { left: 0; }
-.artist-group-label::after  { right: 0; }
 
 .artist-grid {
   display: grid;
@@ -2650,7 +2702,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   list-style: none;
   padding: 0;
   margin: 0 0 12px;
-  font-size: clamp(12px, 3.2vw, 14px);
+  font-size: clamp(13px, 3.4vw, 14px);
   line-height: 1.9;
   color: var(--ink-soft);
   word-break: keep-all;
@@ -2663,7 +2715,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   gap: 9px;
   min-height: 44px;
   padding: 4px 0;
-  font-size: clamp(12px, 3.2vw, 14px);
+  font-size: clamp(13px, 3.4vw, 14px);
   line-height: 1.7;
   color: var(--ink);
   cursor: pointer;
@@ -2827,7 +2879,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 }
 
 .word-open-hint {
-  font-size: clamp(11px, 2.9vw, 12.5px);
+  font-size: clamp(13px, 3.3vw, 13.5px);
   color: var(--ink-faint);
   margin-left: auto;
 }
@@ -2873,7 +2925,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 }
 
 .word-open-ref {
-  font-size: clamp(12px, 3.1vw, 13.5px);
+  font-size: clamp(13px, 3.4vw, 14px);
   color: var(--clay);
   word-break: keep-all;
 }
@@ -2902,14 +2954,14 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: clamp(12px, 3.1vw, 13px);
+  font-size: clamp(13px, 3.3vw, 13.5px);
   color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
 }
 
 .word-open-more {
   margin-left: auto;
-  font-size: clamp(12px, 3.1vw, 13px);
+  font-size: clamp(13px, 3.4vw, 13.5px);
   color: #7d3a20;
 }
 
@@ -3198,7 +3250,7 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 .word-like-n { font-variant-numeric: tabular-nums; }
 
 .word-card-views {
-  font-size: clamp(12px, 3.1vw, 13px);
+  font-size: clamp(13px, 3.3vw, 13.5px);
   color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
 }

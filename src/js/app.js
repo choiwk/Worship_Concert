@@ -281,7 +281,7 @@ function renderSongDetail(slug) {
     const yt = _extLink(song.youtube, t('songs.youtube', 'YouTube에서 듣기'), 'song-yt', song.title + ' 유튜브에서 듣기');
     const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     icon.setAttribute('width', '16'); icon.setAttribute('height', '16');
-    icon.setAttribute('fill', 'white'); icon.setAttribute('aria-hidden', 'true');
+    icon.setAttribute('fill', 'currentColor'); icon.setAttribute('aria-hidden', 'true');
     const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     use.setAttribute('href', '#icon-yt');
     icon.appendChild(use);
@@ -490,7 +490,8 @@ const CONCERT = {
   // 장소 확정 완료
   venueConfirmed: true,
   venues: [
-    { name: '향상교회 3층 체육관', address: '기흥구 언동로 140' }
+    { name: '향상교회 3층 체육관', address: '기흥구 언동로 140',
+      mapQuery: '경기 용인시 기흥구 언동로 140' }
   ]
 };
 
@@ -543,7 +544,16 @@ function renderDetailGrid() {
       if (i > 0) v.appendChild(_el('span', 'card-note', '또는 '));
       v.appendChild(_el('span', 'card-strong venue-highlight', t('main.venue', place.name)));
       c.appendChild(v);
-      if (place.address) c.appendChild(_el('p', 'card-value card-sub', t('main.address', place.address)));
+      if (place.address) {
+        const addr = _el('p', 'card-value card-sub card-addr');
+        addr.appendChild(_el('span', null, t('main.address', place.address)));
+        /* 처음 오는 사람에게 가장 필요한 것은 '어떻게 가나' 다 */
+        if (place.mapQuery) {
+          addr.appendChild(_extLink('https://map.naver.com/p/search/' + encodeURIComponent(place.mapQuery),
+            t('main.directions', '길찾기'), 'card-map', t('main.directions', '길찾기')));
+        }
+        c.appendChild(addr);
+      }
     });
     if (!CONCERT.venueConfirmed) {
       c.appendChild(_el('p', 'card-note card-note-block', '두 장소 중 하나로 확정될 예정이에요'));
@@ -771,23 +781,23 @@ function renderFinaleDate() {
 ══════════════════════════════════ */
 
 function updateDday() {
-  const el = document.getElementById('ddayCounter');
+  const el = document.getElementById('heroWhen');
   if (!el) return;
 
   const base = concertBaseDate();
-  const target = new Date(base.iso + 'T20:00:00+09:00');
+  // 공연 시작(19:30) 기준으로 센다. 예전에는 20:00 이라 당일 저녁에 30분 어긋났다.
+  const target = new Date(base.iso + 'T19:30:00+09:00');
   const diff = target - new Date();
-
-  if (diff <= 0) {
-    el.textContent = 'TODAY';
-    return;
-  }
-
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  // 확정 전이므로 어느 날짜 기준인지 밝혀 준다
-  el.textContent = CONCERT.confirmed
-    ? 'D-' + days
-    : 'D-' + days + ' (' + base.ko.replace(/^\d+년 /, '') + ' 기준)';
+
+  /* D-day 는 형광펜 알약으로, 날짜와 장소는 그 옆·아래에 작게.
+     히어로가 '언제·어디' 를 한눈에 답하고, 자세한 것은 아래 정보 블록이 맡는다. */
+  el.innerHTML = '';
+  const row = _el('p', 'hero-when-row');
+  row.appendChild(_el('span', 'hero-dday', diff <= 0 ? t('main.today', 'TODAY') : 'D-' + days));
+  row.appendChild(_el('span', 'hero-when-date', t('main.heroWhen', '12월 19일 토요일 저녁 7:30')));
+  el.appendChild(row);
+  el.appendChild(_el('p', 'hero-when-place', t('main.venue', CONCERT.venues[0].name)));
 }
 
 function addToCalendar() {
