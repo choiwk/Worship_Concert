@@ -308,7 +308,7 @@ function renderSongDetail(slug) {
     }
     else if (i === 0) sec.appendChild(_el('h2', 'song-part-label sr-only', t('songs.lyrics', '가사')));
 
-    sec.appendChild(_el('p', 'song-lyrics', part.lyrics));
+    sec.appendChild(_el('p', 'song-lyrics', _lyrics(part)));
 
     if (part.bible) {
       const word = _el('aside', 'song-word');
@@ -2116,6 +2116,15 @@ function _fallbackCopy(text, callback) {
 /* 곡 가사 안내문을 현재 언어에 맞춘다.
    한국어일 때는 비워서 감춘다 — 글자가 남아 있으면 그 글자 때문에
    손글씨 폴백 글꼴(503KB)까지 내려받게 된다. */
+/* 가사를 현재 언어로. 사장님이 주신 번역이 있을 때만 바꾸고,
+   없으면 한국어 가사를 그대로 둔다. */
+function _lyrics(part) {
+  const lang = currentLang();
+  if (lang === 'km' && part.lyricsKm) return part.lyricsKm;
+  if (lang === 'en' && part.lyricsEn) return part.lyricsEn;
+  return part.lyrics;
+}
+
 /* 곡 제목을 현재 언어로. 크메르어 제목은 사장님이 직접 적어 주신 것이고,
    없으면 한국어 제목을 그대로 쓴다. 영어는 제목을 옮기지 않고 소리 적기로 돕는다. */
 function _songTitle(song) {

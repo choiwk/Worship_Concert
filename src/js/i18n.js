@@ -146,7 +146,7 @@ const I18N = {
     'msg.ref': '1 John 4:7-8, World English Bible',
 
     /* 곡 — 가사는 옮기지 않는다 (저작권이 있는 찬양곡) */
-    'songs.koNotice': 'Lyrics are shown in Korean. Song titles include a romanization to help you search for them.',
+    'songs.koNotice': 'These lyrics are translated so you can follow the meaning. We sing the Korean original, so the words you hear will differ.',
 
     /* 팀 소개 — 사장님이 쓰신 글을 옮긴 것이라 검토가 필요합니다 */
     'story.title': 'Young adults<br>who gather<br>for worship',
@@ -289,7 +289,7 @@ const I18N = {
     'msg.p2': 'អ្នកណាដែលមិនស្រឡាញ់ អ្នកនោះមិនស្គាល់ព្រះជាម្ចាស់ទេ<br>ដ្បិត <em>ព្រះជាម្ចាស់ជាសេចក្តីស្រឡាញ់</em>',
     'msg.ref': 'យ៉ូហានទី១ ៤:៧-៨',
 
-    'songs.koNotice': 'អត្ថបទចម្រៀងបង្ហាញជាភាសាកូរ៉េ។ ឈ្មោះបទមានអក្សរឡាតាំង ដើម្បីងាយស្រួលស្វែងរក។',
+    'songs.koNotice': 'អត្ថបទចម្រៀងនេះត្រូវបានបកប្រែ ដើម្បីជួយឱ្យអ្នកយល់ន័យ។ ពេលច្រៀង យើងប្រើភាសាកូរ៉េដើម ដូច្នេះពាក្យដែលអ្នកឮនឹងខុសគ្នា។',
 
     'story.title': 'យុវជន<br>ដែលជួបជុំគ្នា<br>ដោយស្រឡាញ់ការសរសើរតម្កើង',
     'story.sub': 'រឿងរ៉ាវនៃការជួបជុំគ្នារបស់យើង',
