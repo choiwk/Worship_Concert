@@ -25,7 +25,11 @@ const I18N_LANGS = [
 /* Noto Sans Khmer 는 중립적인 고딕이라 이 사이트의 종이·손글씨 톤과 겉돈다.
    Noto Serif Khmer 는 획에 맺음이 있어 본문 서체와 결이 맞는다.
    가중치는 범위(400..700) 로 적어야 한다 — 세미콜론 형식은 400 을 돌려준다. */
-const KHMER_FONT = 'https://fonts.googleapis.com/css2?family=Noto+Serif+Khmer:wght@400..700&display=swap';
+/* 크메르 서체 — 구글 폰트의 '크메르 구간' 파일만 직접 가리킨다.
+   라틴 구간은 이 사이트의 손글씨(Sarang)가 맡으므로 받지 않는다. */
+const KHMER_FONT_URL = 'https://fonts.gstatic.com/s/notoserifkhmer/v29/-F6nfidqLzI2JPCkXAO2hmogq0146FxtbwKEr951z5s6lKQzmMW9Y7ZmfaY.woff2';
+/* 한글 대비 크기를 10% 줄인다 */
+const KHMER_SIZE_ADJUST = '90%';
 
 /* 성경 사이트(YouVersion)의 언어별 주소와 번역본 번호 */
 const BIBLE_LOCALE = {
@@ -360,11 +364,22 @@ function t(key, fallback) {
 /** 크메르 폰트는 필요할 때만 */
 function _ensureKhmerFont() {
   if (document.getElementById('khmerFont')) return;
-  const link = document.createElement('link');
-  link.id = 'khmerFont';
-  link.rel = 'stylesheet';
-  link.href = KHMER_FONT;
-  document.head.appendChild(link);
+  /* 구글이 주는 stylesheet 를 그대로 쓰지 않고 @font-face 를 직접 적는다.
+     크메르 글자는 같은 font-size 에서도 한글보다 커 보여 화면이 답답해진다.
+     size-adjust 로 서체 자체를 90% 로 줄이면 193곳의 font-size 를 건드리지
+     않고도 전체가 한 번에 맞는다. 줄 간격·여백은 그대로 유지된다.
+     주소가 바뀌어 받지 못하면 아래 글꼴 스택의 시스템 크메르 서체로 넘어간다. */
+  const el = document.createElement('style');
+  el.id = 'khmerFont';
+  el.textContent =
+    '@font-face{' +
+      "font-family:'Noto Serif Khmer';" +
+      'font-style:normal;font-weight:400 700;font-display:swap;' +
+      'size-adjust:' + KHMER_SIZE_ADJUST + ';' +
+      'src:url(' + KHMER_FONT_URL + ") format('woff2');" +
+      'unicode-range:U+1780-17FF,U+19E0-19FF,U+200C-200D,U+25CC;' +
+    '}';
+  document.head.appendChild(el);
 }
 
 /** data-i18n 이 붙은 모든 곳을 지금 언어로 바꾼다 */
