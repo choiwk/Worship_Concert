@@ -43,15 +43,14 @@
   "organizer": { "@type": "Organization", "name": "찬양이 좋아서 모인 청년들" }
 }
 </script>
-<!-- Google Fonts (최적화: 미사용 wght@700 제거, preload 추가) -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<!-- 구글 폰트 3종(Noto Serif KR · Cormorant Garamond · IM Fell English)을 걷어냈다.
+     CSS 어디에서도 쓰지 않는데 렌더를 막는 stylesheet 로 받고 있었다.
+     gstatic preconnect 는 남긴다 — 크메르어를 고르면 그쪽에서 서체를 받는다. -->
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=IM+Fell+English:ital@0;1&amp;display=swap" as="style"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=IM+Fell+English:ital@0;1&amp;display=swap" rel="stylesheet"/>
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
-<link rel="preload" href="public/fonts/Sarang-site.woff2" as="font" type="font/woff2" crossorigin=""/>
+<link rel="preload" href="public/fonts/Sarang-site.woff2?v=77" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=76" rel="stylesheet"/>
+<link href="src/css/style.css?v=77" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -352,9 +351,9 @@
 </div>
 </section><div class="divider reveal"></div><section class="scene">
 <div class="scene-img-wrap">
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-0.JPG" style="aspect-ratio:3/2"/>
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-1.JPG" style="aspect-ratio:3/2"/>
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-0.JPG?v=77" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-1.JPG?v=77" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG?v=77" style="aspect-ratio:3/2"/>
 </div>
 <div class="scene-text reveal">
 <p class="ch-label" data-i18n="story.ch7">07. 공동체</p>
@@ -722,11 +721,11 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/i18n.js?v=76" defer></script>
-<script src="src/js/bible.js?v=76" defer></script>
-<script src="src/js/songs.js?v=76" defer></script>
-<script src="src/js/members.js?v=76" defer></script>
-<script src="src/js/app.js?v=76" defer></script>
+<script src="src/js/i18n.js?v=77" defer></script>
+<script src="src/js/bible.js?v=77" defer></script>
+<script src="src/js/songs.js?v=77" defer></script>
+<script src="src/js/members.js?v=77" defer></script>
+<script src="src/js/app.js?v=77" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

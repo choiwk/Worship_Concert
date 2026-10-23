@@ -40,6 +40,9 @@ const BIBLE_LOCALE = {
 
 const I18N = {
   en: {
+    'word.loading': 'Loading...',
+    'songs.verseLabel': 'A verse to reflect on with this song',
+    'songs.prayNote': 'We offer this song together in prayer',
     'word.openLoading': 'Loading devotions...',
     'rsvp.nameReq': 'Name <span class="rsvp-req" aria-hidden="true">*</span>',
     'word.bodyReq': 'Your reflection <span class="rsvp-req" aria-hidden="true">*</span>',
@@ -120,7 +123,7 @@ const I18N = {
     'rsvp.consentLabel': 'Collected items', 'rsvp.purposeLabel': 'Purpose',
     'rsvp.keepLabel': 'Kept until',
     'rsvp.agree': 'I agree. You are welcome to come even if you do not.',
-    'rsvp.submit': 'Send', 'rsvp.sending': 'Sending…',
+    'rsvp.submit': 'Send', 'rsvp.sending': 'Sending...',
     'rsvp.doneTitle': 'We have your note', 'rsvp.doneText': 'See you there',
     'rsvp.close': 'Close',
 
@@ -129,7 +132,7 @@ const I18N = {
     'word.hint': 'We share what we read each week',
     'word.lockTitle': 'This space is for our team',
     'word.lockText': 'Enter the passcode shared with the team.',
-    'word.passPh': 'Passcode', 'word.enter': 'Enter', 'word.checking': 'Checking…',
+    'word.passPh': 'Passcode', 'word.enter': 'Enter', 'word.checking': 'Checking...',
     'word.write': 'Share yours', 'word.byWeek': 'By week', 'word.byPerson': 'By person',
     'word.openTitle': 'Open to everyone', 'word.openHint': 'Swipe to see more',
     'word.read': 'Read', 'word.more': 'Read more',
@@ -196,11 +199,14 @@ const I18N = {
     'donate.label': 'Account', 'donate.copy': 'Copy account number',
 
     /* 공통 */
-    'common.close': 'Close', 'common.loading': 'Loading…',
+    'common.close': 'Close', 'common.loading': 'Loading...',
     'common.notice': 'Lyrics and Bible passages are shown in Korean.'
   },
 
   km: {
+    'word.loading': 'កំពុងផ្ទុក...',
+    'songs.verseLabel': 'ខព្រះគម្ពីរដើម្បីរំពឹងគិតជាមួយបទនេះ',
+    'songs.prayNote': 'យើងថ្វាយបទនេះជាមួយគ្នាក្នុងការអធិស្ឋាន',
     'word.openLoading': 'កំពុងផ្ទុក...',
     'rsvp.nameReq': 'ឈ្មោះ <span class="rsvp-req" aria-hidden="true">*</span>',
     'word.bodyReq': 'ការរំពឹងគិតរបស់អ្នក <span class="rsvp-req" aria-hidden="true">*</span>',
@@ -277,7 +283,7 @@ const I18N = {
     'rsvp.consentLabel': 'ព័ត៌មានប្រមូល', 'rsvp.purposeLabel': 'គោលបំណង',
     'rsvp.keepLabel': 'រក្សាទុករហូតដល់',
     'rsvp.agree': 'ខ្ញុំយល់ព្រម។ បើមិនយល់ព្រម អ្នកក៏អាចមកចូលរួមបានដែរ។',
-    'rsvp.submit': 'ផ្ញើ', 'rsvp.sending': 'កំពុងផ្ញើ…',
+    'rsvp.submit': 'ផ្ញើ', 'rsvp.sending': 'កំពុងផ្ញើ...',
     'rsvp.doneTitle': 'យើងទទួលបានហើយ', 'rsvp.doneText': 'ជួបគ្នានៅទីនោះ',
     'rsvp.close': 'បិទ',
 
@@ -285,7 +291,7 @@ const I18N = {
     'word.hint': 'យើងចែករំលែកព្រះបន្ទូលជារៀងរាល់សប្តាហ៍',
     'word.lockTitle': 'កន្លែងនេះសម្រាប់ក្រុមរបស់យើង',
     'word.lockText': 'សូមបញ្ចូលលេខសម្ងាត់ដែលបានចែករំលែក។',
-    'word.passPh': 'លេខសម្ងាត់', 'word.enter': 'ចូល', 'word.checking': 'កំពុងពិនិត្យ…',
+    'word.passPh': 'លេខសម្ងាត់', 'word.enter': 'ចូល', 'word.checking': 'កំពុងពិនិត្យ...',
     'word.write': 'ចែករំលែក', 'word.byWeek': 'តាមសប្តាហ៍', 'word.byPerson': 'តាមបុគ្គល',
     'word.openTitle': 'បើកសម្រាប់គ្រប់គ្នា', 'word.openHint': 'អូសដើម្បីមើលបន្ថែម',
     'word.read': 'អាន', 'word.more': 'អានបន្ថែម',
@@ -346,7 +352,7 @@ const I18N = {
     'donate.title': 'អរគុណសម្រាប់ការគាំទ្រ',
     'donate.label': 'គណនី', 'donate.copy': 'ចម្លងលេខគណនី',
 
-    'common.close': 'បិទ', 'common.loading': 'កំពុងផ្ទុក…',
+    'common.close': 'បិទ', 'common.loading': 'កំពុងផ្ទុក...',
     'common.notice': 'អត្ថបទចម្រៀង និងខព្រះគម្ពីរ បង្ហាញជាភាសាកូរ៉េ។'
   }
 };

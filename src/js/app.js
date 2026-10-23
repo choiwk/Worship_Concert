@@ -271,7 +271,7 @@ function renderSongDetail(slug) {
     head.appendChild(_el('span', 'song-badge tag-' + tagKind(song.tag), _tagName(song.tag)));
   }
   if (song.tag === '기도') {
-    head.appendChild(_el('p', 'song-head-note', '기도하며 함께 드리는 곡입니다'));
+    head.appendChild(_el('p', 'song-head-note', t('songs.prayNote', '기도하며 함께 드리는 곡입니다')));
   }
 
   wrap.appendChild(head);
@@ -318,7 +318,7 @@ function renderSongDetail(slug) {
 
     if (part.bible) {
       const word = _el('aside', 'song-word');
-      word.appendChild(_el('p', 'song-word-label', '이 곡과 함께 묵상할 말씀'));
+      word.appendChild(_el('p', 'song-word-label', t('songs.verseLabel', '이 곡과 함께 묵상할 말씀')));
       word.appendChild(_el('p', 'song-word-ref', part.bible.ref));
 
       const btn = _el('button', 'song-word-link', t('songs.readVerse', '말씀 보기'));
@@ -621,7 +621,8 @@ function renderMembers() {
 function toggleMemberVerse() {
   const textEl = document.getElementById('memberVerseText');
   const open = textEl.classList.toggle('is-clamped');
-  document.getElementById('memberVerseMore').textContent = open ? '펼쳐보기' : '접기';
+  document.getElementById('memberVerseMore').textContent =
+    open ? t('member.expand', '펼쳐보기') : t('songs.less', '접기');
 }
 
 function openMember(groupIndex, personIndex) {
@@ -671,7 +672,7 @@ function openMember(groupIndex, personIndex) {
     textEl.classList.remove('is-clamped');
     const fullHeight = textEl.scrollHeight;
     textEl.classList.add('is-clamped');
-    moreBtn.textContent = '펼쳐보기';
+    moreBtn.textContent = t('member.expand', '펼쳐보기');
     moreBtn.hidden = textEl.clientHeight >= fullHeight - 1;
   }
 
@@ -1114,7 +1115,7 @@ function _rsvpReset() {
   form.hidden = false;
   done.hidden = true;
   document.getElementById('rsvpLabel').hidden = false;
-  document.getElementById('rsvpTitle').textContent = '참여 신청';
+  document.getElementById('rsvpTitle').textContent = t('rsvp.title', '참여 신청');
   _rsvpError('');
   _rsvpBusy(false);
 }
@@ -1130,7 +1131,7 @@ function _rsvpBusy(on) {
   const btn = document.getElementById('rsvpSubmit');
   if (!btn) return;
   btn.disabled = on;
-  btn.textContent = on ? '보내는 중…' : '신청하기';
+  btn.textContent = on ? t('rsvp.sending', '보내는 중...') : t('rsvp.submit', '신청하기');
 }
 
 /** 글자 수 표시 */
@@ -1145,17 +1146,21 @@ async function _rsvpSubmit(e) {
   e.preventDefault();
   _rsvpError('');
 
-  // 자동 프로그램이 채우는 함정 칸. 조용히 끝낸 척한다.
-  if (document.getElementById('rsvpWebsite').value) { _rsvpShowDone(document.getElementById('rsvpName').value.trim()); return; }
+  const nameEl  = document.getElementById('rsvpName');
+  const agreeEl = document.getElementById('rsvpAgree');
 
-  const name    = document.getElementById('rsvpName').value.trim();
+  // 자동 프로그램이 채우는 함정 칸. 조용히 끝낸 척한다.
+  if (document.getElementById('rsvpWebsite').value) { _rsvpShowDone(nameEl.value.trim()); return; }
+
+  const name    = nameEl.value.trim();
   const church  = document.getElementById('rsvpChurch').value.trim();
   const message = document.getElementById('rsvpMessage').value.trim();
-  const agree   = document.getElementById('rsvpAgree').checked;
+  const agree   = agreeEl.checked;
 
-  if (!name)            { _rsvpError('이름을 입력해주세요.'); document.getElementById('rsvpName').focus(); return; }
-  if (name.length > 40) { _rsvpError('이름이 너무 깁니다.');   document.getElementById('rsvpName').focus(); return; }
-  if (!agree)           { _rsvpError('개인정보 수집·이용에 동의해주세요.'); document.getElementById('rsvpAgree').focus(); return; }
+  // '·' 는 이 손글씨 서체에 없어서, 이 글자 하나로 503KB 폴백이 내려온다
+  if (!name)            { _rsvpError('이름을 입력해주세요.'); nameEl.focus(); return; }
+  if (name.length > 40) { _rsvpError('이름이 너무 깁니다.');   nameEl.focus(); return; }
+  if (!agree)           { _rsvpError('개인정보 수집 및 이용에 동의해주세요.'); agreeEl.focus(); return; }
 
   // 연속 전송 막기
   const last = Number(_rsvpStore('get') || 0);
@@ -1419,7 +1424,7 @@ async function _wordUnlock(e) {
   const value = input.value.trim();
   if (!value) { _wordShowLock('암호를 넣어주세요.'); input.focus(); return; }
 
-  btn.disabled = true; btn.textContent = '확인하는 중…';
+  btn.disabled = true; btn.textContent = t('word.checking', '확인하는 중...');
   const before = _wordPass();
   _wordPass(value);
   try {
@@ -1506,7 +1511,7 @@ async function loadWord() {
     b.setAttribute('aria-selected', String(on));
   });
 
-  _wordState('불러오는 중…');
+  _wordState(t('word.loading', '불러오는 중...'));
   try {
     const data = await _wordCall('list');
     _renderWeekly(data.weekly || null);
@@ -1893,7 +1898,7 @@ function _wordFormError(msg) {
 function _wordFormBusy(on) {
   const btn = document.getElementById('wordSubmit');
   btn.disabled = on;
-  btn.textContent = on ? '보내는 중…' : '나누기';
+  btn.textContent = on ? t('rsvp.sending', '보내는 중...') : t('word.send', '나누기');
 }
 
 async function _wordSubmit(e) {
