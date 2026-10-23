@@ -40,6 +40,16 @@ const BIBLE_LOCALE = {
 
 const I18N = {
   en: {
+    'rsvp.nameReq': 'Name <span class="rsvp-req" aria-hidden="true">*</span>',
+    'word.bodyReq': 'Your reflection <span class="rsvp-req" aria-hidden="true">*</span>',
+    'rsvp.consentRow1': '<b>Collected</b> Name, church, and what you write',
+    'rsvp.consentRow2': '<b>Purpose</b> To estimate how many people are coming',
+    'rsvp.consentRow3': '<b>Kept until</b> Deleted after the concert',
+    'rsvp.doneWhen': 'Saturday, December 19, 7:30 PM<br>See you at Hyangsang Church, 3F Gymnasium',
+    'np.text': 'Let Us Love One Another <span class="np-artist">Wecclesia</span>',
+    'footer.team': 'Wecclesia, 2026',
+    'donate.holder': 'Account holder', 'donate.holderName': 'Choi Wonkeun',
+    'word.koOnly': 'Devotions are written by our team in Korean, so they are not shown here.',
     /* 이번에 연결하며 채운 것들 */
     'common.or': 'or',
     'share.kakao': 'KakaoTalk', 'share.instagram': 'Instagram DM',
@@ -190,6 +200,16 @@ const I18N = {
   },
 
   km: {
+    'rsvp.nameReq': 'ឈ្មោះ <span class="rsvp-req" aria-hidden="true">*</span>',
+    'word.bodyReq': 'ការរំពឹងគិតរបស់អ្នក <span class="rsvp-req" aria-hidden="true">*</span>',
+    'rsvp.consentRow1': '<b>ព័ត៌មានដែលប្រមូល</b> ឈ្មោះ ព្រះវិហារ និងអ្វីដែលអ្នកសរសេរ',
+    'rsvp.consentRow2': '<b>គោលបំណង</b> ដើម្បីប៉ាន់ស្មានចំនួនអ្នកចូលរួម',
+    'rsvp.consentRow3': '<b>រយៈពេលរក្សាទុក</b> លុបចោលបន្ទាប់ពីកម្មវិធីបញ្ចប់',
+    'rsvp.doneWhen': 'ថ្ងៃសៅរ៍ ទី១៩ ខែធ្នូ ម៉ោង ៧:៣០ ល្ងាច<br>ជួបគ្នានៅព្រះវិហារ Hyangsang ជាន់ទី៣',
+    'np.text': 'ចូរយើងស្រឡាញ់គ្នាទៅវិញទៅមក <span class="np-artist">Wecclesia</span>',
+    'footer.team': 'Wecclesia, 2026',
+    'donate.holder': 'ម្ចាស់គណនី', 'donate.holderName': 'Choi Wonkeun',
+    'word.koOnly': 'ការចែករំលែកខព្រះគម្ពីរ សរសេរជាភាសាកូរ៉េដោយក្រុមរបស់យើង ដូច្នេះមិនបង្ហាញនៅទីនេះទេ។',
     /* 이번에 연결하며 채운 것들 */
     'common.or': 'ឬ',
     'share.kakao': 'KakaoTalk', 'share.instagram': 'Instagram DM',

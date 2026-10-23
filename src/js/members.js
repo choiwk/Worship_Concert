@@ -51,11 +51,11 @@
 ══════════════════════════════════════════════════════════ */
 
 const PEOPLE = {
-  'park-seongeun': { name: '박성은', icon: '♪' },
-  'kim-ahyeon':    { name: '김아현', icon: '♪' },
-  'kwon-yeseul':   { name: '권예슬', icon: '♪' },
+  'park-seongeun': { name: '박성은', roman: 'Park Seongeun', icon: '♪' },
+  'kim-ahyeon':    { name: '김아현', roman: 'Kim Ahyeon', icon: '♪' },
+  'kwon-yeseul':   { name: '권예슬', roman: 'Kwon Yeseul', icon: '♪' },
   'hwang-yuchan': {
-    name: '황유찬',
+    name: '황유찬', roman: 'Hwang Yuchan',
     icon: '♪',
     photo: 'public/images/members/hwang-yuchan.jpg',
     instagram: 'https://www.instagram.com/y_0o0_c',
@@ -65,17 +65,17 @@ const PEOPLE = {
       ref: '시편 126편 5절'
     }
   },
-  'lee-hanbin':    { name: '이한빈', icon: '♪' },
-  'choi-goun':     { name: '최고운', icon: '♪' },
-  'han-gahee':     { name: '한가희', icon: '♪' },
+  'lee-hanbin':    { name: '이한빈', roman: 'Lee Hanbin', icon: '♪' },
+  'choi-goun':     { name: '최고운', roman: 'Choi Gowoon', icon: '♪' },
+  'han-gahee':     { name: '한가희', roman: 'Han Gahee', icon: '♪' },
 
-  'han-yuhee':     { name: '한유희', icon: '🎹' },
-  'ryu-danbi':     { name: '류단비', icon: '🎹' },
-  'lee-gwangbin':  { name: '이광빈', icon: '🎸' },
-  'lee-gieun':     { name: '이기은', icon: '🎸' },
+  'han-yuhee':     { name: '한유희', roman: 'Han Yuhee', icon: '🎹' },
+  'ryu-danbi':     { name: '류단비', roman: 'Ryu Danbi', icon: '🎹' },
+  'lee-gwangbin':  { name: '이광빈', roman: 'Lee Gwangbin', icon: '🎸' },
+  'lee-gieun':     { name: '이기은', roman: 'Lee Gieun', icon: '🎸' },
 
   'choi-wonkeun': {
-    name: '최원근',
+    name: '최원근', roman: 'Choi Wonkeun',
     icon: '🥁',
     photo: 'public/images/members/choi-wonkeun.jpg',
     instagram: 'https://www.instagram.com/wonkeun_e',
@@ -87,11 +87,11 @@ const PEOPLE = {
     }
   },
 
-  'kim-jaeseo':    { name: '김재서', icon: '📣' },
-  'yeo-myeong':    { name: '여명',   icon: '📷' },
-  'choi-juhee':    { name: '최주희', icon: '📷' },
+  'kim-jaeseo':    { name: '김재서', roman: 'Kim Jaeseo', icon: '📣' },
+  'yeo-myeong':    { name: '여명', roman: 'Yeo Myeong',   icon: '📷' },
+  'choi-juhee':    { name: '최주희', roman: 'Choi Juhee', icon: '📷' },
   'kim-yeeun': {
-    name: '김예은',
+    name: '김예은', roman: 'Kim Yeeun',
     icon: '🤝',
     photo: 'public/images/members/kim-yeeun.jpg',
     instagram: 'https://www.instagram.com/yes_silver_n._.n',
@@ -101,8 +101,8 @@ const PEOPLE = {
       ref: '사도행전 20장 24절'
     }
   },
-  'lee-gijun':     { name: '이기준', icon: '🤝' },
-  'lee-kangjun':   { name: '이강준', icon: '🤝' }
+  'lee-gijun':     { name: '이기준', roman: 'Lee Gijun', icon: '🤝' },
+  'lee-kangjun':   { name: '이강준', roman: 'Lee Kangjun', icon: '🤝' }
 };
 
 const MEMBERS = [

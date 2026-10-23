@@ -232,7 +232,10 @@ function _metaTag(iconId, label) {
 
 /* ── 곡 상세 ───────────────────────────────────────────── */
 
+let _lastSongSlug = null;
+
 function renderSongDetail(slug) {
+  _lastSongSlug = slug;
   const wrap = document.getElementById('songDetail');
   const song = findSong(slug);
   if (!wrap || !song) return false;
@@ -576,7 +579,7 @@ function renderMembers() {
         card.type = 'button';
         card.setAttribute('aria-haspopup', 'dialog');
         card.setAttribute('aria-label',
-          person.name + (person.role ? ' ' + person.role : '') + ' 인스타그램 보기');
+          _personName(person) + (person.role ? ' ' + _roleName(person.role) : '') + ' Instagram');
         card.onclick = () => openMember(gi, pi);
       }
 
@@ -601,7 +604,7 @@ function renderMembers() {
       }
       card.appendChild(avatar);
 
-      card.appendChild(_el('p', 'artist-card-name', person.name));
+      card.appendChild(_el('p', 'artist-card-name', _personName(person)));
       if (person.role) card.appendChild(_el('p', 'artist-card-role', _roleName(person.role)));
 
       grid.appendChild(card);
@@ -638,7 +641,7 @@ function openMember(groupIndex, personIndex) {
     avatar.appendChild(_avatarIcon(person));
   }
 
-  document.getElementById('memberName').textContent = person.name;
+  document.getElementById('memberName').textContent = _personName(person);
   const role = document.getElementById('memberRole');
   role.textContent = person.role || _teamName(section.group);
 
@@ -1320,6 +1323,15 @@ async function loadWordOpen() {
   const sec = document.getElementById('wordOpen');
   const rail = document.getElementById('wordOpenRail');
   if (!sec || !rail) return;
+
+  /* 팀원이 한국어로 쓴 글이라 옮길 수 없다.
+     한국어가 아닐 때는 글 대신 왜 비어 있는지 한 줄로 알린다. */
+  if (currentLang() !== 'ko') {
+    rail.innerHTML = '';
+    rail.appendChild(_el('p', 'word-ko-only', t('word.koOnly', '')));
+    sec.hidden = false;
+    return;
+  }
 
   let items = [];
   try {
@@ -2149,9 +2161,10 @@ function _trField(obj, base) {
 /* 번역 제목 아래에 한국어 원제를 붙인다. 공연 순서지와 맞춰 볼 수 있게.
    번역 제목이 없을 때만 소리 적기(로마자)로 대신한다. */
 function _songSubLine(song) {
+  /* 한국어가 아닐 때는 한국어 원제를 적지 않는다.
+     번역 제목이 아직 없는 곡만 소리 적기로 대신한다. */
   const lang = currentLang();
-  if (lang === 'ko') return '';
-  if (_trField(song, 'title')) return song.title;
+  if (lang === 'ko' || _trField(song, 'title')) return '';
   return lang === 'en' ? (song.roman || '') : '';
 }
 
@@ -2167,6 +2180,12 @@ const TAG_I18N = { '주제곡': 'songs.tagLead', '앵콜': 'songs.tagEncore', '�
 function _tagName(tag) {
   const k = TAG_I18N[tag];
   return k ? t(k, tag) : tag;
+}
+
+/* 사람 이름 — 한국어가 아닐 때는 로마자로 적는다.
+   이름은 옮길 수 없으니 소리 나는 대로 적는 것이 맞다. */
+function _personName(person) {
+  return (currentLang() !== 'ko' && person && person.roman) ? person.roman : (person ? person.name : '');
 }
 
 /* 악기·역할 이름을 현재 언어로. 사전에 없으면 한국어 그대로 둔다. */
@@ -2191,7 +2210,8 @@ function _updateKoNotice() {
     let v = '';
     if (lang !== 'ko') {
       const tr = lang === 'km' ? el.dataset.km : el.dataset.en;
-      v = tr ? (el.dataset.ko || '') : (lang === 'en' ? (el.dataset.roman || '') : '');
+      /* 번역 제목이 있으면 아무것도 덧붙이지 않는다 */
+      v = tr ? '' : (lang === 'en' ? (el.dataset.roman || '') : '');
     }
     el.textContent = v;
     el.hidden = !v;
@@ -2201,13 +2221,17 @@ function _updateKoNotice() {
 function onLangChange() {
   _updateKoNotice();
   renderFinaleDate();
+  if (typeof loadWordOpen === 'function') loadWordOpen();
   renderDetailGrid();
   renderMembers();
   renderSongList();
   _updateLP();
   updateDday();
   const r = parseHash();
-  if (r.tab === 'songs' && r.slug) renderSongDetail(r.slug);
+  /* 곡 상세는 떠나도 DOM 에 남아 있다. 지금 보고 있지 않더라도
+     그려 둔 것이 있으면 다시 그려야 옛 언어가 남지 않는다. */
+  const openSlug = (r.tab === 'songs' && r.slug) || _lastSongSlug;
+  if (openSlug) renderSongDetail(openSlug);
   if (r.tab === 'word' && !document.getElementById('wordMain').hidden) {
     _renderWord(_wordItems);
   }
