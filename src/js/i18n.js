@@ -40,6 +40,7 @@ const BIBLE_LOCALE = {
 
 const I18N = {
   en: {
+    'word.openLoading': 'Loading devotions...',
     'rsvp.nameReq': 'Name <span class="rsvp-req" aria-hidden="true">*</span>',
     'word.bodyReq': 'Your reflection <span class="rsvp-req" aria-hidden="true">*</span>',
     'rsvp.consentRow1': '<b>Collected</b> Name, church, and what you write',
@@ -200,6 +201,7 @@ const I18N = {
   },
 
   km: {
+    'word.openLoading': 'កំពុងផ្ទុក...',
     'rsvp.nameReq': 'ឈ្មោះ <span class="rsvp-req" aria-hidden="true">*</span>',
     'word.bodyReq': 'ការរំពឹងគិតរបស់អ្នក <span class="rsvp-req" aria-hidden="true">*</span>',
     'rsvp.consentRow1': '<b>ព័ត៌មានដែលប្រមូល</b> ឈ្មោះ ព្រះវិហារ និងអ្វីដែលអ្នកសរសេរ',

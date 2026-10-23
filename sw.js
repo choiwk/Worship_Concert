@@ -1,15 +1,15 @@
-const CACHE_NAME = 'worship-concert-v75';
+const CACHE_NAME = 'worship-concert-v76';
 const ASSETS = [
   './',
   './index.html',
-  './src/css/style.css?v=75',
-  './src/js/app.js?v=75',
-  './src/js/i18n.js?v=75',
-  './src/js/bible.js?v=75',
-  './src/js/songs.js?v=75',
-  './src/js/members.js?v=75',
+  './src/css/style.css?v=76',
+  './src/js/app.js?v=76',
+  './src/js/i18n.js?v=76',
+  './src/js/bible.js?v=76',
+  './src/js/songs.js?v=76',
+  './src/js/members.js?v=76',
   './manifest.json',
-  './public/fonts/Sarang-site.woff2?v=75',
+  './public/fonts/Sarang-site.woff2?v=76',
   './public/audio/bgm.mp3',
   './public/images/members/choi-wonkeun.jpg',
   './public/videos/MainWorship.mp4',

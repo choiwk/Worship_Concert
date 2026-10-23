@@ -64,6 +64,7 @@ function route() {
     _showPage('page-' + r.tab, r.tab);
     if (r.tab === 'word') loadWord();
   }
+  _syncShareFab();
 
   // 곡 상세에서 목록으로 돌아온 경우에만 보던 자리를 복원하고,
   // 그 외에는 기존 동작대로 맨 위로 올린다.
@@ -1333,6 +1334,14 @@ async function loadWordOpen() {
     return;
   }
 
+  /* 불러오는 동안 자리를 비워 두면 화면이 덜컥 늘어난다.
+     먼저 '불러오는 중' 을 보여 주고, 글이 도착하면 바꿔 끼운다. */
+  rail.innerHTML = '';
+  rail.appendChild(_el('p', 'word-open-loading', t('word.openLoading', '나눔 불러오는 중...')));
+  sec.hidden = false;
+  const hintEl = sec.querySelector('.word-open-hint');
+  if (hintEl) hintEl.hidden = true;
+
   let items = [];
   try {
     const res = await fetch(WORD.endpoint, {
@@ -1354,7 +1363,7 @@ async function loadWordOpen() {
   if (!items.length) { sec.hidden = true; return; }
 
   rail.innerHTML = '';
-  items.forEach(row => {
+  items.forEach((row, i) => {
     _wordById[row.id] = row;
 
     const card = _el('button', 'word-open-card');
@@ -1376,6 +1385,11 @@ async function loadWordOpen() {
     foot.appendChild(_el('span', 'word-open-more', t('word.openMore', '읽어보기')));
     card.appendChild(foot);
 
+    /* 카드마다 조금씩 늦게 떠오르게 한다. 순서대로 읽히도록.
+       0.06초씩 미루되 너무 늦지 않게 0.4초에서 멈춘다. */
+    card.classList.add('word-open-in');
+    card.style.animationDelay = Math.min(i * 0.06, 0.4) + 's';
+
     rail.appendChild(card);
   });
 
@@ -1391,6 +1405,7 @@ async function loadWordOpen() {
 function _wordShowLock(msg) {
   document.getElementById('wordLock').hidden = false;
   document.getElementById('wordMain').hidden = true;
+  _syncShareFab();
   loadWordOpen();          // 암호가 없어도 공개 묵상은 읽을 수 있다
   const err = document.getElementById('wordLockError');
   err.textContent = msg || '';
@@ -1463,6 +1478,17 @@ function _wordState(msg) {
   el.hidden = !msg;
 }
 
+/* 공유 버튼은 화면 오른쪽 아래에 떠 있다. 말씀 나눔에 들어가면
+   나눔 카드와 겹쳐 글이 가려지므로, 들어가 있는 동안만 감춘다.
+   잠금 화면이나 다른 탭에서는 그대로 보인다. */
+function _syncShareFab() {
+  const fab = document.querySelector('.share-fab');
+  if (!fab) return;
+  const main = document.getElementById('wordMain');
+  const inWord = parseHash().tab === 'word' && main && !main.hidden;
+  fab.hidden = !!inWord;
+}
+
 async function loadWord() {
   if (!_wordPass()) { _wordShowLock(''); return; }
 
@@ -1470,6 +1496,7 @@ async function loadWord() {
   document.getElementById('wordMain').hidden = false;
   // 들어오면 아래 목록에 다 들어 있으므로 따로 띄우지 않는다
   document.getElementById('wordOpen').hidden = true;
+  _syncShareFab();
 
   // 지난번에 고른 보기 방식으로 버튼을 맞춰 둔다
   const mode = _wordViewMode();

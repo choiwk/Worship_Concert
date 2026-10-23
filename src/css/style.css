@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=75') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=76') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=75') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=76') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -508,6 +508,10 @@ html.is-km .tab-label { font-size: 11px; }
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
 }
+
+/* display: flex 가 hidden 속성을 이기므로 따로 적어 둔다.
+   (말씀 나눔에 들어가 있는 동안 감추는 데 쓴다) */
+.share-fab[hidden] { display: none; }
 
 .share-fab:hover {
   background: var(--clay-wash);
@@ -1231,6 +1235,38 @@ html[lang="km"] .title-main .line-hand-sub {
    글꼴에 없는 화살표 글자(↳) 대신 테두리로 그려 폴백 폰트를 피한다. */
 /* 한국어가 아닐 때 제목 아래 붙는 소리 적기.
    번역이 아니라 읽고 검색할 수 있게 돕는 것이다. */
+/* 나눔을 불러오는 동안 자리를 지켜 주는 한 줄.
+   글자가 숨 쉬듯 옅어졌다 진해져, 멈춘 화면이 아니라는 걸 알린다. */
+.word-open-loading {
+  padding: 18px 16px;
+  font-size: clamp(12px, 3.1vw, 13.5px);
+  color: var(--ink-faint);
+  animation: wordLoadingBreath 1.4s ease-in-out infinite;
+}
+
+@keyframes wordLoadingBreath {
+  0%, 100% { opacity: .45; }
+  50%      { opacity: .9; }
+}
+
+/* 도착한 나눔은 아래에서 살짝 떠오르며 나타난다.
+   카드마다 animation-delay 를 조금씩 달리 줘서 순서대로 읽히게 한다. */
+.word-open-in {
+  opacity: 0;
+  animation: wordCardIn .45s ease-out forwards;
+}
+
+@keyframes wordCardIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* 움직임을 줄여 달라고 설정한 분에게는 바로 보여 준다 */
+@media (prefers-reduced-motion: reduce) {
+  .word-open-loading { animation: none; opacity: .7; }
+  .word-open-in { opacity: 1; animation: none; }
+}
+
 /* 말씀 나눔 글은 한국어로 쓰여 있어 다른 언어에서는 보여주지 않는다.
    그 자리에 왜 비어 있는지 한 줄로 적는다. */
 .word-ko-only {
