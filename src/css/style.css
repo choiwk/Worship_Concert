@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=88') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=89') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=88') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=89') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4121,7 +4121,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=88") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=89") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4463,3 +4463,35 @@ html.main-cinema:has(#page-main.active) .tab-btn {
 }
 html.main-cinema:has(#page-main.active) .tab-btn .tab-icon { filter: drop-shadow(0 1px 4px rgba(0, 0, 0, .55)); }
 html.main-cinema:has(#page-main.active) .tab-btn.active { color: #f0c3a8; }
+
+/* 메인(영상)에서는 공유하기·언어 버튼을 유리처럼 — 영상이 비쳐 보이고 가장자리만 빛을 받는다 */
+html.main-cinema:has(#page-main.active) .share-fab,
+html.main-cinema:has(#page-main.active) .lang-btn,
+html.main-cinema:has(#page-main.active) .lang-menu {
+  background: linear-gradient(145deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .06));
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, .26);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .32),     /* 위쪽 가장자리의 빛 */
+    inset 0 -1px 0 rgba(255, 255, 255, .06),
+    0 8px 24px rgba(0, 0, 0, .28);
+  color: rgba(247, 244, 236, .94);
+}
+html.main-cinema:has(#page-main.active) .share-fab:hover,
+html.main-cinema:has(#page-main.active) .lang-btn:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, .1));
+  border-color: rgba(255, 255, 255, .4);
+}
+html.main-cinema:has(#page-main.active) .share-fab:active {
+  background: rgba(255, 255, 255, .32);
+  color: #fff;
+}
+html.main-cinema:has(#page-main.active) .share-fab:focus-visible { outline-color: #f0c3a8; }
+html.main-cinema:has(#page-main.active) .lang-btn svg { stroke: #f0c3a8; }
+html.main-cinema:has(#page-main.active) .lang-menu {
+  background: linear-gradient(145deg, rgba(40, 32, 25, .55), rgba(23, 18, 13, .45));
+}
+html.main-cinema:has(#page-main.active) .lang-opt { color: rgba(247, 244, 236, .86); }
+html.main-cinema:has(#page-main.active) .lang-opt:hover,
+html.main-cinema:has(#page-main.active) .lang-opt.is-on { background: rgba(255, 255, 255, .12); color: #f0c3a8; }
