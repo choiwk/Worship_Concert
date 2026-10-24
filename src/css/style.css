@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=82') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=83') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=82') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=83') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4074,21 +4074,42 @@ html.main-cinema #page-main > .sec-message { display: none; }
 html.main-cinema #page-main { animation-name: cinemaPageFade; padding-bottom: 0; }
 @keyframes cinemaPageFade { from { opacity: 0; } to { opacity: 1; } }
 
-/* 장면마다 손을 떼면 그 장면에 멈추도록. 메인 탭이 열려 있을 때만 */
-html.main-cinema:has(#page-main.active) { scroll-snap-type: y proximity; }
+/* ── 페이지가 아니라 이 화면 안쪽만 스크롤한다 ──
+   휴대폰 브라우저(사파리·카카오톡)는 '페이지'를 스크롤하면 주소창과 아래 도구 막대를
+   접었다 폈다 하면서 화면 높이를 계속 바꾼다. 그러면 장면 계산과 멈춤이 흔들린다.
+   메인에서는 페이지를 움직이지 않고, 화면에 붙인 이 상자 안에서만 스크롤한다.
+   페이지가 그대로라 주소창·도구 막대도 그대로 있다. */
+html.main-cinema:has(#page-main.active),
+html.main-cinema:has(#page-main.active) body { overflow: hidden; }
+html.main-cinema #page-main { min-height: 0; }
 
-/* 장면 한 칸의 스크롤 길이. 한 번 쓸어 올리면 한 장면씩 넘어가도록 화면의 60% */
-.cinema { position: relative; --step: 60vh; --step: 60svh; }
+.cinema {
+  --n: 3;                          /* 장면 수 */
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: min(100%, var(--max-w));
+  margin: 0 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;    /* 끝에서 더 당겨도 페이지가 끌려 나오지 않게 */
+  scroll-snap-type: y mandatory;   /* 손을 떼면 반드시 한 장면에 멈춘다 */
+  scrollbar-width: none;
+  z-index: 1;
+}
+.cinema::-webkit-scrollbar { display: none; }
 
 /* ── 고정 배경 영상 ── */
 .cinema-bg {
-  position: fixed;
+  position: fixed;               /* 안쪽이 스크롤돼도 영상은 그대로 */
   top: 0;
-  left: 50%;
+  bottom: 0;
+  left: 0;
+  right: 0;
   width: min(100%, var(--max-w));
-  height: 100vh;
-  height: 100lvh;                 /* 주소창이 접혀도 아래가 비지 않게 '큰' 화면 높이 */
-  transform: translateX(-50%);
+  margin: 0 auto;
   overflow: hidden;
   background: #17120d;
   z-index: 0;
@@ -4120,24 +4141,24 @@ html.main-cinema:has(#page-main.active) { scroll-snap-type: y proximity; }
 /* ── 장면 ── 스크롤 길이 = 장면 수 × 화면 높이. 무대는 그 안에서 붙어 있다 */
 .cinema-track {
   position: relative;
-  height: calc(100vh + 2 * var(--step));
-  height: calc(100svh + 2 * var(--step));
+  height: calc(var(--n) * 100%);
   z-index: 1;
 }
+/* 한 장면 = 한 화면. 세게 쓸어도 한 장면씩만 넘어간다(scroll-snap-stop) */
 .cinema-snap {
   position: absolute;
   left: 0;
   width: 1px;
   height: 1px;
-  top: calc(var(--i) * var(--step));
+  top: calc(var(--i) * 100% / var(--n));
   scroll-snap-align: start;
+  scroll-snap-stop: always;
   pointer-events: none;
 }
 .cinema-stage {
   position: sticky;
   top: 0;
-  height: 100vh;
-  height: 100svh;
+  height: calc(100% / var(--n));
   color: var(--paper);
 }
 
@@ -4340,15 +4361,16 @@ html.main-cinema:has(#page-main.active) .now-playing {
 }
 html.main-cinema:has(#page-main.active) .np-text { color: rgba(247, 244, 236, .9); }
 
-/* 메인 맨 아래 꼬리말도 영상 위에서 읽히게 */
-html.main-cinema #page-main > .footer {
+/* 메인 맨 아래 꼬리말도 영상 위에서 읽히게 (JS 가 스크롤 상자 맨 끝으로 옮긴다) */
+.cinema > .footer {
+  scroll-snap-align: end;
   position: relative;
   z-index: 1;
   background: transparent;
   color: rgba(247, 244, 236, .7);
   padding-bottom: calc(var(--tab-content-h) + env(safe-area-inset-bottom, 0px) + 24px);
 }
-html.main-cinema #page-main > .footer .footer-text { color: rgba(247, 244, 236, .7); }
+.cinema > .footer .footer-text { color: rgba(247, 244, 236, .7); }
 
 /* 움직임 줄이기: 장면을 바꾸지 않고 차례로 늘어놓는다 */
 @media (prefers-reduced-motion: reduce) {
@@ -4356,5 +4378,5 @@ html.main-cinema #page-main > .footer .footer-text { color: rgba(247, 244, 236, 
   .cinema-stage { position: relative; height: auto; padding: 120px 0 calc(var(--tab-content-h) + 40px); display: flex; flex-direction: column; gap: 56px; }
   .scene { position: relative; top: auto; bottom: auto; opacity: 1; visibility: visible; filter: none; transition: none; }
   .cinema-hint, .cinema-dots, .cinema-snap { display: none; }
-  html.main-cinema:has(#page-main.active) { scroll-snap-type: none; }
+  .cinema { scroll-snap-type: none; }
 }

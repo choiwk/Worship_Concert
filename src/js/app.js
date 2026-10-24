@@ -519,6 +519,9 @@ function initMainCinema() {
   move('#detailGrid', '.scene-info');
   move('.ticket-cta', '.scene-info');      // 일시·장소 바로 아래에 참여하기
   move('.sec-message', '.scene-word');
+  // 꼬리말은 스크롤 상자 맨 끝으로 (페이지 쪽에 남으면 페이지가 스크롤된다)
+  const foot = page.querySelector(':scope > .footer');
+  if (foot) root.appendChild(foot);
 
   document.documentElement.classList.add('main-cinema');
   root.hidden = false;
@@ -539,27 +542,24 @@ function initMainCinema() {
   sync();
 
   // 스크롤 위치 → 지금 장면. 위아래로 밀지 않고, 장면을 통째로 바꾼다.
-  const track = document.getElementById('cinemaTrack');
+  // 페이지가 아니라 이 상자(root) 안쪽이 스크롤된다. 한 장면 = 상자 높이 한 칸.
   const scenes = [...root.querySelectorAll('.scene')];
   const dots = [...root.querySelectorAll('.cinema-dots li')];
   let cur = 0;
   const update = () => {
     if (!page.classList.contains('active')) return;
-    const span = track.offsetHeight - window.innerHeight;
-    const p = span > 0 ? Math.min(1, Math.max(0, -track.getBoundingClientRect().top / span)) : 0;
-    const i = Math.round(p * (scenes.length - 1));
+    const h = root.clientHeight || 1;
+    const i = Math.min(scenes.length - 1, Math.max(0, Math.round(root.scrollTop / h)));
     if (i === cur) return;
     cur = i;
     scenes.forEach((s, k) => s.classList.toggle('is-on', k === i));
     dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
     root.dataset.scene = String(i);
   };
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => { ticking = false; update(); });
-  }, { passive: true });
+  // 계산이 가벼워(장면이 바뀔 때만 클래스를 바꾼다) 스크롤마다 바로 부른다.
+  // 화면 갱신 타이밍(requestAnimationFrame)에 기대지 않아 느린 기기에서도 밀리지 않는다.
+  root.addEventListener('scroll', update, { passive: true });
+  root.addEventListener('scrollend', update);
   window.addEventListener('resize', update);
 }
 
