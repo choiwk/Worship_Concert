@@ -491,6 +491,18 @@ function _mainDesign() {
   return MAIN_DESIGN;
 }
 
+/* 배경 영상을 어느 단계에서 시작할지. 'full' 고화질 / 'light' 가벼운 것 / 'still' 사진만.
+   망 정보를 주지 않는 브라우저(아이폰 사파리·카카오톡 등)는 고화질로 시작하고,
+   늦으면 initMainCinema 의 시간 재기가 알아서 낮춘다. */
+function _cinemaVideoPlan(conn) {
+  if (!conn) return 'full';
+  if (conn.saveData) return 'still';
+  const t = conn.effectiveType || '';
+  if (t === 'slow-2g' || t === '2g') return 'still';
+  if (t === '3g' || (conn.downlink && conn.downlink < 1.5)) return 'light';
+  return 'full';
+}
+
 /* 옵션1 을 켠다. 기존 메인의 요소(제목·날짜·참여하기·말씀)를 장면 안으로 옮겨 온다.
    복사하지 않고 옮기므로 번역·D-day·참여 신청 동작은 그대로 이어진다. */
 function initMainCinema() {
@@ -527,19 +539,90 @@ function initMainCinema() {
   root.hidden = false;
   root.dataset.scene = '0';
 
-  // 배경 영상: 메인을 보고 있을 때만 재생한다(배터리·데이터 절약).
-  // 데이터 절약 모드인 휴대폰에서는 멈춘 첫 장면(포스터)만 보여 준다.
+  /* ── 배경 영상 ─────────────────────────────────────────
+     1) 사진(80KB)을 먼저 깐다. 영상이 늦거나 끝내 안 와도 첫 화면이 비지 않는다.
+     2) 망 상태를 보고 영상을 고른다: 빠르면 고화질(4.2MB), 느리면 가벼운 것(985KB),
+        데이터 절약·매우 느림이면 사진만.
+     3) 영상이 정해진 시간 안에 시작하지 않거나, 재생 중 3초 넘게 끊기거나,
+        자동 재생이 막히면(아이폰 저전력 모드 등) 한 단계씩 낮춘다: 고화질 → 가벼운 것 → 사진.
+     영상은 실제로 재생이 시작된 뒤에야 사진 위로 서서히 나타난다. */
   const video = document.getElementById('cinemaVideo');
-  const saveData = !!(navigator.connection && navigator.connection.saveData);
-  const sync = () => {
-    if (!video) return;
-    const onMain = parseHash().tab === 'main' && !document.hidden;
-    if (onMain && !saveData) video.play().catch(() => {});
-    else video.pause();
+  const bg = root.querySelector('.cinema-bg');
+  let tier = 'still';
+  const tried = new Set();
+  let startTimer = null;
+  let stallTimer = null;
+  const onMain = () => parseHash().tab === 'main' && !document.hidden;
+
+  const armStart = () => {
+    clearTimeout(startTimer);
+    if (tier === 'still' || bg.dataset.video === 'playing') return;
+    // 이만큼 기다려도 시작하지 않으면 낮춘다. 메인을 떠나 있으면 돌아왔을 때 다시 잰다
+    startTimer = setTimeout(() => {
+      if (onMain() && bg.dataset.video !== 'playing') downgrade();
+    }, tier === 'full' ? 5000 : 8000);
   };
+
+  const setTier = (t) => {
+    clearTimeout(startTimer);
+    clearTimeout(stallTimer);
+    tier = t;
+    bg.dataset.video = 'still';
+    if (t === 'still') {
+      video.pause();
+      video.removeAttribute('src');
+      video.load();                 // 받던 것을 멈춘다
+      return;
+    }
+    tried.add(t);
+    const at = video.currentTime || 0;
+    video.muted = true;             // 아이폰은 속성뿐 아니라 값으로도 음소거여야 자동 재생된다
+    video.preload = 'auto';
+    video.src = t === 'full' ? video.dataset.srcFull : video.dataset.srcLight;
+    if (at) {
+      video.addEventListener('loadedmetadata', () => {
+        try { video.currentTime = at; } catch (e) {}
+      }, { once: true });
+    }
+    sync();
+    armStart();
+  };
+
+  const downgrade = () => {
+    if (tier === 'full' && !tried.has('light')) setTier('light');
+    else setTier('still');
+  };
+
+  video.addEventListener('playing', () => {
+    clearTimeout(startTimer);
+    clearTimeout(stallTimer);
+    bg.dataset.video = 'playing';
+  });
+  video.addEventListener('waiting', () => {
+    if (bg.dataset.video !== 'playing') return;
+    clearTimeout(stallTimer);
+    stallTimer = setTimeout(() => { if (onMain()) downgrade(); }, 3000);
+  });
+  video.addEventListener('error', () => {
+    if (tier !== 'still' && video.getAttribute('src')) downgrade();
+  });
+
+  // 메인을 보고 있을 때만 재생한다(배터리·데이터 절약)
+  function sync() {
+    if (onMain() && tier !== 'still') {
+      const p = video.play();
+      if (p) p.catch(err => {
+        // 자동 재생이 막혔다(아이폰 저전력 모드 등) → 사진에 머문다
+        if (err && err.name === 'NotAllowedError') setTier('still');
+      });
+      armStart();
+    } else {
+      video.pause();
+    }
+  }
   window.addEventListener('hashchange', sync);
   document.addEventListener('visibilitychange', sync);
-  sync();
+  setTier(_cinemaVideoPlan(navigator.connection));
 
   // 스크롤 위치 → 지금 장면. 위아래로 밀지 않고, 장면을 통째로 바꾼다.
   // 페이지가 아니라 이 상자(root) 안쪽이 스크롤된다. 한 장면 = 상자 높이 한 칸.
