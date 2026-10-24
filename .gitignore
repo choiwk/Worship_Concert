@@ -10,3 +10,6 @@ supabase/.temp/
 supabase/.branches/
 .env
 .env.local
+
+# graphify 프로젝트 지도 (로컬 전용, 배포 안 함)
+graphify-out/
