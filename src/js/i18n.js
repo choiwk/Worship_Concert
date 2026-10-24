@@ -40,6 +40,8 @@ const BIBLE_LOCALE = {
 
 const I18N = {
   en: {
+    'main.scrollHint': 'Scroll down',
+    'main.ctaLead': 'Saturday evening, December 19<br>Come worship with us',
     'main.today': 'TODAY',
     'main.directions': 'Directions',
     'word.loading': 'Loading...',
@@ -206,6 +208,8 @@ const I18N = {
   },
 
   km: {
+    'main.scrollHint': 'រំកិលចុះក្រោម',
+    'main.ctaLead': 'ល្ងាចថ្ងៃសៅរ៍ ទី១៩ ខែធ្នូ<br>មកថ្វាយបង្គំជាមួយគ្នា',
     'main.today': 'ថ្ងៃនេះ',
     'main.directions': 'ផ្លូវទៅ',
     'word.loading': 'កំពុងផ្ទុក...',
