@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=86') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=87') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=86') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=87') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4121,7 +4121,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=86") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=87") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4183,7 +4183,7 @@ html.main-cinema #page-main { min-height: 0; }
 
 /* 장면 전환: 지금 장면이 그 자리에서 사라진 뒤, 다음 장면이 그 자리에서 나타난다.
    위아래로 미끄러지지 않는다. */
-.scene {
+.cinema .scene {
   position: absolute;
   left: 0;
   right: 0;
@@ -4193,7 +4193,7 @@ html.main-cinema #page-main { min-height: 0; }
   filter: blur(2px);
   transition: opacity .22s ease, filter .22s ease, visibility 0s linear .22s;
 }
-.scene.is-on {
+.cinema .scene.is-on {
   opacity: 1;
   visibility: visible;
   filter: none;
@@ -4395,7 +4395,7 @@ html.main-cinema:has(#page-main.active) .np-text { color: rgba(247, 244, 236, .9
 @media (prefers-reduced-motion: reduce) {
   .cinema-track { height: auto; }
   .cinema-stage { position: relative; height: auto; padding: 120px 0 calc(var(--tab-content-h) + 40px); display: flex; flex-direction: column; gap: 56px; }
-  .scene { position: relative; top: auto; bottom: auto; opacity: 1; visibility: visible; filter: none; transition: none; }
+  .cinema .scene { position: relative; top: auto; bottom: auto; opacity: 1; visibility: visible; filter: none; transition: none; }
   .cinema-hint, .cinema-dots, .cinema-snap { display: none; }
   .cinema { scroll-snap-type: none; }
   .cinema-bg::before { animation: none; }
@@ -4452,3 +4452,14 @@ html:not(:has(#page-main.active)) .fs-guide { display: none; }
   cursor: pointer;
 }
 .fs-guide-btn:focus-visible, .fs-guide-close:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+
+/* 메인(영상)에서는 아래 탭 바도 영상의 어두운 바닥색으로 — 영상이 탭 뒤까지 이어져 화면이 넓어 보이게 */
+html.main-cinema:has(#page-main.active) .tab-bar {
+  background: linear-gradient(to bottom, rgba(23, 18, 13, .42), rgba(23, 18, 13, .78));
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
+  transition: background .3s ease;
+}
+html.main-cinema:has(#page-main.active) .tab-bar::before { background: rgba(247, 244, 236, .08); }
+html.main-cinema:has(#page-main.active) .tab-btn { color: rgba(247, 244, 236, .72); }
+html.main-cinema:has(#page-main.active) .tab-btn.active { color: #f0c3a8; }
