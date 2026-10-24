@@ -40,6 +40,7 @@ const BIBLE_LOCALE = {
 
 const I18N = {
   en: {
+    'main.scrollHint': 'Scroll down',
     'main.today': 'TODAY',
     'main.directions': 'Directions',
     'word.loading': 'Loading...',
@@ -206,6 +207,7 @@ const I18N = {
   },
 
   km: {
+    'main.scrollHint': 'រំកិលចុះក្រោម',
     'main.today': 'ថ្ងៃនេះ',
     'main.directions': 'ផ្លូវទៅ',
     'word.loading': 'កំពុងផ្ទុក...',

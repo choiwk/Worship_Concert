@@ -476,6 +476,93 @@ function toggleBgmFromBar() {
      여기와 함께 손으로 맞춰야 한다.
 ══════════════════════════════════ */
 
+/* ── 메인 디자인 선택 ─────────────────────────────────
+   'cinema'  : 옵션1 — 화면을 꽉 채운 배경 영상 위에서 내용이 장면별로 바뀐다
+   'classic' : 옵션2 — 기존 메인 (제목 → 영상 상자 → 정보 → 말씀)
+   이 한 줄만 바꾸면 된다. 저장하지 않고 미리 보려면 주소 뒤에
+   ?design=classic 또는 ?design=cinema 를 붙인다. */
+const MAIN_DESIGN = 'cinema';
+
+function _mainDesign() {
+  try {
+    const q = new URLSearchParams(location.search).get('design');
+    if (q === 'classic' || q === 'cinema') return q;
+  } catch (e) {}
+  return MAIN_DESIGN;
+}
+
+/* 옵션1 을 켠다. 기존 메인의 요소(제목·날짜·참여하기·말씀)를 장면 안으로 옮겨 온다.
+   복사하지 않고 옮기므로 번역·D-day·참여 신청 동작은 그대로 이어진다. */
+function initMainCinema() {
+  /* 옵션2 의 영상은 HTML 에서 자동 재생을 꺼 두었다(옵션1 일 때 43MB 를 받지 않도록).
+     옵션2 일 때 여기서 예전과 똑같이 소리 없이 자동 재생한다. */
+  if (_mainDesign() !== 'cinema') {
+    const v = document.getElementById('main-video');
+    if (v) {
+      v.preload = 'metadata';
+      v.autoplay = true;
+      v.play().catch(() => {});
+    }
+    return;
+  }
+  const root = document.getElementById('mainCinema');
+  const page = document.getElementById('page-main');
+  if (!root || !page) return;
+
+  const move = (sel, to) => {
+    const el = page.querySelector(sel);
+    const box = root.querySelector(to);
+    if (el && box) box.appendChild(el);
+  };
+  move('.sec-title .title-main', '.scene-title');
+  move('#ddayCounter', '.scene-info');
+  move('#detailGrid', '.scene-info');
+  move('.ticket-cta', '.scene-info');      // 일시·장소 바로 아래에 참여하기
+  move('.sec-message', '.scene-word');
+
+  document.documentElement.classList.add('main-cinema');
+  root.hidden = false;
+  root.dataset.scene = '0';
+
+  // 배경 영상: 메인을 보고 있을 때만 재생한다(배터리·데이터 절약).
+  // 데이터 절약 모드인 휴대폰에서는 멈춘 첫 장면(포스터)만 보여 준다.
+  const video = document.getElementById('cinemaVideo');
+  const saveData = !!(navigator.connection && navigator.connection.saveData);
+  const sync = () => {
+    if (!video) return;
+    const onMain = parseHash().tab === 'main' && !document.hidden;
+    if (onMain && !saveData) video.play().catch(() => {});
+    else video.pause();
+  };
+  window.addEventListener('hashchange', sync);
+  document.addEventListener('visibilitychange', sync);
+  sync();
+
+  // 스크롤 위치 → 지금 장면. 위아래로 밀지 않고, 장면을 통째로 바꾼다.
+  const track = document.getElementById('cinemaTrack');
+  const scenes = [...root.querySelectorAll('.scene')];
+  const dots = [...root.querySelectorAll('.cinema-dots li')];
+  let cur = 0;
+  const update = () => {
+    if (!page.classList.contains('active')) return;
+    const span = track.offsetHeight - window.innerHeight;
+    const p = span > 0 ? Math.min(1, Math.max(0, -track.getBoundingClientRect().top / span)) : 0;
+    const i = Math.round(p * (scenes.length - 1));
+    if (i === cur) return;
+    cur = i;
+    scenes.forEach((s, k) => s.classList.toggle('is-on', k === i));
+    dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
+    root.dataset.scene = String(i);
+  };
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { ticking = false; update(); });
+  }, { passive: true });
+  window.addEventListener('resize', update);
+}
+
 const CONCERT = {
   // 날짜 확정 완료
   confirmed: true,
@@ -2276,6 +2363,7 @@ function onLangChange() {
    boot — 최초 렌더 및 라우팅 시작
 ══════════════════════════════════ */
 
+initMainCinema();
 renderDetailGrid();
 renderFinaleDate();
 renderMembers();
