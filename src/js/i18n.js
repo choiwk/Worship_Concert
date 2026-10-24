@@ -368,23 +368,31 @@ const _origin = new WeakMap();   // 요소별 한국어 원문
 
 function currentLang() { return _lang; }
 
+/* 고른 언어는 지금 보고 있는 탭에서만 기억한다(sessionStorage).
+   새로고침하거나 다른 화면으로 옮겨도 고른 언어가 유지되고,
+   사이트에 새로 들어오면 언제나 한국어로 시작한다.
+   예전에는 localStorage 에 영구 저장해서, 한 번 영어를 누른 브라우저는
+   다음에 들어와도 계속 영어로 열렸다. */
 function _langStore(v) {
   try {
-    if (v === undefined) return localStorage.getItem('site-lang');
-    localStorage.setItem('site-lang', v);
+    if (v === undefined) return sessionStorage.getItem('site-lang');
+    sessionStorage.setItem('site-lang', v);
     return v;
   } catch (e) { return null; }
 }
 
-/** 처음 들어온 사람의 브라우저 언어를 본다 */
+/* 기본은 언제나 한국어다. 브라우저 언어로 추측하지 않는다.
+   (예전에는 기기 언어가 영어·크메르어면 그 언어로 시작해서,
+    기기마다 다른 언어로 열리는 것처럼 보였다) */
 function _guessLang() {
   const saved = _langStore();
   if (saved && I18N_LANGS.some(l => l.code === saved)) return saved;
-  const nav = (navigator.language || '').toLowerCase();
-  if (nav.startsWith('km')) return 'km';
-  if (nav.startsWith('ko')) return 'ko';
-  return nav ? 'en' : 'ko';
+  return 'ko';
 }
+
+/* 예전 방식으로 영구 저장된 언어를 지운다. 이게 남아 있으면
+   이미 다녀간 브라우저는 계속 영어·크메르어로 열린다. */
+try { localStorage.removeItem('site-lang'); } catch (e) {}
 
 function t(key, fallback) {
   if (_lang === 'ko') return fallback !== undefined ? fallback : key;
