@@ -517,7 +517,7 @@ function initMainCinema() {
   move('.sec-title .title-main', '.scene-title');
   move('#ddayCounter', '.scene-info');
   move('#detailGrid', '.scene-info');
-  move('.ticket-cta', '.scene-cta');
+  move('.ticket-cta', '.scene-info');      // 일시·장소 바로 아래에 참여하기
   move('.sec-message', '.scene-word');
 
   document.documentElement.classList.add('main-cinema');

@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=81') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=82') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=81') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=82') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4111,17 +4111,17 @@ html.main-cinema:has(#page-main.active) { scroll-snap-type: y proximity; }
     linear-gradient(to bottom,
       rgba(23, 18, 13, .72) 0%,
       rgba(23, 18, 13, .58) 24%,
-      rgba(23, 18, 13, .30) 36%,
-      rgba(23, 18, 13, .38) 40%,
-      rgba(23, 18, 13, .82) 60%,
+      rgba(23, 18, 13, .30) 34%,
+      rgba(23, 18, 13, .52) 42%,
+      rgba(23, 18, 13, .86) 58%,
       rgba(23, 18, 13, .92) 100%);
 }
 
 /* ── 장면 ── 스크롤 길이 = 장면 수 × 화면 높이. 무대는 그 안에서 붙어 있다 */
 .cinema-track {
   position: relative;
-  height: calc(100vh + 3 * var(--step));
-  height: calc(100svh + 3 * var(--step));
+  height: calc(100vh + 2 * var(--step));
+  height: calc(100svh + 2 * var(--step));
   z-index: 1;
 }
 .cinema-snap {
@@ -4174,42 +4174,107 @@ html.main-cinema:has(#page-main.active) { scroll-snap-type: y proximity; }
 .scene-title .line-hand-sub { color: #f0c3a8; }
 
 /* 2~4. 정보·참여·말씀 — 아래쪽 어두운 자리에, 왼쪽 정렬 */
-.scene-info, .scene-cta, .scene-word {
+.scene-info, .scene-word {
   bottom: calc(var(--tab-content-h) + env(safe-area-inset-bottom, 0px) + 44px);
 }
 
 .cinema .dday-counter {
   display: inline-block;
-  margin: 0 0 14px;
-  padding: 2px 12px 3px;
+  margin: 0 0 16px;
+  padding: 3px 13px 4px;
   border-radius: 999px;
   background: rgba(230, 201, 182, .22);
   color: #f6dccb;
-  font-size: clamp(15px, 4vw, 17px);
+  font-size: clamp(16px, 4.3vw, 18px);
+  line-height: 1.5;
   -webkit-text-stroke-width: var(--stroke-md);
   font-variant-numeric: tabular-nums;
 }
-.cinema .detail-grid { margin: 0; }
-.cinema .detail-card { border-color: rgba(247, 244, 236, .16); }
-.cinema .card-label { color: rgba(247, 244, 236, .70); }
-.cinema .card-strong, .cinema .card-value,
-.cinema .is-date .card-strong { color: var(--paper); }
-.cinema .card-sub { color: rgba(247, 244, 236, .74); }
-.cinema .venue-highlight { background: linear-gradient(transparent 55%, rgba(165, 77, 48, .65) 55%, rgba(165, 77, 48, .65) 92%, transparent 92%); }
-.cinema .card-map { color: #f6dccb; text-decoration-color: rgba(246, 220, 203, .5); }
 
-.cinema .ticket-cta { margin: 0; }
+/* ── 날짜·시간·장소 ──
+   왼쪽 라벨 칸 + 줄 긋기(표 모양) 대신, 아이콘 하나 + 큰 글씨 한 줄.
+   라벨 글자는 화면에서는 아이콘이 대신하고, 화면 낭독기에는 그대로 읽힌다. */
+.cinema .detail-grid {
+  margin: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cinema .detail-card {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  column-gap: 12px;
+  align-items: start;
+  padding: 0;
+  border: 0;
+}
+.cinema .detail-card::before {
+  content: '';
+  grid-row: 1 / span 3;
+  width: 22px;
+  height: 22px;
+  margin-top: 6px;
+  background-color: #f0c3a8;
+  -webkit-mask: var(--ico) center / contain no-repeat;
+          mask: var(--ico) center / contain no-repeat;
+}
+.cinema .detail-card:nth-child(1) {
+  --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='5' width='17' height='15.5' rx='2.5'/%3E%3Cpath d='M3.5 10h17M8 3v4M16 3v4'/%3E%3C/svg%3E");
+}
+.cinema .detail-card:nth-child(2) {
+  --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Cpath d='M12 7.5V12l3 2'/%3E%3C/svg%3E");
+}
+.cinema .detail-card:nth-child(3) {
+  --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z'/%3E%3Ccircle cx='12' cy='10' r='2.4'/%3E%3C/svg%3E");
+}
+.cinema .detail-card .card-label {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.cinema .detail-card .card-value {
+  grid-column: 2;
+  margin: 0;
+  color: var(--paper);
+  line-height: 1.5;
+}
+.cinema .card-strong,
+.cinema .detail-card.is-date .card-strong { color: var(--paper); }
+
+/* 가장 먼저 읽혀야 하는 날짜가 제일 크다 */
+.cinema .detail-card:nth-child(1) .card-value { font-size: clamp(23px, 6.4vw, 27px); }
+.cinema .detail-card:nth-child(2) .card-value { font-size: clamp(19px, 5.2vw, 22px); }
+.cinema .venue-highlight {
+  font-size: clamp(20px, 5.6vw, 23px);
+  color: var(--paper);
+  background: linear-gradient(transparent 55%, rgba(165, 77, 48, .65) 55%, rgba(165, 77, 48, .65) 92%, transparent 92%);
+}
+.cinema .detail-card .card-sub {
+  margin-top: 4px;
+  font-size: clamp(15px, 4.1vw, 17px);
+  color: rgba(247, 244, 236, .82);
+}
+.cinema .card-addr { align-items: center; gap: 2px 14px; }
+.cinema .card-map {
+  min-height: 44px;        /* 손가락으로 누르기 좋은 높이 */
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(246, 220, 203, .45);
+  color: #f6dccb;
+  text-decoration: none;
+  font-size: clamp(14px, 3.8vw, 15px);
+}
+
+/* 참여하기 — 일시·장소 바로 아래 */
+.cinema .ticket-cta { margin: 22px 0 0; }
+.cinema .btn-ticket { font-size: clamp(18px, 4.9vw, 20px); }
 .cinema .btn-secondary {
   background: rgba(247, 244, 236, .08);
   border-color: rgba(247, 244, 236, .5);
   color: var(--paper);
-}
-.scene-cta-lead {
-  margin: 0 0 18px;
-  font-size: clamp(19px, 5.2vw, 23px);
-  line-height: 1.6;
-  color: var(--paper);
-  -webkit-text-stroke-width: var(--stroke-md);
 }
 
 .cinema .sec-message {
