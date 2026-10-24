@@ -217,65 +217,48 @@ function renderSongList() {
   _songChapters(box, lis);
 }
 
-/* ── 곡 리스트를 화면 한 칸짜리 장으로 나눈다 ─────────────
-   곡 줄의 실제 높이를 재서, 한 화면(위 언어 버튼 ~ 아래 탭 바 사이)에 들어가는 만큼씩 묶는다.
-   묶음 크기는 고르게 맞춘다(마지막 장에 한 곡만 남지 않게). 각 장은 스크롤하면 스르륵 바뀐다. */
+/* ── 곡 리스트: 룰렛 ─────────────────────────────────
+   곡 카드가 세로 원통에 붙어 돌아가듯 움직인다. 화면 한가운데 온 카드가 '고른 곡'으로
+   가장 크고 또렷하며, 위아래로 멀어질수록 작아지고 흐려지며 뒤로 눕는다.
+   손을 떼면 카드 하나가 한가운데에 멈춘다(스크롤 스냅). 누르면 그 곡 화면으로 간다. */
 function _songChapters(box, lis) {
-  const probe = _el('ul', 'song-list sl-probe');
-  probe.style.cssText = 'position:absolute;left:0;top:0;visibility:hidden;pointer-events:none;width:'
-    + (document.body.clientWidth || innerWidth) + 'px';
-  lis.forEach(li => probe.appendChild(li));
-  document.body.appendChild(probe);
-  const gap = parseFloat(getComputedStyle(probe).rowGap) || 10;
-  const hs = lis.map(li => li.offsetHeight + gap);
-  probe.remove();
-
-  const tabH = document.querySelector('.tab-bar')?.offsetHeight || 60;
-  const avail = Math.max(240, innerHeight - 72 - tabH - 40 - 52);   // 위 여백·탭 바·장 번호 줄을 뺀 높이
-  const fits = (from, to) => hs.slice(from, to).reduce((a, b) => a + b, 0) <= avail;
-
-  // 먼저 욕심껏 담아 장 수를 정하고, 그 수로 고르게 나눠 본다
-  let k = 0;
-  for (let i = 0; i < lis.length; k++) {
-    let j = i + 1;
-    while (j < lis.length && fits(i, j + 1)) j++;
-    i = j;
-  }
-  const even = [];
-  const base = Math.floor(lis.length / Math.max(1, k));
-  const extra = lis.length % Math.max(1, k);          // 남는 곡은 앞 장부터 하나씩 (13곡 → 5·4·4)
-  for (let g = 0, i = 0; g < k; g++) {
-    const n = base + (g < extra ? 1 : 0);
-    even.push([i, i + n]);
-    i += n;
-  }
-  let groups = even.every(([a, b]) => fits(a, b)) ? even : null;
-  if (!groups) {
-    groups = [];
-    for (let i = 0; i < lis.length;) {
-      let j = i + 1;
-      while (j < lis.length && fits(i, j + 1)) j++;
-      groups.push([i, j]);
-      i = j;
-    }
-  }
-
-  const total = String(lis.length).padStart(2, '0');
-  groups.forEach(([a, b]) => {
-    const sec = _el('section', 'sl-ch sl-group');
-    const from = String(a + 1).padStart(2, '0');
-    const to = String(b).padStart(2, '0');
-    sec.setAttribute('aria-label', from + '-' + to);
-    const label = _el('p', 'sl-range');
-    label.appendChild(_el('span', 'sl-range-now', from + ' - ' + to));
-    label.appendChild(_el('span', 'sl-range-total', '/ ' + total));
-    sec.appendChild(label);
-    const ul = _el('ul', 'song-list');
-    lis.slice(a, b).forEach((li, k) => { li.style.setProperty('--k', k); ul.appendChild(li); });
-    sec.appendChild(ul);
-    box.appendChild(sec);
-  });
+  const sec = _el('section', 'sl-ch sl-roulette');
+  sec.setAttribute('aria-label', t('songs.title', '곡 리스트'));
+  const count = _el('p', 'sl-wheel-count');
+  count.setAttribute('aria-hidden', 'true');
+  count.appendChild(_el('span', 'sl-wheel-now', '01'));
+  count.appendChild(_el('span', 'sl-wheel-total', '/ ' + String(lis.length).padStart(2, '0')));
+  sec.appendChild(count);
+  const ul = _el('ul', 'song-list sl-wheel');
+  lis.forEach(li => ul.appendChild(li));
+  sec.appendChild(ul);
+  box.appendChild(sec);
   _songScenesInit();
+}
+
+/* 룰렛: 카드마다 화면 가운데와의 거리(카드 몇 장만큼 떨어졌는지)에 맞춰 크기·기울기·흐림을 정한다.
+   카드 자체(li)는 움직이지 않고 안쪽 링크만 변형하므로, 잰 위치가 변형에 흔들리지 않는다. */
+const _reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+function _songWheelUpdate() {
+  const items = document.querySelectorAll('#page-songs .sl-wheel .song-item');
+  if (!items.length) return;
+  const vc = innerHeight / 2;
+  let best = null, bestD = Infinity;
+  items.forEach(li => {
+    const r = li.getBoundingClientRect();
+    const d = (r.top + r.height / 2 - vc) / (r.height + 12);
+    const a = Math.min(Math.abs(d), 3);
+    if (Math.abs(d) < bestD) { bestD = Math.abs(d); best = li; }
+    const row = li.firstElementChild;
+    if (_reduceMotion.matches) { row.style.transform = ''; row.style.opacity = ''; return; }
+    const scale = 1.05 - Math.min(a, 2) * 0.08;
+    const tilt = Math.max(-38, Math.min(38, -d * 16));
+    row.style.transform = 'perspective(900px) rotateX(' + tilt.toFixed(1) + 'deg) scale(' + scale.toFixed(3) + ')';
+    row.style.opacity = (1 - Math.min(a, 2.5) * 0.26).toFixed(2);
+  });
+  items.forEach(li => li.classList.toggle('is-center', li === best));
+  const now = document.querySelector('#page-songs .sl-wheel-now');
+  if (now && best) now.textContent = best.querySelector('.song-num')?.textContent || '';
 }
 
 /* 지금 화면 가운데에 걸친 장만 보이고, 나머지는 흐려져 사라진다 (메인 장면 전환과 같은 결) */
@@ -291,6 +274,7 @@ function _songScenesUpdate() {
   });
   _slChapters.forEach((c, i) => c.classList.toggle('is-on', i === on));
   document.querySelectorAll('#slDots li').forEach((d, i) => d.classList.toggle('is-on', i === on));
+  _songWheelUpdate();
 }
 function _songScenesInit() {
   const page = document.getElementById('page-songs');
@@ -308,16 +292,8 @@ function _songScenesInit() {
     document.documentElement.classList.add('sl-scenes');
     window.addEventListener('scroll', _songScenesUpdate, { passive: true });
     window.addEventListener('scrollend', _songScenesUpdate);
+    window.addEventListener('resize', _songScenesUpdate);
     window.addEventListener('hashchange', () => setTimeout(_songScenesUpdate, 60));
-    // 화면 높이가 크게 바뀌면(가로·세로 전환 등) 다시 나눈다
-    let lastH = innerHeight;
-    window.addEventListener('resize', () => {
-      if (Math.abs(innerHeight - lastH) < 120) return;
-      lastH = innerHeight;
-      renderSongList();
-    });
-    // 손글씨 글꼴이 늦게 와서 줄 높이가 달라졌으면 다시 잰다
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderSongList());
   }
   _slChapters.forEach((c, i) => c.classList.toggle('is-on', i === 0));
   _songScenesUpdate();

@@ -4831,3 +4831,37 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 @media (prefers-reduced-motion: reduce) {
   html.sd-anim .song-page * { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
+
+/* ══════════════════════════════════
+   곡 리스트 룰렛 — 한가운데 카드가 고른 곡 (JS 가 거리마다 크기·기울기·흐림을 넣는다)
+══════════════════════════════════ */
+.sl-ch.sl-roulette {
+  min-height: auto;
+  justify-content: flex-start;
+  padding: calc(50vh - 60px) 0 calc(50vh - 60px);
+  scroll-snap-align: none;
+}
+.sl-wheel { padding-top: 0; background: transparent; gap: 12px; }
+.sl-wheel .song-item { scroll-snap-align: center; }
+.sl-wheel .song-row {
+  background: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 6px 18px rgba(50, 44, 37, .07);
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+.sl-wheel .song-item.is-center .song-row {
+  background: #fff;
+  border-color: rgba(165, 77, 48, .45);
+  box-shadow: 0 14px 34px rgba(50, 44, 37, .16), 0 0 0 3px rgba(230, 201, 182, .45);
+}
+.sl-wheel-count {
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 64px);
+  z-index: 2;
+  margin: 0 clamp(16px, 5.5vw, 28px) 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.sl-wheel-now { font-size: 26px; color: var(--clay); font-variant-numeric: tabular-nums; }
+.sl-wheel-total { font-size: 15px; color: var(--ink-faint); }
