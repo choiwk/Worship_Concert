@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=84') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=85') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=84') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=85') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4120,7 +4120,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=84") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=85") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4399,3 +4399,8 @@ html.main-cinema:has(#page-main.active) .np-text { color: rgba(247, 244, 236, .9
   .cinema { scroll-snap-type: none; }
   .cinema-bg::before { animation: none; }
 }
+
+
+/* 창 자체에 초점을 둘 때(키보드 없이 열기) 테두리를 그리지 않는다.
+   창 안의 버튼·입력칸 초점 표시는 그대로다. */
+.rsvp-modal:focus { outline: none; }

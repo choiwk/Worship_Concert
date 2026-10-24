@@ -1036,6 +1036,12 @@ function closeOverlay(name) {
   document.getElementById(o.backdrop).classList.remove('open');
   panel.classList.remove('open');
 
+  // 창 안의 입력칸에 커서가 남아 있으면 키보드도 남는다. 닫을 때 반드시 뺀다.
+  // (아이폰은 버튼을 눌러도 버튼에 초점을 주지 않아, 아래에서 '누른 버튼'으로
+  //  초점을 돌려보내는 것만으로는 입력칸에서 커서가 빠지지 않는다)
+  const active = document.activeElement;
+  if (active && panel.contains(active) && active.blur) active.blur();
+
   _openOverlays = _openOverlays.filter(n => n !== name);
   if (_openOverlays.length) return;          // 아직 다른 게 열려 있으면 유지
 
@@ -1268,13 +1274,20 @@ const RSVP = {
 // 같은 사람이 실수로 연속해 누르는 것만 막는다 (초)
 const RSVP_COOLDOWN = 30;
 
+/* 창을 열 때 입력칸에 바로 커서를 넣으면 휴대폰에서 키보드가 저절로 올라온다.
+   대신 창 자체에 초점을 둔다. 키보드는 뜨지 않고, 화면 낭독기는 창 제목을 읽어 준다.
+   입력칸은 사용자가 눌렀을 때 비로소 키보드를 띄운다. */
+function _focusDialog(id) {
+  const panel = document.getElementById(id);
+  if (!panel) return;
+  if (!panel.hasAttribute('tabindex')) panel.setAttribute('tabindex', '-1');
+  panel.focus({ preventScroll: true });
+}
+
 function openRsvp() {
   _rsvpReset();
   openOverlay('rsvp');
-  requestAnimationFrame(() => {
-    const el = document.getElementById('rsvpName');
-    if (el) el.focus();
-  });
+  requestAnimationFrame(() => _focusDialog('rsvpSheet'));
 }
 
 function closeRsvp() { closeOverlay('rsvp'); }
@@ -2056,7 +2069,7 @@ function openWordWrite() {
   _wordFormError('');
   _wordFormBusy(false);
   openOverlay('word');
-  requestAnimationFrame(() => document.getElementById('wordVerse').focus());
+  requestAnimationFrame(() => _focusDialog('wordSheet'));
 }
 
 function closeWordWrite() { closeOverlay('word'); }
@@ -2311,6 +2324,7 @@ function _fallbackCopy(text, callback) {
   const ta = document.createElement('textarea');
   ta.value = text;
   ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+  ta.setAttribute('readonly', '');      // 잠깐 초점을 줘도 휴대폰 키보드가 올라오지 않게
   document.body.appendChild(ta);
   ta.focus();
   ta.select();
