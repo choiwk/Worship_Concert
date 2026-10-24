@@ -365,7 +365,11 @@ function renderSongDetail(slug) {
 
   /* 머리말 */
   const head = _el('header', 'song-head');
-  head.appendChild(_el('p', 'song-head-num', song.no));
+  // 몇 번째 곡인지 — 리스트의 장 표시(01 - 05 / 13)와 같은 모양
+  const num = _el('p', 'song-head-num');
+  num.appendChild(_el('span', 'song-head-no', song.no));
+  num.appendChild(_el('span', 'song-head-total', '/ ' + String(SONGS.length).padStart(2, '0')));
+  head.appendChild(num);
   const h1 = _el('h1', 'song-head-title', _songTitle(song));
   head.appendChild(h1);
   const roman = _el('p', 'song-head-roman');
@@ -460,7 +464,25 @@ function renderSongDetail(slug) {
   nav.appendChild(links);
   wrap.appendChild(nav);
 
+  _songDetailReveal(wrap);
   return true;
+}
+
+/* 곡 화면: 가사 파트·말씀·이전/다음이 화면에 들어올 때 스르륵 떠오른다 (곡 리스트 장 전환과 같은 결).
+   읽는 중인 글이 사라지면 안 되므로 나타나기만 한다. */
+let _sdObserver = null;
+function _songDetailReveal(wrap) {
+  if (!('IntersectionObserver' in window)) return;
+  if (_sdObserver) _sdObserver.disconnect();
+  document.documentElement.classList.add('sd-anim');
+  _sdObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('sd-in');
+      _sdObserver.unobserve(e.target);
+    });
+  }, { rootMargin: '0px 0px -8% 0px' });
+  wrap.querySelectorAll('.song-head, .song-yt, .song-ko-notice, .song-part, .song-nav').forEach(el => _sdObserver.observe(el));
 }
 
 function updateStoryProgress() {
@@ -789,11 +811,24 @@ let _cinemaTouchedAt = 0;
 // 화면에 보이는 넘김 정도(_hoShown)는 손가락 위치(_hoTarget)를 시간에 맞춰 천천히 따라간다.
 // 그래서 세게 쓸어 한 번에 끝까지 가도, 색은 1.6초에 걸쳐 스르륵 바뀐다.
 let _hoTarget = 0, _hoShown = 0, _hoRaf = 0, _hoLast = 0, _hoForced = false;
+let _hoSettle = 0;
 function _cinemaHandoff(root, next, h) {
   if (!next || _handing || _hoForced) return;
-  const byHand = Date.now() - _cinemaTouchedAt < 2500;   // 손을 뗀 뒤 관성으로 굴러가는 시간까지
-  _hoTarget = byHand ? Math.min(1, Math.max(0, (root.scrollTop + h - next.offsetTop) / h)) : 0;
+  // 들어온 뒤 한 번도 직접 내린 적이 없으면(새로고침 때 브라우저가 위치를 되살린 경우) 넘기지 않는다
+  const p = _cinemaTouchedAt ? Math.min(1, Math.max(0, (root.scrollTop + h - next.offsetTop) / h)) : 0;
+  _hoTarget = p;
+  if (p >= 0.98) _hoForced = true;                     // 끝까지 왔으면 반드시 끝까지 넘긴다
   _hoRun();
+
+  // 스크롤이 멈췄는데 빈자리(영상만 보이는 곳)에 걸쳐 있으면, 절반을 넘었으면 넘기고 아니면 꼬리말로 되돌린다
+  clearTimeout(_hoSettle);
+  _hoSettle = setTimeout(() => {
+    if (_handing || _hoForced || !document.getElementById('page-main').classList.contains('active')) return;
+    const q = (root.scrollTop + h - next.offsetTop) / h;
+    if (q <= 0.02) return;
+    if (q >= 0.5 && _cinemaTouchedAt) _cinemaHandoffGo();
+    else root.scrollTo({ top: next.offsetTop - h, behavior: 'smooth' });
+  }, 220);
 }
 /* 「계속 내리면 곡 리스트」 를 누르면 내리지 않아도 같은 넘김이 일어난다 */
 function _cinemaHandoffGo() {
@@ -836,6 +871,8 @@ function _hoFinish() {
   const veil = document.getElementById('tabVeil');
   _handing = true;
   veil.classList.add('is-leaving');                    // 여기서부터는 막이 시간에 맞춰 걷힌다
+  // 곡 리스트는 첫 장(제목)이 이미 떠 있는 채로 열어, 막이 걷힐 때 한 번만 나타나게 한다
+  document.querySelectorAll('#page-songs .sl-ch').forEach((c, i) => c.classList.toggle('is-on', i === 0));
   switchTab('songs');
   setTimeout(() => {
     _cinemaReset();

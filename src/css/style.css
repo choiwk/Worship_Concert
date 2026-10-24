@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=91') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=92') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=91') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=92') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4121,7 +4121,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=91") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=92") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4508,36 +4508,21 @@ html.main-cinema:has(#page-main.active) .lang-opt.is-on { background: rgba(255, 
   scroll-snap-align: end;
   scroll-snap-stop: always;
 }
-/* 맨 끝: 꼬리말 글 대신 다음 탭으로 가는 유리 버튼 하나만 (JS 가 꼬리말 안으로 옮긴다).
-   눌러도 되고, 그대로 계속 내려도 된다. 살짝 오르내리며 숨 쉬듯 빛난다. */
+/* 맨 끝: 꼬리말 글 대신 다음 탭 안내 한 줄 (JS 가 꼬리말 안으로 옮긴다). 눌러도 넘어간다 */
 .cinema > .footer .footer-text { display: none; }
 .cinema-next-cue {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 50px;
-  padding: 0 22px;
+  min-height: 44px;
   margin: 0;
-  border-radius: 999px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .06));
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
-  backdrop-filter: blur(14px) saturate(1.4);
-  border: 1px solid rgba(255, 255, 255, .28);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .32), 0 10px 28px rgba(0, 0, 0, .3);
+  padding: 0 12px;
+  background: none;
+  border: 0;
   font: inherit;
-  font-size: 16px;
-  color: rgba(247, 244, 236, .88);
+  font-size: 17px;
+  color: rgba(247, 244, 236, .78);
   cursor: pointer;
-  animation: cueBob 2.6s ease-in-out infinite, cueGlow 2.6s ease-in-out infinite;
 }
-.cinema-next-cue b { font-weight: 400; font-size: 19px; color: #f0c3a8; }
-.cinema-next-arrow { display: inline-block; transform: rotate(90deg); color: #f0c3a8; }
-.cinema-next-cue:focus-visible { outline: 2px solid #f0c3a8; outline-offset: 3px; }
-@keyframes cueBob { 0%, 100% { translate: 0 0; } 50% { translate: 0 5px; } }
-@keyframes cueGlow {
-  0%, 100% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .32), 0 10px 28px rgba(0, 0, 0, .3), 0 0 0 0 rgba(240, 195, 168, 0); }
-  50%      { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .32), 0 10px 28px rgba(0, 0, 0, .3), 0 0 26px 2px rgba(240, 195, 168, .28); }
-}
+.cinema-next-cue b { font-weight: 400; font-size: 20px; color: #f0c3a8; }
+.cinema-next-cue:focus-visible { outline: 2px solid #f0c3a8; outline-offset: 3px; border-radius: 8px; }
 
 .tab-veil {
   position: fixed;
@@ -4571,23 +4556,6 @@ html.main-cinema:has(#page-main.active) .lang-opt.is-on { background: rgba(255, 
 .tab-veil.is-leaving .tab-veil-paper { -webkit-mask-image: none; mask-image: none; }
 .tab-veil.is-leaving .tab-veil-glow { opacity: 0; }
 
-/* 곡 리스트 제목이 놓일 자리 근처에 미리 이름을 띄운다 */
-.tab-veil-label {
-  position: absolute;
-  left: clamp(22px, 7vw, 32px);
-  right: clamp(22px, 7vw, 32px);
-  top: 34%;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  color: var(--ink);
-  opacity: clamp(0, calc((var(--handoff, 0) - .5) * 2.2), 1);
-  transform: translateY(calc((1 - var(--handoff, 0)) * 28px));
-}
-.tab-veil.is-leaving .tab-veil-label { opacity: 1; transform: none; }
-.tab-veil-kicker { font-size: 15px; color: var(--clay); }
-.tab-veil-title { font-size: clamp(30px, 8.6vw, 36px); line-height: 1.3; }
-.tab-veil-sub { font-size: 16px; color: var(--ink-soft); }
 
 /* 넘기는 동안 메인의 글은 빛 속으로 사라진다 (위로 밀려 올라가며 음악 바와 겹치지 않게) */
 .cinema-stage, .cinema > .footer { opacity: clamp(0, calc(1 - var(--handoff, 0) * 1.8), 1); }
@@ -4620,7 +4588,6 @@ html.main-cinema:has(#page-main.active) .now-playing { z-index: 460; }
 
 @media (prefers-reduced-motion: reduce) {
   .tab-veil-glow { display: none; }
-  .cinema-next-cue { animation: none; }
   .tab-veil.is-leaving { transition-duration: .2s; }
 }
 
@@ -4770,3 +4737,97 @@ html:not(:has(#page-songs.active)) .sl-dots { display: none; }
 /* 메인(영상)에서는 막대 바탕을 비워 영상이 그대로 보이게, 알약만 유리처럼 */
 html.main-cinema:has(#page-main.active) .tab-bar { border-color: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 html.main-cinema:has(#page-main.active) .tab-btn::before { background: rgba(255, 255, 255, .13); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22); }
+
+/* ══════════════════════════════════
+   곡 화면(가사·말씀) — 곡 리스트의 떠 있는 카드와 같은 결로
+══════════════════════════════════ */
+/* 돌아가기는 화면 위에 떠 있는 유리 단추 — 가사를 읽다가도 언제든 누를 수 있게 */
+.song-page .song-back {
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  z-index: 60;
+  margin-left: 0;
+  min-height: 44px;
+  padding: 4px 16px 4px 4px;
+  background: rgba(250, 248, 242, .8);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, .75);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 8px 22px rgba(50, 44, 37, .12);
+}
+.song-page .song-back-icon { width: 36px; height: 36px; background: #fff; }
+
+/* 머리말: 줄 대신 여백으로, 번호는 리스트 장 표시와 같은 모양 */
+.song-page .song-head {
+  border-bottom: 0;
+  padding: clamp(22px, 7vw, 34px) 0 clamp(14px, 4vw, 18px);
+  margin-bottom: 0;
+}
+.song-page .song-head-num { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.song-head-no { font-size: clamp(22px, 6vw, 26px); color: var(--clay); font-variant-numeric: tabular-nums; }
+.song-head-total { font-size: 15px; color: var(--ink-faint); }
+.song-page .song-head-title { font-size: clamp(27px, 7.4vw, 34px); line-height: 1.4; }
+
+/* 유튜브: 화면을 가로지르는 큰 상자 대신 작은 알약 */
+.song-page .song-yt {
+  display: inline-flex;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid rgba(165, 77, 48, .35);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .78);
+  box-shadow: 0 6px 16px rgba(50, 44, 37, .08);
+  font-size: 16px;
+}
+
+/* 가사: 종이 위에 살짝 떠 있는 카드 한 장 (파트가 둘이면 카드도 둘) */
+.song-page .song-part {
+  margin-top: clamp(18px, 5vw, 24px);
+  padding: clamp(20px, 6vw, 28px) clamp(18px, 5.5vw, 26px);
+  background: rgba(255, 255, 255, .72);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 8px 24px rgba(50, 44, 37, .07);
+}
+.song-page .song-part-label {
+  border-bottom: 0;
+  padding-bottom: 0;
+  color: var(--clay);
+}
+
+/* 말씀: 카드 안에서 형광펜처럼 옅게 칠한 자리 */
+.song-page .song-word {
+  margin-top: clamp(20px, 6vw, 26px);
+  background: rgba(230, 201, 182, .32);
+  border-radius: 14px;
+}
+.song-page .song-word-link {
+  background: #fff;
+  border-color: rgba(165, 77, 48, .35);
+  color: var(--clay);
+  box-shadow: 0 4px 12px rgba(50, 44, 37, .07);
+}
+
+/* 이전 / 다음 곡: 리스트의 곡 카드와 같은 모양 */
+.song-page .song-nav { border-top: 0; }
+.song-page .song-nav-btn {
+  background: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 6px 18px rgba(50, 44, 37, .07);
+  border-radius: 14px;
+}
+
+/* 화면에 들어오면 스르륵 떠오른다 */
+html.sd-anim .song-page .song-head,
+html.sd-anim .song-page .song-yt,
+html.sd-anim .song-page .song-ko-notice,
+html.sd-anim .song-page .song-part,
+html.sd-anim .song-page .song-nav {
+  transition: opacity .55s ease, transform .7s cubic-bezier(.2, .8, .2, 1);
+}
+html.sd-anim .song-page .song-head:not(.sd-in),
+html.sd-anim .song-page .song-yt:not(.sd-in),
+html.sd-anim .song-page .song-ko-notice:not(.sd-in),
+html.sd-anim .song-page .song-part:not(.sd-in),
+html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translateY(18px); }
+@media (prefers-reduced-motion: reduce) {
+  html.sd-anim .song-page * { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
