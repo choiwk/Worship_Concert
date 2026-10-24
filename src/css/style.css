@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=87') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=88') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=87') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=88') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4121,7 +4121,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=87") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=88") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4453,13 +4453,13 @@ html:not(:has(#page-main.active)) .fs-guide { display: none; }
 }
 .fs-guide-btn:focus-visible, .fs-guide-close:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
 
-/* 메인(영상)에서는 아래 탭 바도 영상의 어두운 바닥색으로 — 영상이 탭 뒤까지 이어져 화면이 넓어 보이게 */
-html.main-cinema:has(#page-main.active) .tab-bar {
-  background: linear-gradient(to bottom, rgba(23, 18, 13, .42), rgba(23, 18, 13, .78));
-  -webkit-backdrop-filter: blur(12px) saturate(1.1);
-  backdrop-filter: blur(12px) saturate(1.1);
-  transition: background .3s ease;
+/* 메인(영상)에서는 아래 탭 바 뒤로 영상이 그대로 보이게 — 화면이 넓어 보이도록 바탕을 비운다.
+   글자는 밝게, 영상 아래쪽 어두운 막(scrim)과 옅은 그림자로 읽히게 한다. */
+html.main-cinema:has(#page-main.active) .tab-bar { background: transparent; }
+html.main-cinema:has(#page-main.active) .tab-bar::before { display: none; }
+html.main-cinema:has(#page-main.active) .tab-btn {
+  color: rgba(247, 244, 236, .8);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .55);
 }
-html.main-cinema:has(#page-main.active) .tab-bar::before { background: rgba(247, 244, 236, .08); }
-html.main-cinema:has(#page-main.active) .tab-btn { color: rgba(247, 244, 236, .72); }
+html.main-cinema:has(#page-main.active) .tab-btn .tab-icon { filter: drop-shadow(0 1px 4px rgba(0, 0, 0, .55)); }
 html.main-cinema:has(#page-main.active) .tab-btn.active { color: #f0c3a8; }
