@@ -138,9 +138,10 @@ function findSong(slug) {
 /* ── 곡 리스트 ─────────────────────────────────────────── */
 
 function renderSongList() {
-  const ul = document.getElementById('songList');
-  if (!ul) return;
-  ul.innerHTML = '';
+  const box = document.getElementById('songList');
+  if (!box) return;
+  box.innerHTML = '';
+  const lis = [];
 
   // 목록 맨 위 '곡 전체 듣기' — 곡 수는 데이터에서 그대로 가져온다
   const play = document.getElementById('setlistPlay');
@@ -211,8 +212,115 @@ function renderSongList() {
     a.appendChild(arrow);
 
     li.appendChild(a);
-    ul.appendChild(li);
+    lis.push(li);
   });
+  _songChapters(box, lis);
+}
+
+/* ── 곡 리스트를 화면 한 칸짜리 장으로 나눈다 ─────────────
+   곡 줄의 실제 높이를 재서, 한 화면(위 언어 버튼 ~ 아래 탭 바 사이)에 들어가는 만큼씩 묶는다.
+   묶음 크기는 고르게 맞춘다(마지막 장에 한 곡만 남지 않게). 각 장은 스크롤하면 스르륵 바뀐다. */
+function _songChapters(box, lis) {
+  const probe = _el('ul', 'song-list sl-probe');
+  probe.style.cssText = 'position:absolute;left:0;top:0;visibility:hidden;pointer-events:none;width:'
+    + (document.body.clientWidth || innerWidth) + 'px';
+  lis.forEach(li => probe.appendChild(li));
+  document.body.appendChild(probe);
+  const gap = parseFloat(getComputedStyle(probe).rowGap) || 10;
+  const hs = lis.map(li => li.offsetHeight + gap);
+  probe.remove();
+
+  const tabH = document.querySelector('.tab-bar')?.offsetHeight || 60;
+  const avail = Math.max(240, innerHeight - 72 - tabH - 40 - 52);   // 위 여백·탭 바·장 번호 줄을 뺀 높이
+  const fits = (from, to) => hs.slice(from, to).reduce((a, b) => a + b, 0) <= avail;
+
+  // 먼저 욕심껏 담아 장 수를 정하고, 그 수로 고르게 나눠 본다
+  let k = 0;
+  for (let i = 0; i < lis.length; k++) {
+    let j = i + 1;
+    while (j < lis.length && fits(i, j + 1)) j++;
+    i = j;
+  }
+  const even = [];
+  const base = Math.floor(lis.length / Math.max(1, k));
+  const extra = lis.length % Math.max(1, k);          // 남는 곡은 앞 장부터 하나씩 (13곡 → 5·4·4)
+  for (let g = 0, i = 0; g < k; g++) {
+    const n = base + (g < extra ? 1 : 0);
+    even.push([i, i + n]);
+    i += n;
+  }
+  let groups = even.every(([a, b]) => fits(a, b)) ? even : null;
+  if (!groups) {
+    groups = [];
+    for (let i = 0; i < lis.length;) {
+      let j = i + 1;
+      while (j < lis.length && fits(i, j + 1)) j++;
+      groups.push([i, j]);
+      i = j;
+    }
+  }
+
+  const total = String(lis.length).padStart(2, '0');
+  groups.forEach(([a, b]) => {
+    const sec = _el('section', 'sl-ch sl-group');
+    const from = String(a + 1).padStart(2, '0');
+    const to = String(b).padStart(2, '0');
+    sec.setAttribute('aria-label', from + '-' + to);
+    const label = _el('p', 'sl-range');
+    label.appendChild(_el('span', 'sl-range-now', from + ' - ' + to));
+    label.appendChild(_el('span', 'sl-range-total', '/ ' + total));
+    sec.appendChild(label);
+    const ul = _el('ul', 'song-list');
+    lis.slice(a, b).forEach((li, k) => { li.style.setProperty('--k', k); ul.appendChild(li); });
+    sec.appendChild(ul);
+    box.appendChild(sec);
+  });
+  _songScenesInit();
+}
+
+/* 지금 화면 가운데에 걸친 장만 보이고, 나머지는 흐려져 사라진다 (메인 장면 전환과 같은 결) */
+let _slChapters = [];
+function _songScenesUpdate() {
+  const page = document.getElementById('page-songs');
+  if (!page || !page.classList.contains('active') || !_slChapters.length) return;
+  const mid = innerHeight * 0.5;
+  let on = 0;
+  _slChapters.forEach((c, i) => {
+    const r = c.getBoundingClientRect();
+    if (r.top <= mid && r.bottom > mid) on = i;
+  });
+  _slChapters.forEach((c, i) => c.classList.toggle('is-on', i === on));
+  document.querySelectorAll('#slDots li').forEach((d, i) => d.classList.toggle('is-on', i === on));
+}
+function _songScenesInit() {
+  const page = document.getElementById('page-songs');
+  if (!page) return;
+  _slChapters = [...page.querySelectorAll('.sl-ch')];
+  const dots = document.getElementById('slDots');
+  if (dots) {
+    if (dots.parentElement !== document.body) document.body.appendChild(dots);   // 페이지의 transform 밖이어야 화면에 고정된다
+    dots.innerHTML = _slChapters.map(() => '<li></li>').join('');
+  }
+  const np = document.getElementById('nowPlaying');
+  if (np) document.documentElement.style.setProperty('--np-h', np.offsetHeight + 'px');
+  if (!_songScenesInit.bound) {
+    _songScenesInit.bound = true;
+    document.documentElement.classList.add('sl-scenes');
+    window.addEventListener('scroll', _songScenesUpdate, { passive: true });
+    window.addEventListener('scrollend', _songScenesUpdate);
+    window.addEventListener('hashchange', () => setTimeout(_songScenesUpdate, 60));
+    // 화면 높이가 크게 바뀌면(가로·세로 전환 등) 다시 나눈다
+    let lastH = innerHeight;
+    window.addEventListener('resize', () => {
+      if (Math.abs(innerHeight - lastH) < 120) return;
+      lastH = innerHeight;
+      renderSongList();
+    });
+    // 손글씨 글꼴이 늦게 와서 줄 높이가 달라졌으면 다시 잰다
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderSongList());
+  }
+  _slChapters.forEach((c, i) => c.classList.toggle('is-on', i === 0));
+  _songScenesUpdate();
 }
 
 /* 배지 종류. 곡 데이터의 tag 문자열을 여기서 한 번만 해석한다
@@ -537,6 +645,7 @@ function initMainCinema() {
   if (foot) root.insertBefore(foot, next);
   const cue = next && next.querySelector('.cinema-next-cue');
   if (foot && cue) foot.appendChild(cue);   // 꼬리말에 머물 때 보이도록
+  if (cue) cue.addEventListener('click', _cinemaHandoffGo);
 
   document.documentElement.classList.add('main-cinema');
   root.hidden = false;
@@ -677,28 +786,64 @@ function initMainCinema() {
 let _cinemaReset = () => {};
 let _handing = false;
 let _cinemaTouchedAt = 0;
+// 화면에 보이는 넘김 정도(_hoShown)는 손가락 위치(_hoTarget)를 시간에 맞춰 천천히 따라간다.
+// 그래서 세게 쓸어 한 번에 끝까지 가도, 색은 1.6초에 걸쳐 스르륵 바뀐다.
+let _hoTarget = 0, _hoShown = 0, _hoRaf = 0, _hoLast = 0, _hoForced = false;
 function _cinemaHandoff(root, next, h) {
-  const veil = document.getElementById('tabVeil');
-  if (!next || !veil || _handing) return;
+  if (!next || _handing || _hoForced) return;
   const byHand = Date.now() - _cinemaTouchedAt < 2500;   // 손을 뗀 뒤 관성으로 굴러가는 시간까지
-  const p = byHand ? Math.min(1, Math.max(0, (root.scrollTop + h - next.offsetTop) / h)) : 0;
-  const e = p * p * (3 - 2 * p);                       // 처음과 끝은 부드럽게
-  document.documentElement.style.setProperty('--handoff', e.toFixed(3));
+  _hoTarget = byHand ? Math.min(1, Math.max(0, (root.scrollTop + h - next.offsetTop) / h)) : 0;
+  _hoRun();
+}
+/* 「계속 내리면 곡 리스트」 를 누르면 내리지 않아도 같은 넘김이 일어난다 */
+function _cinemaHandoffGo() {
+  if (_handing) return;
+  _hoForced = true;
+  _hoTarget = 1;
+  _hoRun();
+}
+function _hoPaint(v) {
+  const e = v * v * (3 - 2 * v);                       // 처음과 끝은 부드럽게
+  const st = document.documentElement.style;
+  st.setProperty('--handoff', e.toFixed(3));
   // 빛은 아래부터 차오르므로 아래쪽 탭 바 글씨는 더 일찍 어두운 색으로 바꾼다
-  document.documentElement.style.setProperty('--handoff-low', Math.min(1, e * 2.2).toFixed(3));
-  veil.classList.toggle('is-on', p > 0);
-  if (p < 0.985) return;
-
+  st.setProperty('--handoff-low', Math.min(1, e * 2.2).toFixed(3));
+  document.getElementById('tabVeil')?.classList.toggle('is-on', v > 0);
+}
+function _hoRun() {
+  if (_hoRaf) return;
+  _hoLast = performance.now();
+  // 화면 갱신(requestAnimationFrame)을 기본으로 쓰되, 브라우저가 갱신을 미루면 타이머가 대신 민다
+  const next = () => {
+    const to = setTimeout(() => { cancelAnimationFrame(id); step(performance.now()); }, 120);
+    const id = requestAnimationFrame(() => { clearTimeout(to); step(performance.now()); });
+  };
+  const step = (now) => {
+    const dt = Math.min(500, now - _hoLast) / 1000;
+    _hoLast = now;
+    const up = _hoTarget > _hoShown;
+    const rate = up ? 1 / 1.6 : 1 / 0.45;                // 차오를 땐 천천히, 되돌릴 땐 빠르게
+    _hoShown = up ? Math.min(_hoTarget, _hoShown + rate * dt) : Math.max(_hoTarget, _hoShown - rate * dt);
+    _hoPaint(_hoShown);
+    if (_hoShown >= 0.999 && _hoTarget >= 0.98) { _hoRaf = 0; _hoFinish(); return; }
+    if (_hoShown === _hoTarget) { _hoRaf = 0; return; }
+    next();
+  };
+  _hoRaf = 1;
+  next();
+}
+function _hoFinish() {
+  const veil = document.getElementById('tabVeil');
   _handing = true;
-  veil.classList.add('is-leaving');                    // 여기서부터는 손가락이 아니라 시간으로 걷힌다
+  veil.classList.add('is-leaving');                    // 여기서부터는 막이 시간에 맞춰 걷힌다
   switchTab('songs');
   setTimeout(() => {
     _cinemaReset();
-    document.documentElement.style.setProperty('--handoff', '0');
-    document.documentElement.style.setProperty('--handoff-low', '0');
-    veil.classList.remove('is-on');
-    setTimeout(() => { veil.classList.remove('is-leaving'); _handing = false; }, 900);
-  }, 260);
+    _hoShown = _hoTarget = 0;
+    _hoForced = false;
+    _hoPaint(0);
+    setTimeout(() => { veil.classList.remove('is-leaving'); _handing = false; }, 1400);
+  }, 320);
 }
 
 const CONCERT = {
