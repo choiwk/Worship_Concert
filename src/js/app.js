@@ -533,7 +533,10 @@ function initMainCinema() {
   move('.sec-message', '.scene-word');
   // 꼬리말은 스크롤 상자 맨 끝으로 (페이지 쪽에 남으면 페이지가 스크롤된다)
   const foot = page.querySelector(':scope > .footer');
-  if (foot) root.appendChild(foot);
+  const next = document.getElementById('cinemaNext');
+  if (foot) root.insertBefore(foot, next);
+  const cue = next && next.querySelector('.cinema-next-cue');
+  if (foot && cue) foot.appendChild(cue);   // 꼬리말에 머물 때 보이도록
 
   document.documentElement.classList.add('main-cinema');
   root.hidden = false;
@@ -632,6 +635,7 @@ function initMainCinema() {
   const update = () => {
     if (!page.classList.contains('active')) return;
     const h = root.clientHeight || 1;
+    _cinemaHandoff(root, next, h);
     const i = Math.min(scenes.length - 1, Math.max(0, Math.round(root.scrollTop / h)));
     if (i === cur) return;
     cur = i;
@@ -644,6 +648,57 @@ function initMainCinema() {
   root.addEventListener('scroll', update, { passive: true });
   root.addEventListener('scrollend', update);
   window.addEventListener('resize', update);
+  // 곡 리스트로 넘기는 건 사람이 직접 내렸을 때만 (새로고침 때 브라우저가 스크롤 위치를 되살려도 넘어가지 않게)
+  const touched = () => { _cinemaTouchedAt = Date.now(); };
+  ['touchmove', 'wheel', 'keydown', 'pointerdown'].forEach(t =>
+    (t === 'keydown' ? window : root).addEventListener(t, touched, { passive: true }));
+  window.addEventListener('pageshow', () => { if (!_handing) root.scrollTop = 0; });
+
+  // 곡 리스트로 넘어간 뒤 메인은 첫 장면으로 되돌려 둔다 (다시 와도 곧바로 또 넘어가지 않게).
+  // 숨어 있는 동안엔 스크롤을 바꿀 수 없어서, 메인이 다시 보이는 순간(그려지기 전)에 맞춘다.
+  let backToTop = false;
+  const toTop = () => {
+    root.scrollTop = 0;
+    cur = 0;
+    scenes.forEach((s, k) => s.classList.toggle('is-on', k === 0));
+    dots.forEach((d, k) => d.classList.toggle('is-on', k === 0));
+    root.dataset.scene = '0';
+  };
+  _cinemaReset = () => { backToTop = true; };
+  window.addEventListener('hashchange', () => {
+    if (backToTop && page.classList.contains('active')) { backToTop = false; toTop(); }
+  });
+}
+
+/* ── 메인 → 곡 리스트 넘김 ─────────────────────────────
+   메인 맨 끝(꼬리말 다음)에 화면 한 칸짜리 빈자리가 있다. 그 자리로 끌어내리는 만큼(p: 0→1)
+   아래에서 종이색 빛이 차오르고(어두운 영상 → 밝은 곡 리스트), 탭 바 글씨도 함께 밝은 화면용으로 바뀐다.
+   끝까지 내리면 곡 리스트를 열고, 덮었던 막은 천천히 걷힌다. 손가락을 따라 움직이므로 되돌릴 수도 있다. */
+let _cinemaReset = () => {};
+let _handing = false;
+let _cinemaTouchedAt = 0;
+function _cinemaHandoff(root, next, h) {
+  const veil = document.getElementById('tabVeil');
+  if (!next || !veil || _handing) return;
+  const byHand = Date.now() - _cinemaTouchedAt < 2500;   // 손을 뗀 뒤 관성으로 굴러가는 시간까지
+  const p = byHand ? Math.min(1, Math.max(0, (root.scrollTop + h - next.offsetTop) / h)) : 0;
+  const e = p * p * (3 - 2 * p);                       // 처음과 끝은 부드럽게
+  document.documentElement.style.setProperty('--handoff', e.toFixed(3));
+  // 빛은 아래부터 차오르므로 아래쪽 탭 바 글씨는 더 일찍 어두운 색으로 바꾼다
+  document.documentElement.style.setProperty('--handoff-low', Math.min(1, e * 2.2).toFixed(3));
+  veil.classList.toggle('is-on', p > 0);
+  if (p < 0.985) return;
+
+  _handing = true;
+  veil.classList.add('is-leaving');                    // 여기서부터는 손가락이 아니라 시간으로 걷힌다
+  switchTab('songs');
+  setTimeout(() => {
+    _cinemaReset();
+    document.documentElement.style.setProperty('--handoff', '0');
+    document.documentElement.style.setProperty('--handoff-low', '0');
+    veil.classList.remove('is-on');
+    setTimeout(() => { veil.classList.remove('is-leaving'); _handing = false; }, 900);
+  }, 260);
 }
 
 const CONCERT = {
