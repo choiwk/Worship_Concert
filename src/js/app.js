@@ -107,8 +107,14 @@ function switchTab(name) {
 }
 function _goTab(name) {
   const target = '#/' + name;
-  if (location.hash === target) route();   // 같은 해시는 hashchange가 안 난다
-  else location.hash = target;
+  if (location.hash === target) { route(); return; }   // 같은 해시는 hashchange가 안 난다
+  location.hash = target;
+  // 주소는 바뀌었는데 화면이 안 바뀌었으면(아이폰에서 hashchange 가 늦거나 빠질 때) 직접 바꾼다
+  const want = name.includes('/') ? 'page-song' : 'page-' + name;
+  setTimeout(() => {
+    const pg = document.getElementById(want);
+    if (pg && !pg.classList.contains('active')) route();
+  }, 150);
 }
 
 window.addEventListener('hashchange', route);
@@ -840,6 +846,20 @@ function _flowGo(to, fromTop, secs) {
   _hoForced = true;
   _hoTarget = 1;
   _hoRun();
+  _flowWatchdog();
+}
+/* 안전장치: 넘김이 정해졌는데 제시간에 끝나지 않으면(휴대폰 브라우저가 애니메이션을 멈추는 등)
+   그 자리에서 끝까지 넘긴다. 어떤 경우에도 화면이 막에 덮인 채 멈추지 않게. */
+let _flowWd = 0;
+function _flowWatchdog() {
+  clearTimeout(_flowWd);
+  _flowWd = setTimeout(() => {
+    if (!_hoForced || _handing) return;
+    _flowLog('watchdog: 넘김 강제 완료');
+    _hoRaf = 0;
+    _hoShown = 1;
+    _hoFinish();
+  }, Math.ceil(1000 / _hoUp) + 1200);
 }
 
 function _cinemaHandoff(root, next, h) {
@@ -872,6 +892,8 @@ function _hoPaint(v) {
   document.getElementById('tabVeil')?.classList.toggle('is-on', v > 0);
 }
 function _hoRun() {
+  // 돌던 고리가 끊겼으면(0.6초 넘게 한 걸음도 안 갔으면) 새로 돌린다
+  if (_hoRaf && performance.now() - _hoLast > 600) { _flowLog('loop: 멈춘 고리 재시작'); _hoRaf = 0; }
   if (_hoRaf) return;
   _hoLast = performance.now();
   // 화면 갱신(requestAnimationFrame)을 기본으로 쓰되, 브라우저가 갱신을 미루면 타이머가 대신 민다
@@ -901,6 +923,20 @@ function _hoRun() {
 function _hoFinish() {
   const veil = document.getElementById('tabVeil');
   const to = _hoTo, from = _hoFrom;
+  clearTimeout(_flowWd);
+  _flowLog('finish → ' + to);
+  // 마지막 안전장치: 2.5초 뒤에도 막이 남아 있으면 모두 걷고, 갈 곳으로 화면을 맞춘다
+  setTimeout(() => {
+    if (!veil.classList.contains('is-on') && !veil.classList.contains('is-leaving') && !_hoForced) return;
+    _flowLog('cleanup: 남은 막 정리');
+    veil.classList.remove('is-on', 'is-leaving', 'to-dark', 'from-top');
+    document.documentElement.classList.remove('flow-commit');
+    document.querySelectorAll('.tab-btn.is-next').forEach(b => b.classList.remove('is-next'));
+    _hoShown = _hoTarget = 0; _hoForced = false; _handing = false; _hoRaf = 0;
+    const st2 = document.documentElement.style;
+    st2.setProperty('--handoff', '0'); st2.setProperty('--handoff-low', '0');
+    if (parseHash().tab !== to) _goTab(to); else route();
+  }, 2500);
   _handing = true;
   veil.classList.add('is-leaving');                    // 여기서부터는 막이 시간에 맞춰 걷힌다
   // 곡 리스트는 첫 장(제목)이 이미 떠 있는 채로 열어, 막이 걷힐 때 한 번만 나타나게 한다
@@ -927,6 +963,37 @@ function _hoFinish() {
 /* ── 밝은 탭들 사이의 넘김 ─────────────────────────────
    메인 → 곡 리스트처럼, 곡 리스트·말씀 나눔·멤버 소개·팀 소개도 맨 끝에서 더 내리면 다음 탭으로,
    맨 위에서 더 당기면 앞 탭으로 스르륵 넘어간다. 팀 소개 다음은 다시 메인(처음)이다. */
+/* ?debug=1 로 열면 화면 아래에 넘김 상태와 오류를 띄운다 (휴대폰에서 원인을 찾기 위한 것) */
+const _flowDebug = /[?&]debug=1/.test(location.search);
+const _flowLogs = [];
+function _flowLog(msg) {
+  if (!_flowDebug) return;
+  _flowLogs.push(new Date().toISOString().slice(14, 23) + ' ' + msg);
+  if (_flowLogs.length > 8) _flowLogs.shift();
+  _flowDebugPaint();
+}
+function _flowDebugPaint() {
+  if (!_flowDebug) return;
+  let box = document.getElementById('flowDebug');
+  if (!box) {
+    box = document.createElement('pre');
+    box.id = 'flowDebug';
+    box.style.cssText = 'position:fixed;left:6px;right:6px;bottom:84px;z-index:99999;margin:0;padding:6px 8px;'
+      + 'background:rgba(0,0,0,.78);color:#9f9;font:11px/1.35 ui-monospace,monospace;white-space:pre-wrap;pointer-events:none;border-radius:8px';
+    document.body.appendChild(box);
+  }
+  const act = document.querySelector('.page.active');
+  box.textContent = 'hash ' + location.hash + ' | page ' + (act ? act.id : '-')
+    + '\nshown ' + _hoShown.toFixed(2) + ' target ' + _hoTarget.toFixed(2) + ' forced ' + _hoForced
+    + ' handing ' + _handing + ' raf ' + _hoRaf + ' to ' + _hoTo
+    + '\nveil ' + (document.getElementById('tabVeil')?.className || '') + '\n' + _flowLogs.join('\n');
+}
+if (_flowDebug) {
+  window.addEventListener('error', e => _flowLog('ERROR ' + e.message + ' @' + (e.lineno || '')));
+  window.addEventListener('unhandledrejection', e => _flowLog('REJECT ' + (e.reason && e.reason.message || e.reason)));
+  setInterval(_flowDebugPaint, 300);
+}
+
 const _FLOW = ['main', 'songs', 'word', 'artists', 'story'];
 function _flowNeighbor(tab, dir) {
   const i = _FLOW.indexOf(tab);
