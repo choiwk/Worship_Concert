@@ -42,6 +42,12 @@ function _showPage(id, tabName) {
   });
   const page = document.getElementById(id);
   if (page) page.classList.add('active');
+  // 지금 보이는 화면을 <html> 에 표시해 둔다 (on-main, on-songs ...).
+  // CSS 의 :has(#page-main.active) 는 아이폰 사파리에서 화면이 바뀌어도 갱신되지 않는 일이 있어
+  // (메인의 스크롤 잠금이 남아 곡 리스트가 멈춤) 이 표시로 대신한다.
+  const html = document.documentElement;
+  [...html.classList].filter(c => c.startsWith('on-')).forEach(c => html.classList.remove(c));
+  html.classList.add('on-' + id.replace('page-', ''));
 }
 
 function route() {
@@ -99,7 +105,8 @@ function switchTab(name) {
   if (_hoForced) return;
   // 어두운 메인 ↔ 밝은 탭을 오갈 때는 색이 스르륵 바뀌는 막을 거쳐 간다
   const cur = parseHash().tab;
-  if (cur !== name && (cur === 'main') !== (name === 'main') && _mainDesign() === 'cinema' && !_handing) {
+  // 메인에서 다른 탭으로는 막 없이 바로 간다 (아이폰에서 넘김 막이 멈추는 문제로 뺐다)
+  if (cur !== name && name === 'main' && _mainDesign() === 'cinema' && !_handing) {
     _flowGo(name, name === 'main', 0.8);
     return;
   }
@@ -865,24 +872,27 @@ function _flowWatchdog() {
 function _cinemaHandoff(root, next, h) {
   if (!next || _handing || _hoForced) return;
   // 들어온 뒤 한 번도 직접 내린 적이 없으면(새로고침 때 브라우저가 위치를 되살린 경우) 넘기지 않는다
-  const p = _cinemaTouchedAt ? Math.min(1, Math.max(0, (root.scrollTop + h - next.offsetTop) / h)) : 0;
-  if (p > 0) _flowPrepare('songs', false);
-  _hoTarget = p;
-  if (p >= 0.98) _hoForced = true;                     // 끝까지 왔으면 반드시 끝까지 넘긴다
-  _hoRun();
+  const p = _cinemaTouchedAt ? (root.scrollTop + h - next.offsetTop) / h : 0;
+  if (p >= 0.6) { _cinemaHandoffGo(); return; }        // 꼬리말 다음 빈자리로 넘어오면 바로 곡 리스트
 
-  // 스크롤이 멈췄는데 빈자리(영상만 보이는 곳)에 걸쳐 있으면, 절반을 넘었으면 넘기고 아니면 꼬리말로 되돌린다
+  // 스크롤이 빈자리에 조금 걸친 채 멈추면 꼬리말로 되돌린다 (영상만 보이는 화면에 서지 않게)
   clearTimeout(_hoSettle);
   _hoSettle = setTimeout(() => {
-    if (_handing || _hoForced || !document.getElementById('page-main').classList.contains('active')) return;
+    if (_handing || !document.getElementById('page-main').classList.contains('active')) return;
     const q = (root.scrollTop + h - next.offsetTop) / h;
     if (q <= 0.02) return;
-    if (q >= 0.5 && _cinemaTouchedAt) _cinemaHandoffGo();
+    if (q >= 0.3 && _cinemaTouchedAt) _cinemaHandoffGo();
     else root.scrollTo({ top: next.offsetTop - h, behavior: 'smooth' });
-  }, 220);
+  }, 200);
 }
-/* 「계속 내리면 곡 리스트」 를 누르면 내리지 않아도 같은 넘김이 일어난다 */
-function _cinemaHandoffGo() { _flowGo('songs', false); }
+/* 메인 맨 끝에서 더 내리거나 「계속 내리면 곡 리스트」 를 누르면 애니메이션 없이 바로 곡 리스트로 */
+function _cinemaHandoffGo() {
+  if (_handing) return;
+  _handing = true;
+  document.querySelectorAll('#page-songs .sl-ch').forEach((c, i) => c.classList.toggle('is-on', i === 0));
+  _goTab('songs');
+  setTimeout(() => { _cinemaReset(); _handing = false; }, 300);
+}
 function _hoPaint(v) {
   const e = v * v * (3 - 2 * v);                       // 처음과 끝은 부드럽게
   const st = document.documentElement.style;

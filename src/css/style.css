@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=98') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=99') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=98') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=99') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4080,8 +4080,8 @@ html.main-cinema #page-main { animation-name: cinemaPageFade; padding-bottom: 0;
    접었다 폈다 하면서 화면 높이를 계속 바꾼다. 그러면 장면 계산과 멈춤이 흔들린다.
    메인에서는 페이지를 움직이지 않고, 화면에 붙인 이 상자 안에서만 스크롤한다.
    페이지가 그대로라 주소창·도구 막대도 그대로 있다. */
-html.main-cinema:has(#page-main.active),
-html.main-cinema:has(#page-main.active) body { overflow: hidden; }
+html.main-cinema.on-main,
+html.main-cinema.on-main body { overflow: hidden; }
 html.main-cinema #page-main { min-height: 0; }
 
 .cinema {
@@ -4121,7 +4121,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=98") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=99") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4372,13 +4372,13 @@ html.main-cinema #page-main { min-height: 0; }
 .cinema-dots li.is-on { background: var(--paper); transform: scale(1.35); }
 
 /* 영상 위에서는 위쪽 음악 바도 투명하게 */
-html.main-cinema:has(#page-main.active) .now-playing {
+html.main-cinema.on-main .now-playing {
   background: transparent;
   color: var(--paper);
   position: relative;
   z-index: 2;
 }
-html.main-cinema:has(#page-main.active) .np-text { color: rgba(247, 244, 236, .9); }
+html.main-cinema.on-main .np-text { color: rgba(247, 244, 236, .9); }
 
 /* 메인 맨 아래 꼬리말도 영상 위에서 읽히게 (JS 가 스크롤 상자 맨 끝으로 옮긴다) */
 .cinema > .footer {
@@ -4423,7 +4423,7 @@ html.main-cinema:has(#page-main.active) .np-text { color: rgba(247, 244, 236, .9
   text-align: left;
 }
 .fs-guide[hidden], .fs-guide-btn[hidden] { display: none; }
-html:not(:has(#page-main.active)) .fs-guide { display: none; }
+html:not(.on-main) .fs-guide { display: none; }
 .fs-guide-text { margin: 0; font-size: 16px; line-height: 1.6; }
 .fs-guide-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .fs-guide-actions:not(:has(.fs-guide-btn:not([hidden]))) { display: none; }
@@ -4456,19 +4456,19 @@ html:not(:has(#page-main.active)) .fs-guide { display: none; }
 
 /* 메인(영상)에서는 아래 탭 바 뒤로 영상이 그대로 보이게 — 화면이 넓어 보이도록 바탕을 비운다.
    글자는 밝게, 영상 아래쪽 어두운 막(scrim)과 옅은 그림자로 읽히게 한다. */
-html.main-cinema:has(#page-main.active) .tab-bar { background: transparent; }
-html.main-cinema:has(#page-main.active) .tab-bar::before { display: none; }
-html.main-cinema:has(#page-main.active) .tab-btn {
+html.main-cinema.on-main .tab-bar { background: transparent; }
+html.main-cinema.on-main .tab-bar::before { display: none; }
+html.main-cinema.on-main .tab-btn {
   color: rgba(247, 244, 236, .8);
   text-shadow: 0 1px 6px rgba(0, 0, 0, .55);
 }
-html.main-cinema:has(#page-main.active) .tab-btn .tab-icon { filter: drop-shadow(0 1px 4px rgba(0, 0, 0, .55)); }
-html.main-cinema:has(#page-main.active) .tab-btn.active { color: #f0c3a8; }
+html.main-cinema.on-main .tab-btn .tab-icon { filter: drop-shadow(0 1px 4px rgba(0, 0, 0, .55)); }
+html.main-cinema.on-main .tab-btn.active { color: #f0c3a8; }
 
 /* 메인(영상)에서는 공유하기·언어 버튼을 유리처럼 — 영상이 비쳐 보이고 가장자리만 빛을 받는다 */
-html.main-cinema:has(#page-main.active) .share-fab,
-html.main-cinema:has(#page-main.active) .lang-btn,
-html.main-cinema:has(#page-main.active) .lang-menu {
+html.main-cinema.on-main .share-fab,
+html.main-cinema.on-main .lang-btn,
+html.main-cinema.on-main .lang-menu {
   background: linear-gradient(145deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .06));
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
   backdrop-filter: blur(14px) saturate(1.4);
@@ -4479,23 +4479,23 @@ html.main-cinema:has(#page-main.active) .lang-menu {
     0 8px 24px rgba(0, 0, 0, .28);
   color: rgba(247, 244, 236, .94);
 }
-html.main-cinema:has(#page-main.active) .share-fab:hover,
-html.main-cinema:has(#page-main.active) .lang-btn:hover {
+html.main-cinema.on-main .share-fab:hover,
+html.main-cinema.on-main .lang-btn:hover {
   background: linear-gradient(145deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, .1));
   border-color: rgba(255, 255, 255, .4);
 }
-html.main-cinema:has(#page-main.active) .share-fab:active {
+html.main-cinema.on-main .share-fab:active {
   background: rgba(255, 255, 255, .32);
   color: #fff;
 }
-html.main-cinema:has(#page-main.active) .share-fab:focus-visible { outline-color: #f0c3a8; }
-html.main-cinema:has(#page-main.active) .lang-btn svg { stroke: #f0c3a8; }
-html.main-cinema:has(#page-main.active) .lang-menu {
+html.main-cinema.on-main .share-fab:focus-visible { outline-color: #f0c3a8; }
+html.main-cinema.on-main .lang-btn svg { stroke: #f0c3a8; }
+html.main-cinema.on-main .lang-menu {
   background: linear-gradient(145deg, rgba(40, 32, 25, .55), rgba(23, 18, 13, .45));
 }
-html.main-cinema:has(#page-main.active) .lang-opt { color: rgba(247, 244, 236, .86); }
-html.main-cinema:has(#page-main.active) .lang-opt:hover,
-html.main-cinema:has(#page-main.active) .lang-opt.is-on { background: rgba(255, 255, 255, .12); color: #f0c3a8; }
+html.main-cinema.on-main .lang-opt { color: rgba(247, 244, 236, .86); }
+html.main-cinema.on-main .lang-opt:hover,
+html.main-cinema.on-main .lang-opt.is-on { background: rgba(255, 255, 255, .12); color: #f0c3a8; }
 
 /* ══════════════════════════════════
    메인 → 곡 리스트 넘김
@@ -4561,26 +4561,26 @@ html.main-cinema:has(#page-main.active) .lang-opt.is-on { background: rgba(255, 
 .cinema-stage, .cinema > .footer { opacity: clamp(0, calc(1 - var(--handoff, 0) * 1.8), 1); }
 
 /* 위쪽 음악 바는 막보다 위에 둔다 */
-html.main-cinema:has(#page-main.active) .now-playing { z-index: 460; }
+html.main-cinema.on-main .now-playing { z-index: 460; }
 
 /* 끌어내리는 만큼 탭 바·음악 바·언어 버튼 글씨가 밝은 화면용 색으로 옮겨 가고,
    켜진 탭 표시도 메인에서 곡 리스트로 건너간다 */
 @supports (color: color-mix(in srgb, red, blue)) {
-  html.main-cinema:has(#page-main.active) .tab-btn {
+  html.main-cinema.on-main .tab-btn {
     color: color-mix(in srgb, var(--ink-soft) calc(var(--handoff-low, 0) * 100%), rgba(247, 244, 236, .8));
     text-shadow: 0 1px 6px rgba(0, 0, 0, calc(.55 - .55 * var(--handoff-low, 0)));
   }
-  html.main-cinema:has(#page-main.active) .tab-btn .tab-icon { filter: drop-shadow(0 1px 4px rgba(0, 0, 0, calc(.55 - .55 * var(--handoff-low, 0)))); }
-  html.main-cinema:has(#page-main.active) .tab-btn.active {
+  html.main-cinema.on-main .tab-btn .tab-icon { filter: drop-shadow(0 1px 4px rgba(0, 0, 0, calc(.55 - .55 * var(--handoff-low, 0)))); }
+  html.main-cinema.on-main .tab-btn.active {
     color: color-mix(in srgb, var(--ink-soft) calc(var(--handoff-low, 0) * 100%), #f0c3a8);
   }
-  html.main-cinema:has(#page-main.active) .tab-btn.is-next {
+  html.main-cinema.on-main .tab-btn.is-next {
     color: color-mix(in srgb, var(--clay) calc(var(--handoff-low, 0) * 100%), rgba(247, 244, 236, .8));
   }
-  html.main-cinema:has(#page-main.active) .np-text {
+  html.main-cinema.on-main .np-text {
     color: color-mix(in srgb, var(--ink-soft) calc(var(--handoff, 0) * 100%), rgba(247, 244, 236, .9));
   }
-  html.main-cinema:has(#page-main.active) .lang-btn {
+  html.main-cinema.on-main .lang-btn {
     color: color-mix(in srgb, var(--ink-soft) calc(var(--handoff, 0) * 100%), rgba(247, 244, 236, .94));
     border-color: color-mix(in srgb, var(--line) calc(var(--handoff, 0) * 100%), rgba(255, 255, 255, .26));
   }
@@ -4688,7 +4688,7 @@ html.sl-scenes .sl-group:not(.is-on) .song-item {
   z-index: 300;
   pointer-events: none;
 }
-html:not(:has(#page-songs.active)) .sl-dots { display: none; }
+html:not(.on-songs) .sl-dots { display: none; }
 .sl-dots li { width: 6px; height: 6px; border-radius: 3px; background: rgba(50, 44, 37, .22); transition: height .3s ease, background .3s ease; }
 .sl-dots li.is-on { height: 18px; background: var(--clay); }
 
@@ -4733,8 +4733,8 @@ html:not(:has(#page-songs.active)) .sl-dots { display: none; }
 .tab-btn.active::before { opacity: 1; transform: none; }
 
 /* 메인(영상)에서는 막대 바탕을 비워 영상이 그대로 보이게, 알약만 유리처럼 */
-html.main-cinema:has(#page-main.active) .tab-bar { border-color: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
-html.main-cinema:has(#page-main.active) .tab-btn::before { background: rgba(255, 255, 255, .13); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22); }
+html.main-cinema.on-main .tab-bar { border-color: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+html.main-cinema.on-main .tab-btn::before { background: rgba(255, 255, 255, .13); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22); }
 
 /* ══════════════════════════════════
    곡 화면(가사·말씀) — 곡 리스트의 떠 있는 카드와 같은 결로
@@ -4877,7 +4877,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=98") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=99") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -4910,7 +4910,7 @@ html { overscroll-behavior-y: none; }
 /* 넘김이 정해지면 탭 바의 알약도 갈 곳으로 미리 옮겨 간다 */
 html.flow-commit .tab-btn.active::before { opacity: 0; transform: scale(.82); }
 html.flow-commit .tab-btn.is-next::before { opacity: 1; transform: none; }
-html.flow-commit:not(:has(#page-main.active)) .tab-btn.is-next { color: var(--clay); }
+html.flow-commit:not(.on-main) .tab-btn.is-next { color: var(--clay); }
 /* 곡 리스트 마지막 장은 화면 한 칸에 맞춰야 끝에서 더 내리는 손짓이 잡힌다 → 안내는 장 바닥에 붙인다 */
 .sl-lp-ch .flow-cue {
   position: absolute;
