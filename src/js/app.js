@@ -18,6 +18,7 @@ const TABS = ['main', 'songs', 'word', 'artists', 'story'];
 
 let _prevRoute = null;
 let _songListScroll = 0;
+let _routeLandEnd = false;   // 다음 화면 전환 때 맨 끝으로 내릴지 (위로 당겨 앞 탭으로 갈 때)
 
 function _scroller() {
   // 곡 리스트는 메인처럼 화면에 고정된 상자 안에서만 스크롤한다 (주소창·도구 막대가 오르내리며 흔들리지 않게)
@@ -78,7 +79,19 @@ function route() {
   // 곡 상세에서 목록으로 돌아온 경우에만 보던 자리를 복원하고,
   // 그 외에는 기존 동작대로 맨 위로 올린다.
   const back = prev && prev.tab === 'songs' && prev.slug && r.tab === 'songs' && !r.slug;
-  const y = back ? _songListScroll : 0;
+  // 앞 탭으로 위로 당겨 왔으면 그 탭의 맨 끝(곡 리스트라면 곡 소개 및 미리듣기)에 내려 준다
+  const toEnd = _routeLandEnd;
+  _routeLandEnd = false;
+  let y = back ? _songListScroll : 0;
+  if (toEnd) {
+    const s2 = _scroller();
+    y = s2.scrollHeight - s2.clientHeight;
+    // 말씀 나눔처럼 내용을 늦게 받아와 길어지는 화면은, 다 들어온 뒤 한 번 더 맨 끝으로 맞춘다
+    [400, 1000].forEach(ms => setTimeout(() => {
+      const s3 = _scroller();
+      if (parseHash().tab === r.tab) s3.scrollTop = s3.scrollHeight - s3.clientHeight;
+    }, ms));
+  }
 
   // html 에 scroll-behavior: smooth 가 걸려 있어 그냥 scrollTop 을 넣으면
   // 이전 위치에서 1초 가까이 천천히 미끄러진다. 화면을 바꾸는 순간에는
@@ -861,6 +874,7 @@ function _flowGo(to, fromTop, land) {
   html.classList.remove('flow-drag');
   if (_reduceMotion.matches) {                          // 움직임 줄이기: 막 없이 바로
     if (to === 'main') _cinemaLand(land || null);
+    else _routeLandEnd = land === 'last';
     _goTab(to);
     if (from === 'main') _cinemaReset();
     return;
@@ -873,8 +887,13 @@ function _flowGo(to, fromTop, land) {
   _setHandoff(1);
   setTimeout(() => {
     veil.classList.add('is-leaving');                   // 다 덮은 채로 고정
-    if (to === 'songs') document.querySelectorAll('#page-songs .sl-ch').forEach((c, i) => c.classList.toggle('is-on', i === 0));
+    if (to === 'songs') {
+      const chs = document.querySelectorAll('#page-songs .sl-ch');
+      const on = land === 'last' ? chs.length - 1 : 0;   // 내려 줄 장을 미리 띄워 두어 한 번만 나타나게
+      chs.forEach((c, i) => c.classList.toggle('is-on', i === on));
+    }
     if (to === 'main') _cinemaLand(land || null);
+    else _routeLandEnd = land === 'last';
     _goTab(to);
     if (from === 'main') _cinemaReset();
     setTimeout(() => {
@@ -969,7 +988,7 @@ function _flowRelease(dir, amount) {
   const to = _flowNeighbor(parseHash().tab, dir);
   const html = document.documentElement;
   if (to && amount >= _PULL * 0.6) {
-    _flowGo(to, dir < 0, to === 'main' && dir < 0 ? 'last' : null);
+    _flowGo(to, dir < 0, dir < 0 ? 'last' : null);
     return;
   }
   if (_handing) return;
