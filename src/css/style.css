@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=105') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=106') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=105') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=106') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4121,7 +4121,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=105") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=106") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4879,7 +4879,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=105") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=106") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -4961,3 +4961,31 @@ html.on-songs, html.on-songs body { overflow: hidden; }
 }
 /* 룰렛 장은 위치를 재며 카드를 가운데 맞추므로, 장 전환 때 미끄러지지 않고 투명도만 바뀐다 */
 html.sl-scenes #page-songs .sl-roulette > * { transform: none; filter: none; }
+
+/* ── 룰렛 떨림 고치기 ──
+   ① 카드 맞추기: 고정 상자 안에서만 스크롤 스냅 (메인과 같은 방식, 페이지 전체에는 걸지 않는다)
+   ② 카드 모양: 스크롤 위치에 직접 묶인 CSS 애니메이션 — 가운데(50%)에서 가장 크고 또렷하다 */
+#page-songs.active { scroll-snap-type: y mandatory; }
+#page-songs .sl-ch.sl-intro { scroll-snap-align: start; }
+#page-songs .sl-ch.sl-note-ch, #page-songs .sl-ch.sl-lp-ch { scroll-snap-align: start; scroll-snap-stop: normal; }
+#page-songs .sl-wheel .song-item { scroll-snap-align: center; }
+
+@supports (animation-timeline: view()) {
+  #page-songs .sl-wheel .song-item { view-timeline-name: --sl-card; view-timeline-axis: block; }
+  #page-songs .sl-wheel .song-row {
+    animation: slWheel linear both;
+    animation-timeline: --sl-card;
+    will-change: transform, opacity;
+  }
+  @keyframes slWheel {
+    0%   { transform: perspective(900px) rotateX(-38deg) scale(.86); opacity: .3; }
+    30%  { transform: perspective(900px) rotateX(-18deg) scale(.93); opacity: .62; }
+    50%  { transform: perspective(900px) rotateX(0deg)   scale(1.05); opacity: 1; }
+    70%  { transform: perspective(900px) rotateX(18deg)  scale(.93); opacity: .62; }
+    100% { transform: perspective(900px) rotateX(38deg)  scale(.86); opacity: .3; }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #page-songs .sl-wheel .song-row { animation: none !important; }
+  #page-songs.active { scroll-snap-type: none; }
+}

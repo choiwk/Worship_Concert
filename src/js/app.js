@@ -264,6 +264,7 @@ function _songChapters(box, lis) {
 /* 룰렛: 카드마다 화면 가운데와의 거리(카드 몇 장만큼 떨어졌는지)에 맞춰 크기·기울기·흐림을 정한다.
    카드 자체(li)는 움직이지 않고 안쪽 링크만 변형하므로, 잰 위치가 변형에 흔들리지 않는다. */
 const _reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const _wheelByCss = !!(window.CSS && CSS.supports && CSS.supports('animation-timeline: view()'));
 function _songWheelUpdate() {
   const items = document.querySelectorAll('#page-songs .sl-wheel .song-item');
   if (!items.length) return;
@@ -277,7 +278,8 @@ function _songWheelUpdate() {
     // 가장 가까운 카드는 px 로 고른다 — 두 곡이 이어진 카드는 키가 커서 '장 수'로 비교하면 어긋난다
     if (Math.abs(px) < bestD) { bestD = Math.abs(px); best = li; }
     const row = li.firstElementChild;
-    if (_reduceMotion.matches) { row.style.transform = ''; row.style.opacity = ''; return; }
+    // 스크롤에 묶인 CSS 애니메이션을 쓸 수 있으면 모양은 CSS 가 그린다 (화면 움직임과 같은 박자라 떨리지 않는다)
+    if (_reduceMotion.matches || _wheelByCss) { row.style.transform = ''; row.style.opacity = ''; return; }
     const scale = 1.05 - Math.min(a, 2) * 0.08;
     const tilt = Math.max(-38, Math.min(38, -d * 16));
     row.style.transform = 'perspective(900px) rotateX(' + tilt.toFixed(1) + 'deg) scale(' + scale.toFixed(3) + ')';
@@ -288,17 +290,6 @@ function _songWheelUpdate() {
   if (now && best) now.textContent = best.querySelector('.song-num')?.textContent || '';
 }
 
-function _songWheelSettle() {
-  const page = document.getElementById('page-songs');
-  const wheel = document.querySelector('#page-songs .sl-roulette');
-  if (!page || !page.classList.contains('active') || !wheel || !wheel.classList.contains('is-on')) return;
-  const li = wheel.querySelector('.song-item.is-center');
-  if (!li) return;
-  const r = li.getBoundingClientRect();
-  const off = r.top + r.height / 2 - _slCenter();
-  // 룰렛 장에 머물러 있으면 빈자리(위아래 여백)에 서지 않도록 가장 가까운 카드를 언제나 가운데로
-  if (Math.abs(off) > 3) page.scrollBy({ top: off, behavior: _reduceMotion.matches ? 'auto' : 'smooth' });
-}
 /* 곡 리스트 상자(화면에 고정)의 세로 가운데 */
 function _slCenter() {
   const page = document.getElementById('page-songs');
@@ -349,12 +340,8 @@ function _songScenesInit() {
     window.addEventListener('resize', () => { _slMeasure(); _songScenesUpdate(); });
     window.addEventListener('hashchange', () => setTimeout(_slMeasure, 30));
     window.addEventListener('hashchange', () => setTimeout(_songScenesUpdate, 60));
-    // 룰렛: 손을 떼고 스크롤이 멈추면 가장 가까운 카드를 화면 가운데로 살며시 맞춘다
-    let touching = false, settleT = 0;
-    const settle = () => { clearTimeout(settleT); settleT = setTimeout(() => { if (!touching) _songWheelSettle(); }, 180); };
-    window.addEventListener('touchstart', () => { touching = true; clearTimeout(settleT); }, { passive: true });
-    window.addEventListener('touchend', () => { touching = false; settle(); }, { passive: true });
-    page.addEventListener('scroll', settle, { passive: true });
+    // 카드를 가운데에 맞추는 일은 상자 안 스크롤 스냅(CSS)이 한다.
+    // (예전에는 JS 가 손을 뗀 뒤 맞췄는데, 휴대폰의 관성 스크롤과 서로 당겨 카드가 떨렸다)
   }
   _slChapters.forEach((c, i) => c.classList.toggle('is-on', i === 0));
   _songScenesUpdate();
