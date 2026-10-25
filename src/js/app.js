@@ -20,6 +20,9 @@ let _prevRoute = null;
 let _songListScroll = 0;
 
 function _scroller() {
+  // 곡 리스트는 메인처럼 화면에 고정된 상자 안에서만 스크롤한다 (주소창·도구 막대가 오르내리며 흔들리지 않게)
+  const songs = document.getElementById('page-songs');
+  if (songs && songs.classList.contains('active')) return songs;
   return document.scrollingElement || document.documentElement;
 }
 
@@ -101,13 +104,11 @@ function route() {
 
 /** 기존 HTML의 onclick="switchTab('main', this)" 와 호환되는 진입점 */
 function switchTab(name) {
-  // 막이 차오르는 중에 다른 탭을 또 누르면 먼저 정한 곳으로 끝까지 간다 (두 막이 섞이지 않게)
-  if (_hoForced) return;
+  if (_handing) return;                    // 넘기는 중(1초 남짓)에는 한 번만
   // 어두운 메인 ↔ 밝은 탭을 오갈 때는 색이 스르륵 바뀌는 막을 거쳐 간다
   const cur = parseHash().tab;
-  // 메인에서 다른 탭으로는 막 없이 바로 간다 (아이폰에서 넘김 막이 멈추는 문제로 뺐다)
-  if (cur !== name && name === 'main' && _mainDesign() === 'cinema' && !_handing) {
-    _flowGo(name, name === 'main', 0.8);
+  if (cur !== name && (cur === 'main') !== (name === 'main') && _mainDesign() === 'cinema') {
+    _flowGo(name, name === 'main');
     return;
   }
   _goTab(name);
@@ -266,13 +267,15 @@ const _reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 function _songWheelUpdate() {
   const items = document.querySelectorAll('#page-songs .sl-wheel .song-item');
   if (!items.length) return;
-  const vc = innerHeight / 2;
+  const vc = _slCenter();
   let best = null, bestD = Infinity;
   items.forEach(li => {
     const r = li.getBoundingClientRect();
-    const d = (r.top + r.height / 2 - vc) / (r.height + 12);
+    const px = r.top + r.height / 2 - vc;               // 화면 가운데와의 거리(px)
+    const d = px / (r.height + 12);                      // 카드 몇 장만큼인지 (모양 계산용)
     const a = Math.min(Math.abs(d), 3);
-    if (Math.abs(d) < bestD) { bestD = Math.abs(d); best = li; }
+    // 가장 가까운 카드는 px 로 고른다 — 두 곡이 이어진 카드는 키가 커서 '장 수'로 비교하면 어긋난다
+    if (Math.abs(px) < bestD) { bestD = Math.abs(px); best = li; }
     const row = li.firstElementChild;
     if (_reduceMotion.matches) { row.style.transform = ''; row.style.opacity = ''; return; }
     const scale = 1.05 - Math.min(a, 2) * 0.08;
@@ -292,8 +295,15 @@ function _songWheelSettle() {
   const li = wheel.querySelector('.song-item.is-center');
   if (!li) return;
   const r = li.getBoundingClientRect();
-  const off = r.top + r.height / 2 - innerHeight / 2;
-  if (Math.abs(off) > 3 && Math.abs(off) < r.height) scrollBy({ top: off, behavior: _reduceMotion.matches ? 'auto' : 'smooth' });
+  const off = r.top + r.height / 2 - _slCenter();
+  // 룰렛 장에 머물러 있으면 빈자리(위아래 여백)에 서지 않도록 가장 가까운 카드를 언제나 가운데로
+  if (Math.abs(off) > 3) page.scrollBy({ top: off, behavior: _reduceMotion.matches ? 'auto' : 'smooth' });
+}
+/* 곡 리스트 상자(화면에 고정)의 세로 가운데 */
+function _slCenter() {
+  const page = document.getElementById('page-songs');
+  const r = page && page.classList.contains('active') ? page.getBoundingClientRect() : null;
+  return r && r.height ? r.top + r.height / 2 : innerHeight / 2;
 }
 
 /* 지금 화면 가운데에 걸친 장만 보이고, 나머지는 흐려져 사라진다 (메인 장면 전환과 같은 결) */
@@ -301,7 +311,9 @@ let _slChapters = [];
 function _songScenesUpdate() {
   const page = document.getElementById('page-songs');
   if (!page || !page.classList.contains('active') || !_slChapters.length) return;
-  const mid = innerHeight * 0.5;
+  // 상자 높이가 아직 안 적혔거나 바뀌었으면 다시 잰다 (처음 곡 리스트로 바로 들어온 경우 등)
+  if (document.documentElement.style.getPropertyValue('--sl-h') !== page.clientHeight + 'px') _slMeasure();
+  const mid = _slCenter();
   let on = 0;
   _slChapters.forEach((c, i) => {
     const r = c.getBoundingClientRect();
@@ -310,6 +322,14 @@ function _songScenesUpdate() {
   _slChapters.forEach((c, i) => c.classList.toggle('is-on', i === on));
   document.querySelectorAll('#slDots li').forEach((d, i) => d.classList.toggle('is-on', i === on));
   _songWheelUpdate();
+}
+/* 곡 리스트 상자는 위 음악 바 바로 아래에서 화면 바닥까지. 그 높이를 CSS 에 알려 준다 */
+function _slMeasure() {
+  const np = document.getElementById('nowPlaying');
+  const st = document.documentElement.style;
+  if (np && np.offsetHeight) st.setProperty('--np-h', np.offsetHeight + 'px');
+  const page = document.getElementById('page-songs');
+  if (page && page.clientHeight) st.setProperty('--sl-h', page.clientHeight + 'px');
 }
 function _songScenesInit() {
   const page = document.getElementById('page-songs');
@@ -320,21 +340,21 @@ function _songScenesInit() {
     if (dots.parentElement !== document.body) document.body.appendChild(dots);   // 페이지의 transform 밖이어야 화면에 고정된다
     dots.innerHTML = _slChapters.map(() => '<li></li>').join('');
   }
-  const np = document.getElementById('nowPlaying');
-  if (np) document.documentElement.style.setProperty('--np-h', np.offsetHeight + 'px');
+  _slMeasure();
   if (!_songScenesInit.bound) {
     _songScenesInit.bound = true;
     document.documentElement.classList.add('sl-scenes');
-    window.addEventListener('scroll', _songScenesUpdate, { passive: true });
-    window.addEventListener('scrollend', _songScenesUpdate);
-    window.addEventListener('resize', _songScenesUpdate);
+    page.addEventListener('scroll', _songScenesUpdate, { passive: true });
+    page.addEventListener('scrollend', _songScenesUpdate);
+    window.addEventListener('resize', () => { _slMeasure(); _songScenesUpdate(); });
+    window.addEventListener('hashchange', () => setTimeout(_slMeasure, 30));
     window.addEventListener('hashchange', () => setTimeout(_songScenesUpdate, 60));
     // 룰렛: 손을 떼고 스크롤이 멈추면 가장 가까운 카드를 화면 가운데로 살며시 맞춘다
     let touching = false, settleT = 0;
     const settle = () => { clearTimeout(settleT); settleT = setTimeout(() => { if (!touching) _songWheelSettle(); }, 180); };
     window.addEventListener('touchstart', () => { touching = true; clearTimeout(settleT); }, { passive: true });
     window.addEventListener('touchend', () => { touching = false; settle(); }, { passive: true });
-    window.addEventListener('scroll', settle, { passive: true });
+    page.addEventListener('scroll', settle, { passive: true });
   }
   _slChapters.forEach((c, i) => c.classList.toggle('is-on', i === 0));
   _songScenesUpdate();
@@ -804,175 +824,104 @@ function initMainCinema() {
 
   // 곡 리스트로 넘어간 뒤 메인은 첫 장면으로 되돌려 둔다 (다시 와도 곧바로 또 넘어가지 않게).
   // 숨어 있는 동안엔 스크롤을 바꿀 수 없어서, 메인이 다시 보이는 순간(그려지기 전)에 맞춘다.
-  let backToTop = false;
-  const toTop = () => {
-    root.scrollTop = 0;
-    cur = 0;
-    scenes.forEach((s, k) => s.classList.toggle('is-on', k === 0));
-    dots.forEach((d, k) => d.classList.toggle('is-on', k === 0));
-    root.dataset.scene = '0';
+  let backToTop = false, landing = null;
+  const goScene = (i) => {
+    root.scrollTop = i * (root.clientHeight || 1);
+    cur = i;
+    scenes.forEach((s, k) => s.classList.toggle('is-on', k === i));
+    dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
+    root.dataset.scene = String(i);
   };
   _cinemaReset = () => { backToTop = true; };
+  // 곡 리스트 맨 위에서 위로 당겨 돌아오면 메인의 마지막 장면(말씀)에 내려 준다
+  _cinemaLand = (where) => { landing = where; };
   window.addEventListener('hashchange', () => {
-    if (backToTop && page.classList.contains('active')) { backToTop = false; toTop(); }
+    if (!page.classList.contains('active')) return;
+    if (landing === 'last') { landing = null; backToTop = false; goScene(scenes.length - 1); }
+    else if (backToTop) { backToTop = false; goScene(0); }
   });
 }
 
-/* ── 메인 → 곡 리스트 넘김 ─────────────────────────────
-   메인 맨 끝(꼬리말 다음)에 화면 한 칸짜리 빈자리가 있다. 그 자리로 끌어내리는 만큼(p: 0→1)
-   아래에서 종이색 빛이 차오르고(어두운 영상 → 밝은 곡 리스트), 탭 바 글씨도 함께 밝은 화면용으로 바뀐다.
-   끝까지 내리면 곡 리스트를 열고, 덮었던 막은 천천히 걷힌다. 손가락을 따라 움직이므로 되돌릴 수도 있다. */
+/* ── 탭 사이 넘김 — 색이 스르륵 바뀌는 막 ─────────────────
+   막은 CSS 전환(투명도, --handoff)으로만 움직이고, 순서는 정해진 시간(setTimeout)으로만 진행한다.
+   화면 갱신 고리(requestAnimationFrame)에 기대지 않으므로 휴대폰 브라우저에서도 중간에 멈추지 않는다.
+   ① 막이 덮인다(0.45초) → ② 화면을 바꾼다 → ③ 막이 걷힌다(0.5초). */
 let _cinemaReset = () => {};
+let _cinemaLand = () => {};
 let _handing = false;
 let _cinemaTouchedAt = 0;
-// 화면에 보이는 넘김 정도(_hoShown)는 손가락 위치(_hoTarget)를 시간에 맞춰 천천히 따라간다.
-// 그래서 세게 쓸어 한 번에 끝까지 가도, 색은 1.6초에 걸쳐 스르륵 바뀐다.
-let _hoTarget = 0, _hoShown = 0, _hoRaf = 0, _hoLast = 0, _hoForced = false;
 let _hoSettle = 0;
-let _hoTo = 'songs', _hoFrom = 'main', _hoUp = 1 / 0.9;   // 어디로 가는지, 차오르는 빠르기(1초에 얼마나)
+const _VEIL_IN = 450, _VEIL_OUT = 500;
 
-/* 넘김 막을 준비한다: 밝은 탭으로 가면 아래에서 종이색이 차오르고,
-   메인으로 가면 위에서 어두운 영상 빛이 내려온다. 탭 바는 갈 곳에 미리 불이 옮겨 간다. */
-function _flowPrepare(to, fromTop, secs) {
-  if (_hoShown > 0 && _hoTo === to) return;
-  _hoTo = to;
-  _hoFrom = parseHash().tab;
-  _hoUp = 1 / (_reduceMotion.matches ? 0.25 : (secs || 0.9));
+function _setHandoff(v) {
+  const st = document.documentElement.style;
+  st.setProperty('--handoff', v.toFixed(3));
+  st.setProperty('--handoff-low', Math.min(1, v * 2.2).toFixed(3));   // 아래 탭 바 글씨는 더 일찍 바뀐다
+}
+/* 막의 색과 방향: 메인으로 가면 어두운 영상 빛(위에서), 밝은 탭으로 가면 종이색(아래에서) */
+function _flowVeil(to, fromTop) {
   const veil = document.getElementById('tabVeil');
-  if (veil) {
-    veil.classList.toggle('to-dark', to === 'main');
-    veil.classList.toggle('from-top', !!fromTop);
-  }
+  veil.classList.remove('is-leaving');
+  veil.classList.toggle('to-dark', to === 'main');
+  veil.classList.toggle('from-top', !!fromTop);
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('is-next', b.dataset.tab === to));
+  return veil;
 }
-/* 지금 바로 그 탭으로 넘긴다 (탭 누름, 「계속 내리면」 누름, 끝에서 더 당김) */
-function _flowGo(to, fromTop, secs) {
+function _flowGo(to, fromTop, land) {
   if (_handing) return;
-  _flowPrepare(to, fromTop, secs);
-  document.documentElement.classList.add('flow-commit');   // 탭 바 알약이 갈 곳으로 옮겨 간다
-  _hoForced = true;
-  _hoTarget = 1;
-  _hoRun();
-  _flowWatchdog();
-}
-/* 안전장치: 넘김이 정해졌는데 제시간에 끝나지 않으면(휴대폰 브라우저가 애니메이션을 멈추는 등)
-   그 자리에서 끝까지 넘긴다. 어떤 경우에도 화면이 막에 덮인 채 멈추지 않게. */
-let _flowWd = 0;
-function _flowWatchdog() {
-  clearTimeout(_flowWd);
-  _flowWd = setTimeout(() => {
-    if (!_hoForced || _handing) return;
-    _flowLog('watchdog: 넘김 강제 완료');
-    _hoRaf = 0;
-    _hoShown = 1;
-    _hoFinish();
-  }, Math.ceil(1000 / _hoUp) + 1200);
+  const from = parseHash().tab;
+  const html = document.documentElement;
+  html.classList.remove('flow-drag');
+  if (_reduceMotion.matches) {                          // 움직임 줄이기: 막 없이 바로
+    if (to === 'main') _cinemaLand(land || null);
+    _goTab(to);
+    if (from === 'main') _cinemaReset();
+    return;
+  }
+  _handing = true;
+  _flowLog('go ' + from + ' → ' + to);
+  const veil = _flowVeil(to, fromTop);
+  html.classList.add('flow-commit');                    // 탭 바 알약이 갈 곳으로 옮겨 간다
+  veil.classList.add('is-on');
+  _setHandoff(1);
+  setTimeout(() => {
+    veil.classList.add('is-leaving');                   // 다 덮은 채로 고정
+    if (to === 'songs') document.querySelectorAll('#page-songs .sl-ch').forEach((c, i) => c.classList.toggle('is-on', i === 0));
+    if (to === 'main') _cinemaLand(land || null);
+    _goTab(to);
+    if (from === 'main') _cinemaReset();
+    setTimeout(() => {
+      _setHandoff(0);
+      veil.classList.remove('is-on');                   // 걷힌다
+      html.classList.remove('flow-commit');
+      document.querySelectorAll('.tab-btn.is-next').forEach(b => b.classList.remove('is-next'));
+      setTimeout(() => {
+        veil.classList.remove('is-leaving', 'to-dark', 'from-top');
+        _handing = false;
+        _flowLog('done ' + to);
+      }, _VEIL_OUT + 80);
+    }, 60);
+  }, _VEIL_IN);
 }
 
+/* 메인 맨 끝: 꼬리말 다음 빈자리로 조금만 넘어와도 곡 리스트로 */
 function _cinemaHandoff(root, next, h) {
-  if (!next || _handing || _hoForced) return;
+  if (!next || _handing) return;
   // 들어온 뒤 한 번도 직접 내린 적이 없으면(새로고침 때 브라우저가 위치를 되살린 경우) 넘기지 않는다
   const p = _cinemaTouchedAt ? (root.scrollTop + h - next.offsetTop) / h : 0;
-  if (p >= 0.6) { _cinemaHandoffGo(); return; }        // 꼬리말 다음 빈자리로 넘어오면 바로 곡 리스트
-
-  // 스크롤이 빈자리에 조금 걸친 채 멈추면 꼬리말로 되돌린다 (영상만 보이는 화면에 서지 않게)
+  if (p >= 0.3) { _cinemaHandoffGo(); return; }
+  // 빈자리에 살짝 걸친 채 멈추면 꼬리말로 되돌린다 (영상만 보이는 화면에 서지 않게)
   clearTimeout(_hoSettle);
   _hoSettle = setTimeout(() => {
     if (_handing || !document.getElementById('page-main').classList.contains('active')) return;
     const q = (root.scrollTop + h - next.offsetTop) / h;
     if (q <= 0.02) return;
-    if (q >= 0.3 && _cinemaTouchedAt) _cinemaHandoffGo();
+    if (q >= 0.15 && _cinemaTouchedAt) _cinemaHandoffGo();
     else root.scrollTo({ top: next.offsetTop - h, behavior: 'smooth' });
   }, 200);
 }
-/* 메인 맨 끝에서 더 내리거나 「계속 내리면 곡 리스트」 를 누르면 애니메이션 없이 바로 곡 리스트로 */
-function _cinemaHandoffGo() {
-  if (_handing) return;
-  _handing = true;
-  document.querySelectorAll('#page-songs .sl-ch').forEach((c, i) => c.classList.toggle('is-on', i === 0));
-  _goTab('songs');
-  setTimeout(() => { _cinemaReset(); _handing = false; }, 300);
-}
-function _hoPaint(v) {
-  const e = v * v * (3 - 2 * v);                       // 처음과 끝은 부드럽게
-  const st = document.documentElement.style;
-  st.setProperty('--handoff', e.toFixed(3));
-  // 빛은 아래부터 차오르므로 아래쪽 탭 바 글씨는 더 일찍 어두운 색으로 바꾼다
-  st.setProperty('--handoff-low', Math.min(1, e * 2.2).toFixed(3));
-  document.getElementById('tabVeil')?.classList.toggle('is-on', v > 0);
-}
-function _hoRun() {
-  // 돌던 고리가 끊겼으면(0.6초 넘게 한 걸음도 안 갔으면) 새로 돌린다
-  if (_hoRaf && performance.now() - _hoLast > 600) { _flowLog('loop: 멈춘 고리 재시작'); _hoRaf = 0; }
-  if (_hoRaf) return;
-  _hoLast = performance.now();
-  // 화면 갱신(requestAnimationFrame)을 기본으로 쓰되, 브라우저가 갱신을 미루면 타이머가 대신 민다
-  const next = () => {
-    const to = setTimeout(() => { cancelAnimationFrame(id); step(performance.now()); }, 120);
-    const id = requestAnimationFrame(() => { clearTimeout(to); step(performance.now()); });
-  };
-  const step = (now) => {
-    const dt = Math.min(500, now - _hoLast) / 1000;
-    _hoLast = now;
-    const up = _hoTarget > _hoShown;
-    const rate = up ? _hoUp : 1 / 0.45;                  // 차오를 땐 천천히, 되돌릴 땐 빠르게
-    _hoShown = up ? Math.min(_hoTarget, _hoShown + rate * dt) : Math.max(_hoTarget, _hoShown - rate * dt);
-    _hoPaint(_hoShown);
-    if (_hoShown >= 0.999 && _hoTarget >= 0.98) { _hoRaf = 0; _hoFinish(); return; }
-    if (_hoShown === _hoTarget) {
-      _hoRaf = 0;
-      // 당기다 그만두어 막이 다 걷혔으면 탭 바 미리 켜 둔 불도 끈다
-      if (_hoShown === 0) document.querySelectorAll('.tab-btn.is-next').forEach(b => b.classList.remove('is-next'));
-      return;
-    }
-    next();
-  };
-  _hoRaf = 1;
-  next();
-}
-function _hoFinish() {
-  const veil = document.getElementById('tabVeil');
-  const to = _hoTo, from = _hoFrom;
-  clearTimeout(_flowWd);
-  _flowLog('finish → ' + to);
-  // 마지막 안전장치: 2.5초 뒤에도 막이 남아 있으면 모두 걷고, 갈 곳으로 화면을 맞춘다
-  setTimeout(() => {
-    if (!veil.classList.contains('is-on') && !veil.classList.contains('is-leaving') && !_hoForced) return;
-    _flowLog('cleanup: 남은 막 정리');
-    veil.classList.remove('is-on', 'is-leaving', 'to-dark', 'from-top');
-    document.documentElement.classList.remove('flow-commit');
-    document.querySelectorAll('.tab-btn.is-next').forEach(b => b.classList.remove('is-next'));
-    _hoShown = _hoTarget = 0; _hoForced = false; _handing = false; _hoRaf = 0;
-    const st2 = document.documentElement.style;
-    st2.setProperty('--handoff', '0'); st2.setProperty('--handoff-low', '0');
-    if (parseHash().tab !== to) _goTab(to); else route();
-  }, 2500);
-  _handing = true;
-  veil.classList.add('is-leaving');                    // 여기서부터는 막이 시간에 맞춰 걷힌다
-  // 곡 리스트는 첫 장(제목)이 이미 떠 있는 채로 열어, 막이 걷힐 때 한 번만 나타나게 한다
-  if (to === 'songs') document.querySelectorAll('#page-songs .sl-ch').forEach((c, i) => c.classList.toggle('is-on', i === 0));
-  // 막이 화면을 다 덮은 지금, 색 섞기 값은 0 으로 (막은 is-leaving 동안 그대로 덮고 있다)
-  const st = document.documentElement.style;
-  st.setProperty('--handoff', '0');
-  st.setProperty('--handoff-low', '0');
-  _goTab(to);
-  setTimeout(() => {
-    if (from === 'main') _cinemaReset();
-    _hoShown = _hoTarget = 0;
-    _hoForced = false;
-    _hoPaint(0);
-    document.querySelectorAll('.tab-btn.is-next').forEach(b => b.classList.remove('is-next'));
-    document.documentElement.classList.remove('flow-commit');
-    setTimeout(() => {
-      veil.classList.remove('is-leaving', 'to-dark', 'from-top');
-      _handing = false;
-    }, 800);
-  }, 200);
-}
+function _cinemaHandoffGo() { _flowGo('songs', false); }
 
-/* ── 밝은 탭들 사이의 넘김 ─────────────────────────────
-   메인 → 곡 리스트처럼, 곡 리스트·말씀 나눔·멤버 소개·팀 소개도 맨 끝에서 더 내리면 다음 탭으로,
-   맨 위에서 더 당기면 앞 탭으로 스르륵 넘어간다. 팀 소개 다음은 다시 메인(처음)이다. */
 /* ?debug=1 로 열면 화면 아래에 넘김 상태와 오류를 띄운다 (휴대폰에서 원인을 찾기 위한 것) */
 const _flowDebug = /[?&]debug=1/.test(location.search);
 const _flowLogs = [];
@@ -993,9 +942,10 @@ function _flowDebugPaint() {
     document.body.appendChild(box);
   }
   const act = document.querySelector('.page.active');
-  box.textContent = 'hash ' + location.hash + ' | page ' + (act ? act.id : '-')
-    + '\nshown ' + _hoShown.toFixed(2) + ' target ' + _hoTarget.toFixed(2) + ' forced ' + _hoForced
-    + ' handing ' + _handing + ' raf ' + _hoRaf + ' to ' + _hoTo
+  const sc = _scroller();
+  box.textContent = 'hash ' + location.hash + ' | page ' + (act ? act.id : '-') + ' | html ' + document.documentElement.className
+    + '\nhanding ' + _handing + ' handoff ' + getComputedStyle(document.documentElement).getPropertyValue('--handoff')
+    + ' scroll ' + Math.round(sc.scrollTop) + '/' + Math.round(sc.scrollHeight - sc.clientHeight)
     + '\nveil ' + (document.getElementById('tabVeil')?.className || '') + '\n' + _flowLogs.join('\n');
 }
 if (_flowDebug) {
@@ -1004,6 +954,9 @@ if (_flowDebug) {
   setInterval(_flowDebugPaint, 300);
 }
 
+/* ── 밝은 탭들 사이의 넘김 ─────────────────────────────
+   맨 끝에서 더 내리면 다음 탭으로, 맨 위에서 더 당기면 앞 탭으로 넘어간다.
+   곡 리스트 맨 위에서 당기면 메인의 마지막 장면으로, 팀 소개 다음은 다시 메인(처음)이다. */
 const _FLOW = ['main', 'songs', 'word', 'artists', 'story'];
 function _flowNeighbor(tab, dir) {
   const i = _FLOW.indexOf(tab);
@@ -1015,28 +968,43 @@ function _flowPageActive() {
   const r = parseHash();
   return r.tab !== 'main' && !r.slug && _FLOW.includes(r.tab) && !_openOverlays.length && !_handing;
 }
-const _PULL = 170;                                     // 이만큼(px) 더 당기면 넘어간다
+const _PULL = 150;                                     // 이만큼(px) 더 당기면 넘어간다
+/* 당기는 동안은 손가락을 따라 막이 살짝 비친다 (전환 없이 바로) */
 function _flowPull(dir, amount) {
   const to = _flowNeighbor(parseHash().tab, dir);
   if (!to) return;
-  _flowPrepare(to, dir < 0);
-  _hoTarget = Math.min(0.9, Math.max(0, amount / _PULL) * 0.9);
-  _hoRun();
+  const veil = _flowVeil(to, dir < 0);
+  document.documentElement.classList.add('flow-drag');
+  veil.classList.add('is-on');
+  _setHandoff(Math.min(1, amount / _PULL) * 0.5);
 }
 function _flowRelease(dir, amount) {
   const to = _flowNeighbor(parseHash().tab, dir);
-  if (to && amount >= _PULL * 0.55) _flowGo(to, dir < 0);
-  else if (!_hoForced) { _hoTarget = 0; _hoRun(); }
+  const html = document.documentElement;
+  if (to && amount >= _PULL * 0.6) {
+    _flowGo(to, dir < 0, to === 'main' && dir < 0 ? 'last' : null);
+    return;
+  }
+  if (_handing) return;
+  html.classList.remove('flow-drag');
+  _setHandoff(0);
+  setTimeout(() => {
+    if (_handing) return;
+    document.getElementById('tabVeil').classList.remove('is-on');
+    document.querySelectorAll('.tab-btn.is-next').forEach(b => b.classList.remove('is-next'));
+  }, _VEIL_IN);
 }
 function _flowEdges() {
-  const max = document.documentElement.scrollHeight - innerHeight;
-  return { top: scrollY <= 4, bottom: scrollY >= max - 8 };   // 소수점 스크롤로 끝에서 몇 px 모자라게 멈추기도 한다
+  const sc = _scroller();
+  const max = sc.scrollHeight - sc.clientHeight;
+  // 소수점 스크롤로 끝에서 몇 px 모자라게 멈추기도 한다
+  return { top: sc.scrollTop <= 4, bottom: sc.scrollTop >= max - 8 };
 }
 (function initFlowGestures() {
   let base = null, dir = 0, amount = 0;
   window.addEventListener('touchstart', () => { base = null; dir = 0; amount = 0; }, { passive: true });
   window.addEventListener('touchmove', e => {
-    if (!_flowPageActive() || _hoForced) return;
+    if (!_flowPageActive()) return;
     const y = e.touches[0].clientY;
     const edge = _flowEdges();
     if (base === null) {
@@ -1057,7 +1025,7 @@ function _flowEdges() {
   // 마우스 휠: 끝에서 같은 방향으로 계속 굴리면 쌓여서 넘어간다
   let acc = 0, wdir = 0, wt = 0;
   window.addEventListener('wheel', e => {
-    if (!_flowPageActive() || _hoForced) return;
+    if (!_flowPageActive()) return;
     const edge = _flowEdges();
     const d = e.deltaY > 0 ? 1 : -1;
     if (!((d > 0 && edge.bottom) || (d < 0 && edge.top))) { acc = 0; return; }

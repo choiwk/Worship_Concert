@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=99') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=105') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=99') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=105') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4121,7 +4121,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=99") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=105") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4533,9 +4533,11 @@ html.main-cinema.on-main .lang-opt.is-on { background: rgba(255, 255, 255, .12);
   pointer-events: none;
   visibility: hidden;
 }
-.tab-veil.is-on, .tab-veil.is-leaving { visibility: visible; }
-.tab-veil.is-leaving { transition: opacity .7s ease; }
-.tab-veil.is-leaving:not(.is-on) { opacity: 0; }
+/* 막은 투명도로 스르륵 나타나고 사라진다 (JS 는 class 만 붙였다 뗀다) */
+.tab-veil { opacity: 0; transition: opacity .5s ease, visibility 0s linear .5s; }
+.tab-veil.is-on { opacity: 1; visibility: visible; transition: opacity .45s ease, visibility 0s; }
+.tab-veil.is-leaving { visibility: visible; }
+html.flow-drag .tab-veil { transition: none; }
 
 /* 무대 조명이 켜지듯 아래쪽에서 번지는 따뜻한 빛 — 넘김의 한가운데서 가장 밝다 */
 .tab-veil-glow {
@@ -4877,7 +4879,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=99") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=105") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -4919,3 +4921,43 @@ html.flow-commit:not(.on-main) .tab-btn.is-next { color: var(--clay); }
   bottom: calc(var(--tab-content-h) + max(8px, env(safe-area-inset-bottom, 0px)) + 8px);
   margin: 0 auto;
 }
+
+
+/* 넘김 정도(--handoff)를 숫자로 등록해 두면 CSS 가 직접 부드럽게 바꿔 준다
+   (막이 아래·위에서 차오르는 모양, 탭 바 글씨 색). 지원하지 않는 브라우저는 투명도만 바뀐다. */
+@property --handoff { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --handoff-low { syntax: '<number>'; inherits: true; initial-value: 0; }
+html { transition: --handoff .45s ease, --handoff-low .3s ease; }
+html.flow-drag { transition: none; }
+
+/* ══════════════════════════════════
+   곡 리스트도 메인처럼 화면에 고정된 상자 안에서만 스크롤한다.
+   페이지 전체가 스크롤되면 휴대폰 주소창·도구 막대가 오르내리며 화면 높이가 바뀌고,
+   룰렛 가운데가 따라 흔들린다. 상자 안 스크롤은 도구 막대를 건드리지 않는다.
+══════════════════════════════════ */
+html.on-songs, html.on-songs body { overflow: hidden; }
+#page-songs.active {
+  position: fixed;
+  min-height: 0;                 /* .page 의 min-height:100dvh 가 바닥을 화면 밖으로 밀지 않게 */
+  top: var(--np-h, 38px);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: min(100%, var(--max-w));
+  margin: 0 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  z-index: 1;
+}
+#page-songs.active::-webkit-scrollbar { display: none; }
+#page-songs .sl-ch { min-height: var(--sl-h, 100%); }
+#page-songs .sl-ch.sl-intro { min-height: var(--sl-h, 100%); }
+#page-songs .sl-ch.sl-roulette {
+  min-height: auto;
+  padding: calc(var(--sl-h, 100svh) / 2 - 60px) 0;
+}
+/* 룰렛 장은 위치를 재며 카드를 가운데 맞추므로, 장 전환 때 미끄러지지 않고 투명도만 바뀐다 */
+html.sl-scenes #page-songs .sl-roulette > * { transform: none; filter: none; }
