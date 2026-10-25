@@ -258,14 +258,14 @@ function renderSongList() {
     li.appendChild(a);
     lis.push(li);
   });
-  _songChapters(box, lis);
+  _songRoulette(box, lis);
 }
 
 /* ── 곡 리스트: 룰렛 ─────────────────────────────────
    곡 카드가 세로 원통에 붙어 돌아가듯 움직인다. 화면 한가운데 온 카드가 '고른 곡'으로
    가장 크고 또렷하며, 위아래로 멀어질수록 작아지고 흐려지며 뒤로 눕는다.
    손을 떼면 카드 하나가 한가운데에 멈춘다(스크롤 스냅). 누르면 그 곡 화면으로 간다. */
-function _songChapters(box, lis) {
+function _songRoulette(box, lis) {
   const sec = _el('section', 'sl-ch sl-roulette');
   sec.setAttribute('aria-label', t('songs.title', '곡 리스트'));
   const count = _el('p', 'sl-wheel-count');
@@ -284,26 +284,32 @@ function _songChapters(box, lis) {
    카드 자체(li)는 움직이지 않고 안쪽 링크만 변형하므로, 잰 위치가 변형에 흔들리지 않는다. */
 const _reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const _wheelByCss = !!(window.CSS && CSS.supports && CSS.supports('animation-timeline: view()'));
+let _wheelCenter = null;
 function _songWheelUpdate() {
   const items = document.querySelectorAll('#page-songs .sl-wheel .song-item');
   if (!items.length) return;
   const vc = _slCenter();
+  // 스크롤에 묶인 CSS 애니메이션을 쓸 수 있으면 모양은 CSS 가 그린다 (화면 움직임과 같은 박자라 떨리지 않는다).
+  // 그때는 여기서 카드 스타일을 건드리지 않고, 가운데 곡만 찾는다.
+  const byJs = !_reduceMotion.matches && !_wheelByCss;
   let best = null, bestD = Infinity;
   items.forEach(li => {
     const r = li.getBoundingClientRect();
     const px = r.top + r.height / 2 - vc;               // 화면 가운데와의 거리(px)
-    const d = px / (r.height + 12);                      // 카드 몇 장만큼인지 (모양 계산용)
-    const a = Math.min(Math.abs(d), 3);
     // 가장 가까운 카드는 px 로 고른다 — 두 곡이 이어진 카드는 키가 커서 '장 수'로 비교하면 어긋난다
     if (Math.abs(px) < bestD) { bestD = Math.abs(px); best = li; }
+    if (!byJs) return;
+    const d = px / (r.height + 12);                      // 카드 몇 장만큼인지 (모양 계산용)
+    const a = Math.min(Math.abs(d), 3);
     const row = li.firstElementChild;
-    // 스크롤에 묶인 CSS 애니메이션을 쓸 수 있으면 모양은 CSS 가 그린다 (화면 움직임과 같은 박자라 떨리지 않는다)
-    if (_reduceMotion.matches || _wheelByCss) { row.style.transform = ''; row.style.opacity = ''; return; }
     const scale = 1.05 - Math.min(a, 2) * 0.08;
     const tilt = Math.max(-38, Math.min(38, -d * 16));
     row.style.transform = 'perspective(900px) rotateX(' + tilt.toFixed(1) + 'deg) scale(' + scale.toFixed(3) + ')';
     row.style.opacity = (1 - Math.min(a, 2.5) * 0.26).toFixed(2);
   });
+  // 가운데 곡이 바뀔 때만 표시를 바꾼다 (스크롤마다 다시 쓰지 않게)
+  if (best === _wheelCenter && best && best.classList.contains('is-center')) return;
+  _wheelCenter = best;
   items.forEach(li => li.classList.toggle('is-center', li === best));
   const now = document.querySelector('#page-songs .sl-wheel-now');
   if (now && best) now.textContent = best.querySelector('.song-num')?.textContent || '';
@@ -534,7 +540,7 @@ function updateStoryProgress() {
   if (!prog || !storyPage) return;
 
   if (!storyPage.classList.contains('active')) {
-    prog.style.width = '0%';
+    if (prog.style.width !== '0%') prog.style.width = '0%';   // 다른 화면에선 스크롤마다 다시 쓰지 않는다
     return;
   }
 
@@ -1255,25 +1261,6 @@ function renderMembers() {
   if (document.getElementById('page-artists')?.classList.contains('active')) triggerReveal();
 }
 
-/* 팀 소개 표지의 목차 — 각 장 제목(「01. 준비」)에서 만든다. 누르면 그 장으로 */
-function renderStoryToc() {
-  const toc = document.getElementById('storyToc');
-  if (!toc) return;
-  toc.querySelectorAll('.st-toc-item').forEach(a => a.remove());
-  document.querySelectorAll('#page-story .st-ch').forEach(sec => {
-    const label = (sec.querySelector('.ch-label')?.textContent || '').trim();
-    const m = label.match(/^(\d+)\.?\s*(.*)$/);
-    const btn = _el('button', 'st-toc-item');
-    btn.type = 'button';
-    btn.appendChild(_el('span', 'st-toc-no', m ? m[1] : ''));
-    btn.appendChild(_el('span', 'st-toc-name', m ? m[2] : label));
-    const arrow = _el('span', 'st-toc-arrow', '→');
-    arrow.setAttribute('aria-hidden', 'true');
-    btn.appendChild(arrow);
-    btn.onclick = () => sec.scrollIntoView({ behavior: _reduceMotion.matches ? 'auto' : 'smooth', block: 'start' });
-    toc.appendChild(btn);
-  });
-}
 
 /** 멤버 카드를 누르면 아래에서 올라오는 시트 */
 /** 멤버 시트의 말씀 접기/펼치기 */
@@ -2923,7 +2910,6 @@ function _updateKoNotice() {
 
 function onLangChange() {
   _updateKoNotice();
-  renderStoryToc();
   renderFinaleDate();
   if (typeof loadWordOpen === 'function') loadWordOpen();
   renderDetailGrid();
@@ -2950,7 +2936,6 @@ initMainCinema();
 renderDetailGrid();
 renderFinaleDate();
 renderMembers();
-renderStoryToc();
 renderSongList();
 _updateLP();
 _rsvpBindCount();

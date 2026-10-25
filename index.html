@@ -48,10 +48,10 @@
      gstatic preconnect 는 남긴다 — 크메르어를 고르면 그쪽에서 서체를 받는다. -->
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
-<link rel="preload" href="public/videos/main-portrait-poster.jpg?v=111" as="image"/>
-<link rel="preload" href="public/fonts/Sarang-site.woff2?v=111" as="font" type="font/woff2" crossorigin=""/>
+<link rel="preload" href="public/videos/main-portrait-poster.jpg?v=112" as="image"/>
+<link rel="preload" href="public/fonts/Sarang-site.woff2?v=112" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=111" rel="stylesheet"/>
+<link href="src/css/style.css?v=112" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -107,8 +107,8 @@
 <!-- 영상 주소는 JS 가 망 상태를 보고 고른다(고화질 4.2MB / 가벼운 985KB / 사진만).
      HTML 에 주소를 박아 두면 망이 느려도 고화질부터 받기 시작한다. -->
 <video id="cinemaVideo" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback
-  data-src-full="public/videos/main-portrait.mp4?v=111"
-  data-src-light="public/videos/main-portrait-light.mp4?v=111"></video>
+  data-src-full="public/videos/main-portrait.mp4?v=112"
+  data-src-light="public/videos/main-portrait-light.mp4?v=112"></video>
 <div class="cinema-scrim"></div>
 </div>
 <div class="cinema-track" id="cinemaTrack">
@@ -177,7 +177,7 @@
      PAGE 2 — SONG LIST
 ════════════════════════════════ -->
 <div class="page" id="page-songs">
-<!-- 곡 리스트는 화면 한 칸씩 장(章)으로 나뉜다: 소개 → 곡 묶음들(JS 가 화면 높이에 맞춰 나눈다) → 콘티 이야기 → 미리듣기 -->
+<!-- 곡 리스트: 표지 → 곡 룰렛(JS 가 songs.js 로 그린다) → 콘티 이야기 → 미리듣기. 화면에 고정된 상자 안에서 스크롤 -->
 <section class="sl-ch sl-intro" aria-label="곡 리스트 소개">
 <div class="sl-cover">
 <p class="sl-eyebrow" data-i18n="songs.coverDate">12월 19일 콘서트</p>
@@ -331,79 +331,100 @@
 </section>
 <!-- 멤버 목록 (src/js/members.js 데이터로 렌더) -->
 <div id="memberList"></div>
-</div><div class="page story-page" id="page-story"><div class="prog" id="storyProg"></div>
-<!-- 표지와 여덟 장 목차 -->
-<header class="st-cover">
-<p class="sl-eyebrow" data-i18n="story.eyebrow">2023 - 2026 우리 이야기</p>
-<h1 class="open-title st-title" data-i18n-html="story.title"><strong>찬양이</strong><br/>좋아서<br/>모인 청년들</h1>
-<p class="st-sub" data-i18n="story.sub">왜 우리가 여기 모였는지의 이야기</p>
-<nav class="st-toc" id="storyToc" aria-label="이야기 차례">
-<p class="sl-eyebrow" data-i18n="story.toc">한 장씩 읽기</p>
-</nav>
-</header>
-<section class="st-ch reveal" id="story-1">
-<div class="st-photos n1"><img alt="악기 세팅" loading="lazy" src="public/images/story-01.jpg"/></div>
-<div class="st-text">
+</div><div class="page story-page" id="page-story"><div class="prog" id="storyProg"></div><header class="opening reveal">
+<p class="open-eyebrow">Our Story  2023 - 2026</p>
+<h1 class="open-title" data-i18n-html="story.title"><strong>찬양이</strong><br/>좋아서<br/>모인 청년들</h1>
+<div class="open-divider"></div>
+<p class="open-sub" data-i18n="story.sub">왜 우리가 여기 모였는지의 이야기</p>
+</header><section class="scene">
+<div class="scene-img-wrap">
+<img alt="악기 세팅" loading="lazy" src="public/images/story-01.jpg" style="aspect-ratio:4/3"/>
+</div>
+<div class="scene-text reveal">
 <p class="ch-label" data-i18n="story.ch1">01. 준비</p>
 <h2 class="scene-headline" data-i18n-html="story.h1">지금 우리는 너무 빠르게<br/>변하는 시대를 살아가고 있습니다</h2>
 <p class="scene-body" data-i18n-html="story.b1">세상은 점점 더 빠르게 움직이고,<br/>우리의 시선은 자연스럽게<br/>눈에 보이는 것들로 향합니다.</p>
 </div>
-</section>
-<section class="st-ch reveal" id="story-2">
-<div class="st-photos n1"><img alt="혼자 앉아있는 장면" loading="lazy" src="public/images/story-02.jpg"/></div>
-<div class="st-text">
+</section><div class="divider reveal"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="혼자 앉아있는 장면" loading="lazy" src="public/images/story-02.jpg" style="aspect-ratio:2/3"/>
+</div>
+<div class="scene-text reveal">
 <p class="ch-label" data-i18n="story.ch2">02. 고민</p>
 <h2 class="scene-headline" data-i18n-html="story.h2">그러다 문득<br/>이런 생각이 들었습니다</h2>
 <p class="scene-body" data-i18n-html="story.b2">이렇게 바쁜 세상 속에서<br/>우리는 하나님을<br/>너무 쉽게 잊고 살아가고 있는 것은 아닐까.</p>
 </div>
-</section>
-<section class="st-ch reveal" id="story-3">
-<div class="st-photos n2"><img alt="차에 싣는 조명" loading="lazy" src="public/images/story-03.jpg"/><img alt="차에 싣는 물건" loading="lazy" src="public/images/story-04.jpg"/></div>
-<div class="st-text">
+</section><div class="divider reveal"></div><div class="text-block reveal">
 <p class="ch-label" data-i18n="story.ch3">03. 결심</p>
 <h2 class="scene-headline" data-i18n-html="story.h3">특히 청년들이<br/>하나님을 향한 <em>찬양</em>을<br/>점점 잃어버리게 되는 것은 아닐까</h2>
 <p class="scene-body" data-i18n-html="story.b3">그래서 우리는 시작했습니다.<br/>조명을 직접 구하고, 악기를 날랐습니다.<br/>아무것도 없었지만, 마음은 있었습니다.</p>
+</div><section class="scene" style="margin-top:3px">
+<div class="double-img">
+<div class="double-img-item reveal">
+<img alt="차에 싣는 조명" loading="lazy" src="public/images/story-03.jpg"/>
 </div>
-</section>
-<section class="st-ch reveal" id="story-4">
-<div class="st-photos n1"><img alt="리허설 / 소규모 공연" loading="lazy" src="public/images/story-05.jpg"/></div>
-<div class="st-text">
+<div class="double-img-item reveal d2">
+<img alt="차에 싣는 물건" loading="lazy" src="public/images/story-04.jpg"/>
+</div>
+</div>
+</section><div class="divider reveal" style="margin-top:clamp(48px,14vw,64px)"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="리허설 / 소규모 공연" loading="lazy" src="public/images/story-05.jpg" style="aspect-ratio:4/3"/>
+</div>
+<div class="scene-text reveal">
 <p class="ch-label" data-i18n="story.ch4">04. 작은 시작</p>
+
 </div>
-</section>
-<section class="st-ch reveal" id="story-5">
-<div class="st-photos n1"><img alt="첫 찬양" loading="lazy" src="public/images/story-06.jpg"/></div>
-<div class="st-text">
+</section><div class="divider reveal"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="첫 찬양" loading="lazy" src="public/images/story-06.jpg" style="aspect-ratio:3/2"/>
+</div>
+<div class="scene-text reveal">
 <p class="ch-label" data-i18n="story.ch5">05. 찬양이 시작됨</p>
+
 </div>
-</section>
-<section class="st-ch reveal" id="story-6">
-<div class="st-photos n2"><img alt="관객들" loading="lazy" src="public/images/story-07.jpg"/><img alt="함께 모여 찬양" loading="lazy" src="public/images/story-08.jpg"/></div>
-<div class="st-text">
+</section><div class="divider reveal"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="관객들" loading="lazy" src="public/images/story-07.jpg" style="aspect-ratio:4/3"/>
+</div>
+<div class="scene-img-wrap" style="margin-top:3px">
+<img alt="함께 모여 찬양" loading="lazy" src="public/images/story-08.jpg" style="aspect-ratio:4/3"/>
+</div>
+<div class="scene-text reveal">
 <p class="ch-label" data-i18n="story.ch6">06. 함께</p>
+
 </div>
-</section>
-<section class="st-ch reveal" id="story-7">
-<div class="st-photos n3"><img alt="함께 찬양" loading="lazy" src="public/images/story-09-0.JPG?v=111"/><img alt="함께 찬양" loading="lazy" src="public/images/story-09-1.JPG?v=111"/><img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG?v=111"/><img alt="팀 단체 사진" loading="lazy" src="public/images/story-10.jpg"/><img alt="팀 식사" loading="lazy" src="public/images/story-11.jpg"/></div>
-<div class="st-text">
+</section><div class="divider reveal"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-0.JPG?v=112" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-1.JPG?v=112" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG?v=112" style="aspect-ratio:3/2"/>
+</div>
+<div class="scene-text reveal">
 <p class="ch-label" data-i18n="story.ch7">07. 공동체</p>
 <h2 class="scene-headline" data-i18n-html="story.h7">우리는 믿습니다</h2>
 <p class="scene-body" data-i18n-html="story.b7">이 작은 시작이 다시 하나님을 바라보는 시간이 되고,<br/>찬양하는 청년들이 더 많아지는 시작이 되기를.</p>
 </div>
-</section>
-<section class="st-ch reveal" id="story-8">
-<div class="st-photos n2"><img alt="핸드폰 불빛 찬양" loading="lazy" src="public/images/story-12.jpg"/><img alt="기타와 게시판" loading="lazy" src="public/images/story-13.jpg"/></div>
-<div class="st-text">
+</section><div class="double-img" style="margin-top:3px">
+<div class="double-img-item reveal">
+<img alt="팀 단체 사진" loading="lazy" src="public/images/story-10.jpg"/>
+</div>
+<div class="double-img-item reveal d2">
+<img alt="팀 식사" loading="lazy" src="public/images/story-11.jpg"/>
+</div>
+</div><div class="divider reveal" style="margin-top:clamp(48px,14vw,64px)"></div><section class="scene">
+<div class="scene-img-wrap">
+<img alt="핸드폰 불빛 찬양" loading="lazy" src="public/images/story-12.jpg" style="aspect-ratio:3/2"/>
+</div>
+<div class="scene-text reveal">
 <p class="ch-label" data-i18n="story.ch8">08. 더 큰 울림</p>
 <h2 class="scene-headline" data-i18n-html="story.h8">우리의 찬양이<br/>세상 가운데<br/>울려 퍼지기를<br/>바랍니다</h2>
 </div>
-</section>
-<!-- 마무리: 우리가 붙드는 말씀 + 공연 정보·후원 -->
-<section class="st-end">
-<div class="st-word reveal">
-<p class="sl-eyebrow" data-i18n="story.wordLabel">우리가 붙드는 말씀</p>
-<p class="quote-lead" data-i18n="story.quoteLead">함께 지어져 가네</p>
-<p class="quote-text" data-i18n-html="story.quoteText">
+</section><div class="scene-img-wrap reveal" style="margin-top:3px">
+<img alt="기타와 게시판" loading="lazy" src="public/images/story-13.jpg" style="aspect-ratio:4/3;width:100%;display:block;object-fit:cover;filter:brightness(.92) saturate(.9)"/>
+</div><div class="quote-wrap">
+<p class="quote-lead reveal" data-i18n="story.quoteLead">함께 지어져 가네</p>
+<p class="quote-text reveal" data-i18n-html="story.quoteText">
   그의 안에서 건물마다 서로 연결하여<br/>
   주 안에서 성전이 되어가고<br/>
   <br/>
@@ -411,18 +432,15 @@
   하나님의 거하실 처소가 되기 위하여<br/>
   예수 안에서 <em>함께 지어져 가느니라</em>
 </p>
-<p class="quote-ref" data-i18n="story.quoteRef">에베소서 2장 21-22절</p>
-</div>
-<div class="finale reveal">
+<p class="quote-ref reveal d2" data-i18n="story.quoteRef">에베소서 2장 21-22절</p>
+</div><section class="finale">
+<div class="reveal">
 <h2 class="finale-title" data-i18n-html="story.finale">세상 가운데<br/>찬양이 계속<br/><strong>울려 퍼지기를 바랍니다</strong></h2>
 <p class="finale-date" id="finaleDate"></p>
-<div class="st-actions">
-<button class="btn-primary" onclick="switchTab('main', document.querySelector('.tab-btn[data-tab=&quot;main&quot;]'))" data-i18n="story.seeInfo">공연 정보 보기</button>
-<button class="btn-secondary" onclick="openDonate()" data-i18n="story.support">후원하기</button>
 </div>
-</div>
-</section>
-</div><!-- /page-story -->
+<button class="btn-primary reveal" onclick="switchTab('main', document.querySelector('.tab-btn[data-tab=&quot;main&quot;]'))" data-i18n="story.seeInfo">공연 정보 보기</button>
+<button class="btn-secondary reveal d1" onclick="openDonate()" data-i18n="story.support">후원하기</button>
+</section><footer><p data-i18n="footer.team">찬양이 좋아서 모인 청년들, 2026</p></footer></div><!-- /page-artists -->
 <!-- ════════════════════════════════
      BOTTOM TAB BAR
 ════════════════════════════════ -->
@@ -753,11 +771,11 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/i18n.js?v=111" defer></script>
-<script src="src/js/bible.js?v=111" defer></script>
-<script src="src/js/songs.js?v=111" defer></script>
-<script src="src/js/members.js?v=111" defer></script>
-<script src="src/js/app.js?v=111" defer></script>
+<script src="src/js/i18n.js?v=112" defer></script>
+<script src="src/js/bible.js?v=112" defer></script>
+<script src="src/js/songs.js?v=112" defer></script>
+<script src="src/js/members.js?v=112" defer></script>
+<script src="src/js/app.js?v=112" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
