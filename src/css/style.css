@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=109') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=111') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=109') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=111') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4121,7 +4121,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=109") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=111") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4833,7 +4833,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=109") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=111") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5048,3 +5048,263 @@ html.sl-scenes #page-songs .sl-roulette > * { transform: none; filter: none; }
 }
 #page-songs .lp-yt-btn svg { fill: var(--clay); }
 #page-songs .lp-yt-btn:active { background: var(--paper-warm); color: var(--clay); }
+
+/* ══════════════════════════════════
+   멤버 소개 — 곡 리스트와 같은 결: 표지 → 팀별 장(두 줄 카드) → 한 사람 시트
+══════════════════════════════════ */
+#page-artists .mb-cover {
+  padding: 96px clamp(24px, 7.5vw, 34px) 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  text-align: left;
+}
+.mb-title { margin: 0; font-size: clamp(40px, 11.5vw, 46px); font-weight: 400; line-height: 1.2; color: var(--ink); }
+.mb-meta { margin: 4px 0 0; font-size: 17px; line-height: 1.6; color: var(--ink-soft); }
+.mb-sep { margin: 0 10px; color: var(--line); }
+.mb-hl { color: var(--ink); background: linear-gradient(transparent 58%, var(--clay-wash) 58%); padding: 0 2px; }
+.mb-hint { margin: 0; font-size: 15px; line-height: 1.7; color: var(--ink-faint); }
+.mb-jump-label { margin-top: 18px; }
+.mb-jump { display: flex; flex-wrap: wrap; gap: 8px; }
+.mb-chip {
+  min-height: 44px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .72);
+  box-shadow: 0 4px 12px rgba(50, 44, 37, .05);
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.mb-chip span { font-size: 13px; color: var(--ink-faint); }
+.mb-chip:focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; }
+
+#page-artists .mb-team { padding: 30px clamp(18px, 5.5vw, 26px) 6px; scroll-margin-top: 16px; }
+.mb-team-head { display: flex; flex-direction: column; gap: 4px; margin: 0 6px 14px; }
+.mb-team-no { color: var(--clay); font-variant-numeric: tabular-nums; }
+.mb-team-title { display: flex; align-items: baseline; gap: 10px; }
+#page-artists .mb-team .artist-group-label {
+  margin: 0;
+  padding: 0;
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--ink);
+  text-align: left;
+  background: none;
+}
+#page-artists .mb-team .artist-group-label::before,
+#page-artists .mb-team .artist-group-label::after { display: none; }
+.mb-team-count { font-size: 16px; color: var(--ink-faint); }
+
+#page-artists .mb-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+}
+#page-artists .mb-card {
+  width: 100%;
+  min-height: 76px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  margin: 0;
+  border: 0;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 6px 18px rgba(50, 44, 37, .07);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  opacity: 1;
+  transform: none;
+}
+/* 이야기를 남긴 사람: 카드 가장자리가 옅게 빛나고 누를 수 있다 */
+#page-artists .mb-card.is-linked {
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 6px 18px rgba(50, 44, 37, .07), 0 0 0 2px rgba(230, 201, 182, .8);
+}
+#page-artists .mb-card.is-linked:active { transform: scale(.98); }
+#page-artists .mb-card:focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; }
+#page-artists .mb-av {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  margin: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--paper-warm);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+#page-artists .mb-av img { width: 100%; height: 100%; object-fit: cover; }
+.mb-initial { font-size: 19px; color: #7d3a20; }
+.mb-who { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+#page-artists .mb-card .artist-card-name { margin: 0; font-size: 17px; color: var(--ink); text-align: left; }
+#page-artists .mb-card .artist-card-role {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-faint);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 한 사람 시트: 사진 옆에 이름·교회, 아래로 맡은 팀·한마디·말씀 카드 */
+#memberSheet .member-body {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  column-gap: 18px;
+  align-items: center;
+  text-align: left;
+}
+#memberSheet .member-avatar {
+  grid-row: span 2;
+  width: 96px;
+  height: 96px;
+  margin: 0;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(50, 44, 37, .16);
+}
+#memberSheet .member-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+#memberSheet .member-name { margin: 0; align-self: end; font-size: 28px; text-align: left; }
+#memberSheet .member-meta { align-self: start; margin: 4px 0 0; justify-content: flex-start; }
+#memberSheet .member-role {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 18px 0 0;
+}
+.mb-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(230, 201, 182, .45);
+  font-size: 14px;
+  color: #7d3a20;
+}
+#memberSheet .member-say,
+#memberSheet .member-verse { grid-column: 1 / -1; text-align: left; }
+#memberSheet .member-say { margin-top: 22px; }
+#memberSheet .member-bio {
+  font-size: 20px;
+  line-height: 1.6;
+  color: var(--ink);
+  text-align: left;
+}
+#memberSheet .member-verse {
+  margin-top: 20px;
+  padding: 20px 20px 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 8px 22px rgba(50, 44, 37, .07);
+}
+#memberSheet .member-verse-text { text-align: left; }
+#memberSheet .member-verse-ref { text-align: left; color: var(--clay); }
+
+/* ══════════════════════════════════
+   팀 소개 — 표지와 목차 → 장마다 사진 카드 + 글 → 우리가 붙드는 말씀
+══════════════════════════════════ */
+#page-story .st-cover {
+  padding: 92px clamp(24px, 7.5vw, 34px) 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+}
+#page-story .st-title { margin: 0; font-size: clamp(34px, 9.6vw, 40px); line-height: 1.3; text-align: left; color: var(--ink); }
+#page-story .st-sub { margin: 2px 0 0; font-size: 16px; line-height: 1.7; color: var(--ink-soft); }
+.st-toc { align-self: stretch; margin-top: 24px; display: flex; flex-direction: column; }
+.st-toc .sl-eyebrow { margin-bottom: 6px; }
+.st-toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  min-height: 46px;
+  padding: 0 4px;
+  border: 0;
+  border-bottom: 1px solid rgba(226, 217, 201, .7);
+  background: none;
+  font: inherit;
+  font-size: 17px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.st-toc-item:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+.st-toc-no { width: 26px; font-size: 14px; color: var(--clay); font-variant-numeric: tabular-nums; }
+.st-toc-arrow { margin-left: auto; font-size: 14px; color: var(--ink-faint); }
+
+#page-story .st-ch { padding: 34px clamp(18px, 5.5vw, 26px) 12px; scroll-margin-top: 12px; }
+.st-photos { border-radius: 22px; overflow: hidden; box-shadow: 0 14px 34px rgba(50, 44, 37, .14); background: var(--paper-warm); }
+.st-photos img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.st-photos.n1 img { aspect-ratio: 4 / 3; max-height: 460px; }
+.st-photos.n2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+.st-photos.n2 img { aspect-ratio: 3 / 4; }
+/* 사진이 여러 장이면 옆으로 넘겨 본다 */
+.st-photos.n3 { display: flex; gap: 3px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+.st-photos.n3::-webkit-scrollbar { display: none; }
+.st-photos.n3 img { flex: 0 0 84%; aspect-ratio: 4 / 3; scroll-snap-align: center; }
+#page-story .st-text { padding: 20px 6px 0; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+#page-story .st-text .ch-label { margin: 0; font-size: 14px; color: var(--clay); text-align: left; }
+#page-story .st-text .scene-headline { margin: 0; font-size: clamp(21px, 5.8vw, 24px); line-height: 1.5; color: var(--ink); text-align: left; }
+#page-story .st-text .scene-headline em { font-style: normal; background: linear-gradient(transparent 58%, var(--clay-wash) 58%); }
+#page-story .st-text .scene-body { margin: 0; font-size: 16px; line-height: 1.85; color: var(--ink-soft); text-align: left; }
+
+#page-story .st-end { padding: 44px clamp(16px, 5vw, 22px) 10px; display: flex; flex-direction: column; gap: 30px; }
+.st-word {
+  padding: 24px 22px 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 10px 28px rgba(50, 44, 37, .08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+#page-story .st-word .quote-lead { margin: 0; font-size: 24px; color: var(--clay); text-align: left; }
+#page-story .st-word .quote-text { margin: 0; font-size: 16px; line-height: 1.9; color: var(--ink); text-align: left; }
+#page-story .st-word .quote-text em { font-style: normal; background: linear-gradient(transparent 58%, var(--clay-wash) 58%); }
+#page-story .st-word .quote-ref { margin: 0; font-size: 14px; color: var(--ink-faint); text-align: left; }
+#page-story .st-end .finale { padding: 0 6px; margin: 0; text-align: left; background: none; }
+#page-story .st-end .finale-title { margin: 0; font-size: 21px; line-height: 1.6; color: var(--ink); text-align: left; }
+#page-story .st-end .finale-title strong { font-weight: 400; color: var(--ink); background: linear-gradient(transparent 58%, var(--clay-wash) 58%); }
+#page-story .st-end .finale-date { text-align: left; }
+.st-actions { display: flex; gap: 10px; margin-top: 18px; }
+#page-story .st-actions button {
+  flex: 1;
+  width: auto;
+  min-height: 48px;
+  margin: 0;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(165, 77, 48, .35);
+  background: rgba(255, 255, 255, .78);
+  color: var(--clay);
+  font: inherit;
+  font-size: 16px;
+  box-shadow: none;
+}
+#page-story .st-actions button:active { background: var(--paper-warm); }
+/* 시트 자리 지정: 사진(1~2줄 왼쪽) · 이름(1줄) · 교회·인스타(2줄) · 맡은 팀(3줄) */
+#memberSheet .member-avatar { grid-column: 1; grid-row: 1 / span 2; }
+#memberSheet .member-name { grid-column: 2; grid-row: 1; }
+#memberSheet .member-meta { grid-column: 2; grid-row: 2; }
+#memberSheet .member-role { grid-row: 3; }

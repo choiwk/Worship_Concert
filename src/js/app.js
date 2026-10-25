@@ -1169,54 +1169,109 @@ function renderMembers() {
   if (!wrap || typeof MEMBERS === 'undefined') return;
   wrap.innerHTML = '';
 
-  MEMBERS.forEach((section, gi) => {
-    const block = _el('div', 'artist-section-block');
-    block.appendChild(_el('h3', 'artist-group-label', _teamName(section.group)));
+  // 표지: 사람 수(여러 팀에 속한 사람은 한 번만)와 팀 수
+  const ids = new Set();
+  MEMBERS.forEach(sec => sec.people.forEach(e => ids.add(e.id)));
+  const meta = document.getElementById('mbMeta');
+  if (meta) {
+    meta.innerHTML = t('artists.meta', '{p}명 <span class="mb-sep">/</span> {t}팀이 <span class="mb-hl">한 무대</span>를 준비해요')
+      .replace('{p}', ids.size).replace('{t}', MEMBERS.length);   // 숫자와 내가 적은 번역문만 들어간다
+  }
+  const jump = document.getElementById('mbJump');
+  if (jump) jump.innerHTML = '';
 
-    const grid = _el('div', 'artist-grid');
+  const total = String(MEMBERS.length).padStart(2, '0');
+  MEMBERS.forEach((section, gi) => {
+    const block = _el('section', 'artist-section-block mb-team reveal');
+    block.id = 'mb-team-' + gi;
+
+    // 팀 머리말: 01 / 06 · 팀 이름 · 사람 수
+    const head = _el('div', 'mb-team-head');
+    const no = _el('p', 'sl-eyebrow');
+    no.appendChild(_el('span', 'mb-team-no', String(gi + 1).padStart(2, '0')));
+    no.appendChild(document.createTextNode(' / ' + total));
+    head.appendChild(no);
+    const title = _el('div', 'mb-team-title');
+    title.appendChild(_el('h3', 'artist-group-label', _teamName(section.group)));
+    title.appendChild(_el('span', 'mb-team-count',
+      t('artists.count', '{n}명').replace('{n}', section.people.length)));
+    head.appendChild(title);
+    block.appendChild(head);
+
+    // 표지의 팀 바로가기
+    if (jump) {
+      const chip = _el('button', 'mb-chip');
+      chip.type = 'button';
+      chip.appendChild(document.createTextNode(_teamName(section.group) + ' '));
+      chip.appendChild(_el('span', '', String(section.people.length)));
+      chip.onclick = () => block.scrollIntoView({ behavior: _reduceMotion.matches ? 'auto' : 'smooth', block: 'start' });
+      jump.appendChild(chip);
+    }
+
+    const grid = _el('div', 'artist-grid mb-grid');
     section.people.forEach((entry, pi) => {
       const person = resolveMember(entry);
       if (!person) return;               // PEOPLE 에 없는 id 는 건너뛴다
-      // 인스타 주소가 있으면 카드를 눌러 아래에서 올라오는 시트를 연다
-      const linked = !!person.instagram;
-      const card = _el(linked ? 'button' : 'div', 'artist-card reveal' + (linked ? ' is-linked' : ''));
+      // 남긴 이야기(말씀·한마디·교회·인스타)가 있으면 카드를 눌러 아래에서 올라오는 시트를 연다
+      const linked = !!(person.instagram || person.verse || person.bio || person.church);
+      const card = _el(linked ? 'button' : 'div', 'artist-card mb-card' + (linked ? ' is-linked' : ''));
       if (linked) {
         card.type = 'button';
         card.setAttribute('aria-haspopup', 'dialog');
         card.setAttribute('aria-label',
-          _personName(person) + (person.role ? ' ' + _roleName(person.role) : '') + ' Instagram');
+          _personName(person) + (person.role ? ' ' + _roleName(person.role) : '') + ' 소개 보기');
         card.onclick = () => openMember(gi, pi);
       }
 
-      const avatar = _el('div', 'artist-avatar');
+      const avatar = _el('div', 'artist-avatar mb-av');
+      const initial = () => _el('span', 'mb-initial', (_personName(person) || '?').trim().charAt(0));
       if (person.photo) {
         const img = _el('img');
         img.src = person.photo;
-        img.alt = '';                 // 이름이 바로 아래 있으므로 중복 읽기 방지
+        img.alt = '';                 // 이름이 바로 옆에 있으므로 중복 읽기 방지
         img.loading = 'lazy';
         img.decoding = 'async';
-        // 사진을 못 불러오면 조용히 기호로 되돌린다
-        img.onerror = () => { img.remove(); avatar.appendChild(_avatarIcon(person)); };
+        // 사진을 못 불러오면 조용히 이름 첫 글자로 되돌린다
+        img.onerror = () => { img.remove(); avatar.appendChild(initial()); };
         avatar.appendChild(img);
       } else {
-        avatar.appendChild(_avatarIcon(person));
-      }
-
-      if (linked) {
-        const badge = _el('span', 'artist-ig');
-        badge.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-ig"/></svg>';
-        avatar.appendChild(badge);
+        avatar.appendChild(initial());
       }
       card.appendChild(avatar);
 
-      card.appendChild(_el('p', 'artist-card-name', _personName(person)));
-      if (person.role) card.appendChild(_el('p', 'artist-card-role', _roleName(person.role)));
+      const who = _el('span', 'mb-who');
+      who.appendChild(_el('span', 'artist-card-name', _personName(person)));
+      who.appendChild(_el('span', 'artist-card-role',
+        person.role ? _roleName(person.role) : (person.church || _teamName(section.group))));
+      card.appendChild(who);
 
       grid.appendChild(card);
     });
 
     block.appendChild(grid);
     wrap.appendChild(block);
+  });
+  // 보고 있는 중에 다시 그렸으면(언어 바꿈 등) 새 장이 숨은 채 남지 않게
+  if (document.getElementById('page-artists')?.classList.contains('active')) triggerReveal();
+}
+
+/* 팀 소개 표지의 목차 — 각 장 제목(「01. 준비」)에서 만든다. 누르면 그 장으로 */
+function renderStoryToc() {
+  const toc = document.getElementById('storyToc');
+  if (!toc) return;
+  toc.querySelectorAll('.st-toc-item').forEach(a => a.remove());
+  document.querySelectorAll('#page-story .st-ch').forEach(sec => {
+    const label = (sec.querySelector('.ch-label')?.textContent || '').trim();
+    const m = label.match(/^(\d+)\.?\s*(.*)$/);
+    const btn = _el('button', 'st-toc-item');
+    btn.type = 'button';
+    btn.appendChild(_el('span', 'st-toc-no', m ? m[1] : ''));
+    btn.appendChild(_el('span', 'st-toc-name', m ? m[2] : label));
+    const arrow = _el('span', 'st-toc-arrow', '→');
+    arrow.setAttribute('aria-hidden', 'true');
+    btn.appendChild(arrow);
+    btn.onclick = () => sec.scrollIntoView({ behavior: _reduceMotion.matches ? 'auto' : 'smooth', block: 'start' });
+    toc.appendChild(btn);
   });
 }
 
@@ -1248,8 +1303,14 @@ function openMember(groupIndex, personIndex) {
   }
 
   document.getElementById('memberName').textContent = _personName(person);
+  // 맡은 팀을 모두 꼬리표로 (여러 팀에서 섬기는 사람도 있다)
   const role = document.getElementById('memberRole');
-  role.textContent = person.role || _teamName(section.group);
+  role.innerHTML = '';
+  MEMBERS.forEach(sec => sec.people.forEach(e => {
+    if (e.id !== entry.id) return;
+    const r = e.role ? ' ' + _roleName(e.role) : '';
+    role.appendChild(_el('span', 'mb-tag', _teamName(sec.group) + r));
+  }));
 
   // 한마디 — 없으면 영역째 감춘다
   document.getElementById('memberBio').textContent = person.bio || '';
@@ -2862,6 +2923,7 @@ function _updateKoNotice() {
 
 function onLangChange() {
   _updateKoNotice();
+  renderStoryToc();
   renderFinaleDate();
   if (typeof loadWordOpen === 'function') loadWordOpen();
   renderDetailGrid();
@@ -2888,6 +2950,7 @@ initMainCinema();
 renderDetailGrid();
 renderFinaleDate();
 renderMembers();
+renderStoryToc();
 renderSongList();
 _updateLP();
 _rsvpBindCount();
