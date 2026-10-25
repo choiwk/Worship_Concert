@@ -190,6 +190,12 @@ function renderSongList() {
     document.getElementById('setlistPlaySub').textContent =
       t('songs.count', '{n}곡').replace('{n}', SONGS.length);
   }
+  // 표지: 곡 수와 주제곡 (언어가 바뀌면 다시 그린다)
+  const count = document.getElementById('slCount');
+  if (count) count.textContent = t('songs.count', '{n}곡').replace('{n}', SONGS.length);
+  const theme = document.getElementById('slTheme');
+  const lead = SONGS.find(isLeadSong);
+  if (theme && lead) theme.textContent = _partLabel(lead.parts[0]) || _songTitle(lead);
 
   SONGS.forEach(song => {
     const li = _el('li', 'song-item');
@@ -2875,75 +2881,10 @@ function onLangChange() {
 
 
 /* ══════════════════════════════════
-   화면 가득 보기 안내
-   웹 페이지는 주소창을 직접 숨길 수 없다. 대신 기기마다 되는 방법을 한 번 알려 준다.
-   - 아이폰 사파리: 홈 화면에 추가 (그렇게 열면 주소창 없이 열린다. 사파리는 전체 화면 API 가 없다)
-   - 안드로이드 등: 전체 화면으로 보기 (requestFullscreen) + 설치 창이 오면 홈 화면에 추가
-══════════════════════════════════ */
-let _fsInstallPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  _fsInstallPrompt = e;
-  const b = document.getElementById('fsGuideInstall');
-  if (b) b.hidden = false;
-});
-
-function _fsGuideMode() {
-  const ua = navigator.userAgent || '';
-  const standalone = matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches
-    || navigator.standalone === true;
-  if (standalone || !matchMedia('(pointer: coarse)').matches) return '';
-  if (/KAKAOTALK/i.test(ua)) return '';   // 카카오톡 브라우저는 도구 막대를 끌 방법이 없다
-  const ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
-  if (ios) return /CriOS|FxiOS|EdgiOS|NAVER|Instagram|FBAN|Line\//.test(ua) ? '' : 'ios';
-  return document.documentElement.requestFullscreen ? 'full' : '';
-}
-
-function initFullscreenGuide() {
-  const box = document.getElementById('fsGuide');
-  if (!box) return;
-  let seen = false;
-  try { seen = sessionStorage.getItem('fs-guide') === '1'; } catch (e) {}
-  const mode = seen ? '' : _fsGuideMode();
-  if (!mode) return;
-
-  const copy = {
-    ios:   ['fs.ios', '아래 공유 버튼을 누르고 홈 화면에 추가를 고르면, 주소창 없이 화면 가득 볼 수 있어요.', '', ''],
-    full:  ['fs.full', '주소창 없이 화면 가득 볼 수 있어요.', 'fs.go', '화면 가득 보기'],
-  }[mode];
-  const text = document.getElementById('fsGuideText');
-  const go = document.getElementById('fsGuideGo');
-  text.dataset.i18n = copy[0];
-  text.textContent = copy[1];
-  if (copy[2]) { go.dataset.i18n = copy[2]; go.textContent = copy[3]; } else go.hidden = true;
-  if (typeof _applyAttrs === 'function') _applyAttrs();
-
-  const close = () => {
-    box.hidden = true;
-    try { sessionStorage.setItem('fs-guide', '1'); } catch (e) {}
-  };
-  document.getElementById('fsGuideClose').addEventListener('click', close);
-  go.addEventListener('click', () => {
-    const el = document.documentElement;
-    Promise.resolve(el.requestFullscreen({ navigationUI: 'hide' })).catch(() => {});
-    close();
-  });
-  document.getElementById('fsGuideInstall').addEventListener('click', () => {
-    if (!_fsInstallPrompt) return;
-    _fsInstallPrompt.prompt();
-    _fsInstallPrompt = null;
-    close();
-  });
-  box.hidden = false;
-}
-
-
-/* ══════════════════════════════════
    boot — 최초 렌더 및 라우팅 시작
 ══════════════════════════════════ */
 
 initMainCinema();
-initFullscreenGuide();
 renderDetailGrid();
 renderFinaleDate();
 renderMembers();

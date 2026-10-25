@@ -41,12 +41,10 @@ const BIBLE_LOCALE = {
 const I18N = {
   en: {
     'main.scrollHint': 'Scroll down',
-    'fs.ios': 'Tap the Share button below and choose Add to Home Screen to view it full screen without the address bar.',
-    'fs.full': 'View it full screen without the address bar.',
-    'fs.go': 'Full screen',
-    'fs.install': 'Add to Home Screen',
-    'fs.close': 'Close',
     'next.cue': 'Keep scrolling for',
+    'songs.coverDate': 'Concert on December 19',
+    'songs.theme': 'Theme song',
+    'songs.noteLabel': 'About this setlist',
     'next.songs': 'Songs',
     'main.today': 'TODAY',
     'main.directions': 'Directions',
@@ -215,12 +213,10 @@ const I18N = {
 
   km: {
     'main.scrollHint': 'រំកិលចុះក្រោម',
-    'fs.ios': 'ចុចប៊ូតុង Share ខាងក្រោម ហើយជ្រើស Add to Home Screen ដើម្បីមើលពេញអេក្រង់ ដោយគ្មានរបារអាសយដ្ឋាន។',
-    'fs.full': 'មើលពេញអេក្រង់ ដោយគ្មានរបារអាសយដ្ឋាន។',
-    'fs.go': 'ពេញអេក្រង់',
-    'fs.install': 'បន្ថែមទៅអេក្រង់ដើម',
-    'fs.close': 'បិទ',
     'next.cue': 'រំកិលបន្តទៅ',
+    'songs.coverDate': 'ការប្រគុំតន្ត្រី ថ្ងៃទី 19 ខែធ្នូ',
+    'songs.theme': 'បទប្រធានបទ',
+    'songs.noteLabel': 'អំពីបញ្ជីបទចម្រៀង',
     'next.songs': 'បទចម្រៀង',
     'main.today': 'ថ្ងៃនេះ',
     'main.directions': 'ផ្លូវទៅ',

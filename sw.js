@@ -1,19 +1,19 @@
-const CACHE_NAME = 'worship-concert-v108';
+const CACHE_NAME = 'worship-concert-v109';
 /* 영상(43MB)과 음원(2.3MB)은 여기 넣지 않는다.
    선캐시에 넣으면 첫 방문에 45MB 를 내려받고서야 설치가 끝난다.
    아래 fetch 처리가 cache-first + 런타임 캐시라, 실제로 재생할 때 캐시된다. */
 const ASSETS = [
   './',
   './index.html',
-  './src/css/style.css?v=108',
-  './src/js/app.js?v=108',
-  './src/js/i18n.js?v=108',
-  './src/js/bible.js?v=108',
-  './src/js/songs.js?v=108',
-  './src/js/members.js?v=108',
+  './src/css/style.css?v=109',
+  './src/js/app.js?v=109',
+  './src/js/i18n.js?v=109',
+  './src/js/bible.js?v=109',
+  './src/js/songs.js?v=109',
+  './src/js/members.js?v=109',
   './manifest.json',
-  './public/videos/main-portrait-poster.jpg?v=108',   // 메인 첫 화면 사진(80KB). 영상보다 먼저, 망이 끊겨도 보이게
-  './public/fonts/Sarang-site.woff2?v=108',
+  './public/videos/main-portrait-poster.jpg?v=109',   // 메인 첫 화면 사진(80KB). 영상보다 먼저, 망이 끊겨도 보이게
+  './public/fonts/Sarang-site.woff2?v=109',
   './public/images/members/choi-wonkeun.jpg',
   './public/images/story-01.jpg',
   './public/images/story-02.jpg',
@@ -23,9 +23,9 @@ const ASSETS = [
   './public/images/story-06.jpg',
   './public/images/story-07.jpg',
   './public/images/story-08.jpg',
-  './public/images/story-09-0.JPG?v=108',
-  './public/images/story-09-1.JPG?v=108',
-  './public/images/story-09-2.JPG?v=108',
+  './public/images/story-09-0.JPG?v=109',
+  './public/images/story-09-1.JPG?v=109',
+  './public/images/story-09-2.JPG?v=109',
   './public/images/story-10.jpg',
   './public/images/story-11.jpg',
   './public/images/story-12.jpg',
