@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=112') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=113') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=112') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=113') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -463,28 +463,15 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 /* 크메르 글자는 손글씨 서체에 아예 없다. 폴백('Sarang Full', 503KB)을
    스택에서 빼 두어야 이 한 줄 때문에 큰 파일을 내려받지 않는다. */
-.lang-opt[data-lang="km"] {
-  font-family: 'Khmer Sangam MN', 'Noto Serif Khmer', 'Apple SD Gothic Neo', sans-serif;
-}
+
 .lang-opt.is-on { background: var(--paper-warm); color: #7d3a20; }
 
 /* 크메르 글자는 손글씨 폰트에 없다. 캄보디아어일 때만 전용 폰트를 앞에 세운다.
    손글씨 느낌은 줄지만, 글자가 네모로 깨지는 것보다 낫다. */
-html.is-km body,
-html.is-km .tab-label,
-html.is-km .lang-btn,
-html.is-km .lang-opt {
-  font-family: 'Noto Serif Khmer', 'Sarang', 'Apple SD Gothic Neo', sans-serif;
-}
-html.is-km .ph-title,
-html.is-km .word-weekly-ref,
-html.is-km .rsvp-title {
-  -webkit-text-stroke: 0;
-}
+
 /* 크메르 글자는 자음 위아래로 모음·기호가 쌓인다. 줄간격을 그대로 두면
    윗줄과 아랫줄이 서로 닿는다. */
-html.is-km body { line-height: 1.95; }
-html.is-km .tab-label { font-size: 11px; }
+
 
 /* 검은 원형 FAB은 이 사이트의 종이·손글씨 톤과 겉돌아서
    종이 바탕에 클레이 테두리를 두른 원형 버튼으로 바꿨다. */
@@ -1269,39 +1256,10 @@ html[lang="km"] .title-main .line-hand-sub {
 
 /* 말씀 나눔 글은 한국어로 쓰여 있어 다른 언어에서는 보여주지 않는다.
    그 자리에 왜 비어 있는지 한 줄로 적는다. */
-.word-ko-only {
-  padding: 14px 16px;
-  font-size: clamp(13px, 3.4vw, 14px);
-  line-height: 1.8;
-  color: var(--ink-faint);
-  word-break: keep-all;
-}
 
-.song-roman {
-  display: block;
-  margin-top: 3px;
-  font-size: clamp(11px, 2.9vw, 12.5px);
-  color: var(--ink-faint);
-  letter-spacing: .01em;
-}
-
-.song-head-roman {
-  margin-top: 5px;
-  font-size: clamp(12px, 3.1vw, 14px);
-  color: var(--ink-faint);
-}
 
 /* 가사가 한국어라는 안내 */
-.song-ko-notice {
-  margin-bottom: clamp(16px, 4.5vw, 22px);
-  padding: 11px 14px;
-  background: var(--paper-warm);
-  border-radius: 10px;
-  font-size: clamp(13px, 3.4vw, 14px);
-  line-height: 1.75;
-  color: var(--ink-faint);
-  word-break: keep-all;
-}
+
 
 .song-sub {
   display: flex;
@@ -4074,7 +4032,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=112") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=113") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4707,14 +4665,12 @@ html.main-cinema.on-main .tab-btn::before { background: rgba(255, 255, 255, .13)
 /* 화면에 들어오면 스르륵 떠오른다 */
 html.sd-anim .song-page .song-head,
 html.sd-anim .song-page .song-yt,
-html.sd-anim .song-page .song-ko-notice,
 html.sd-anim .song-page .song-part,
 html.sd-anim .song-page .song-nav {
   transition: opacity .55s ease, transform .7s cubic-bezier(.2, .8, .2, 1);
 }
 html.sd-anim .song-page .song-head:not(.sd-in),
 html.sd-anim .song-page .song-yt:not(.sd-in),
-html.sd-anim .song-page .song-ko-notice:not(.sd-in),
 html.sd-anim .song-page .song-part:not(.sd-in),
 html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translateY(18px); }
 @media (prefers-reduced-motion: reduce) {
@@ -4768,7 +4724,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=112") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=113") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5158,3 +5114,6 @@ html.sl-scenes #page-songs .sl-roulette > * { transform: none; filter: none; }
 #memberSheet .member-name { grid-column: 2; grid-row: 1; }
 #memberSheet .member-meta { grid-column: 2; grid-row: 2; }
 #memberSheet .member-role { grid-row: 3; }
+
+/* 디자인 고르기 메뉴의 링크 */
+.design-opt { display: block; text-decoration: none; }

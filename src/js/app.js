@@ -126,6 +126,20 @@ function switchTab(name) {
   }
   _goTab(name);
 }
+/* 오른쪽 위 「디자인」 — 새 디자인과 기존 디자인(classic/ 고정본) 사이를 오간다 */
+function toggleDesignMenu(force) {
+  const menu = document.getElementById('designMenu');
+  const btn = document.getElementById('designBtn');
+  if (!menu || !btn) return;
+  const open = force !== undefined ? force : menu.hidden;
+  menu.hidden = !open;
+  btn.setAttribute('aria-expanded', String(open));
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest || e.target.closest('.lang-pick')) return;
+  toggleDesignMenu(false);                 // 바깥을 누르면 닫는다
+});
+
 function _goTab(name) {
   const target = '#/' + name;
   if (location.hash === target) { route(); return; }   // 같은 해시는 hashchange가 안 난다
@@ -190,7 +204,7 @@ function renderSongList() {
     document.getElementById('setlistPlaySub').textContent =
       t('songs.count', '{n}곡').replace('{n}', SONGS.length);
   }
-  // 표지: 곡 수와 주제곡 (언어가 바뀌면 다시 그린다)
+  // 표지: 곡 수와 주제곡
   const count = document.getElementById('slCount');
   if (count) count.textContent = t('songs.count', '{n}곡').replace('{n}', SONGS.length);
   const theme = document.getElementById('slTheme');
@@ -220,22 +234,12 @@ function renderSongList() {
     // 것보다 공연 순서가 그대로 읽힌다.
     // 2부 구성이라도 그 파트의 크메르어 이름이 없으면 곡 제목을 쓴다.
     // (02 처럼 두 곡을 한 제목으로 적어 주신 경우)
-    const headText = (song.parts[0].label
-        && (currentLang() === 'ko' || _trField(song.parts[0], 'label')))
-      ? _partLabel(song.parts[0])
-      : _songTitle(song);
+    const headText = song.parts[0].label || song.title;
     head.appendChild(_el('span', 'song-title-text', headText));
     if (song.tag) head.appendChild(_el('span', 'song-badge tag-' + tagKind(song.tag), _tagName(song.tag)));
     mid.appendChild(head);
 
-    // 한국어가 아닐 때는 제목을 소리 나는 대로 적어 둔다.
-    // 찬양곡 가사와 제목은 저작권이 있어 옮기지 않는다. 대신 읽고 찾을 수 있게 돕는다.
-    const subLine = _songSubLine(song);
-    if (subLine) mid.appendChild(_el('span', 'song-roman', subLine));
-
     subs.forEach(part => {
-      // 번역된 이름이 없는 파트는 제목에 이미 합쳐져 있으므로 따로 적지 않는다
-      if (currentLang() !== 'ko' && !_trField(part, 'label')) return;
       const sub = _el('span', 'song-sub');
       sub.appendChild(_el('span', 'song-sub-title', _partLabel(part)));
       if (part.note) sub.appendChild(_el('span', 'song-sub-note', '(' + _noteName(part.note) + ')'));
@@ -421,12 +425,6 @@ function renderSongDetail(slug) {
   head.appendChild(num);
   const h1 = _el('h1', 'song-head-title', _songTitle(song));
   head.appendChild(h1);
-  const roman = _el('p', 'song-head-roman');
-  roman.dataset.roman = song.roman || '';
-  roman.dataset.ko = song.title;
-  roman.dataset.km = song.titleKm || '';
-  roman.dataset.en = song.titleEn || '';
-  head.appendChild(roman);
   if (song.artist) head.appendChild(_el('p', 'song-head-artist', song.artist));
   if (song.tag) {
     head.appendChild(_el('span', 'song-badge tag-' + tagKind(song.tag), _tagName(song.tag)));
@@ -450,11 +448,6 @@ function renderSongDetail(slug) {
     wrap.appendChild(yt);
   }
 
-  /* 가사는 저작권이 있는 찬양곡이라 옮기지 않는다. 대신 한국어라고 알려 준다.
-     노드는 언제나 만들어 두고 _updateKoNotice() 가 언어에 맞춰 채운다.
-     언어를 한국어로 되돌렸을 때 외국어 안내문이 남지 않도록. */
-  wrap.appendChild(_el('p', 'song-ko-notice'));
-  _updateKoNotice();
 
   /* 가사 + 말씀 (한 곡에 두 곡이 이어지면 파트마다 반복) */
   song.parts.forEach((part, i) => {
@@ -531,7 +524,7 @@ function _songDetailReveal(wrap) {
       _sdObserver.unobserve(e.target);
     });
   }, { rootMargin: '0px 0px -8% 0px' });
-  wrap.querySelectorAll('.song-head, .song-yt, .song-ko-notice, .song-part, .song-nav').forEach(el => _sdObserver.observe(el));
+  wrap.querySelectorAll('.song-head, .song-yt, .song-part, .song-nav').forEach(el => _sdObserver.observe(el));
 }
 
 function updateStoryProgress() {
@@ -683,7 +676,7 @@ function _cinemaVideoPlan(conn) {
 }
 
 /* 옵션1 을 켠다. 기존 메인의 요소(제목·날짜·참여하기·말씀)를 장면 안으로 옮겨 온다.
-   복사하지 않고 옮기므로 번역·D-day·참여 신청 동작은 그대로 이어진다. */
+   복사하지 않고 옮기므로 D-day·참여 신청 동작은 그대로 이어진다. */
 function initMainCinema() {
   /* 옵션2 의 영상은 HTML 에서 자동 재생을 꺼 두었다(옵션1 일 때 43MB 를 받지 않도록).
      옵션2 일 때 여기서 예전과 똑같이 소리 없이 자동 재생한다. */
@@ -1067,9 +1060,7 @@ function _flowEdges() {
     const b = _el('button', 'flow-cue');
     b.type = 'button';
     const a = _el('span', '', '계속 내리면');
-    a.dataset.i18n = 'next.cue';
     const n = _el('b', '', { songs: '곡 리스트', word: '말씀 나눔', artists: '멤버 소개', story: '팀 소개', main: '메인' }[to]);
-    n.dataset.i18n = 'tab.' + to;
     b.append(a, ' ', n);
     b.addEventListener('click', () => _flowGo(to, false));
     box.appendChild(b);
@@ -1181,7 +1172,7 @@ function renderMembers() {
   const meta = document.getElementById('mbMeta');
   if (meta) {
     meta.innerHTML = t('artists.meta', '{p}명 <span class="mb-sep">/</span> {t}팀이 <span class="mb-hl">한 무대</span>를 준비해요')
-      .replace('{p}', ids.size).replace('{t}', MEMBERS.length);   // 숫자와 내가 적은 번역문만 들어간다
+      .replace('{p}', ids.size).replace('{t}', MEMBERS.length);   // 숫자와 내가 적은 문구만 들어간다
   }
   const jump = document.getElementById('mbJump');
   if (jump) jump.innerHTML = '';
@@ -1257,7 +1248,7 @@ function renderMembers() {
     block.appendChild(grid);
     wrap.appendChild(block);
   });
-  // 보고 있는 중에 다시 그렸으면(언어 바꿈 등) 새 장이 숨은 채 남지 않게
+  // 보고 있는 중에 다시 그렸으면 새 장이 숨은 채 남지 않게
   if (document.getElementById('page-artists')?.classList.contains('active')) triggerReveal();
 }
 
@@ -1406,7 +1397,7 @@ function _avatarIcon(person) {
 function renderFinaleDate() {
   const el = document.getElementById('finaleDate');
   if (!el) return;
-  /* 날짜와 장소가 확정되어 하나씩이다. 번역본이 있으면 그것을 쓴다. */
+  /* 날짜와 장소가 확정되어 하나씩이다. */
   const or = ' ' + t('common.or', '또는') + ' ';
   const date = CONCERT.dates.length === 1
     ? t('main.date', CONCERT.dates[0].short)
@@ -1606,7 +1597,7 @@ function openVerse(slug, partIndex) {
   });
 
   const full = document.getElementById('verseFull');
-  // 곡에 딸린 말씀도 지금 언어판 성경으로 보낸다
+  // 곡에 딸린 말씀은 개역한글 전체 장으로 보낸다
   full.href = bibleUrlFor(bible.url.split('/').pop());
   full.setAttribute('aria-label', bible.ref + ' 전체 장 읽기 (새 탭에서 열림)');
 
@@ -1986,15 +1977,6 @@ async function loadWordOpen() {
   const sec = document.getElementById('wordOpen');
   const rail = document.getElementById('wordOpenRail');
   if (!sec || !rail) return;
-
-  /* 팀원이 한국어로 쓴 글이라 옮길 수 없다.
-     한국어가 아닐 때는 글 대신 왜 비어 있는지 한 줄로 알린다. */
-  if (currentLang() !== 'ko') {
-    rail.innerHTML = '';
-    rail.appendChild(_el('p', 'word-ko-only', t('word.koOnly', '')));
-    sec.hidden = false;
-    return;
-  }
 
   /* 불러오는 동안 자리를 비워 두면 화면이 덜컥 늘어난다.
      먼저 '불러오는 중' 을 보여 주고, 글이 도착하면 바꿔 끼운다. */
@@ -2810,122 +2792,14 @@ function _fallbackCopy(text, callback) {
 }
 
 
-/* ══════════════════════════════════
-   언어 전환 — 자바스크립트가 그려 넣은 화면 다시 그리기
-
-   data-i18n 이 붙은 정적인 글은 i18n.js 가 알아서 바꾼다.
-   목록·카드처럼 코드가 만들어 넣은 것은 여기서 다시 그려야 한다.
-══════════════════════════════════ */
-
-/* 곡 가사 안내문을 현재 언어에 맞춘다.
-   한국어일 때는 비워서 감춘다 — 글자가 남아 있으면 그 글자 때문에
-   손글씨 폴백 글꼴(503KB)까지 내려받게 된다. */
-/* 가사를 현재 언어로. 사장님이 주신 번역이 있을 때만 바꾸고,
-   없으면 한국어 가사를 그대로 둔다. */
-function _lyrics(part) {
-  const lang = currentLang();
-  if (lang === 'km' && part.lyricsKm) return part.lyricsKm;
-  if (lang === 'en' && part.lyricsEn) return part.lyricsEn;
-  return part.lyrics;
-}
-
-/* 곡 제목을 현재 언어로. 크메르어 제목은 사장님이 직접 적어 주신 것이고,
-   없으면 한국어 제목을 그대로 쓴다. 영어는 제목을 옮기지 않고 소리 적기로 돕는다. */
-function _songTitle(song) {
-  const t2 = _trField(song, 'title');
-  return t2 || song.title;
-}
-function _partLabel(part) {
-  const t2 = _trField(part, 'label');
-  return t2 || part.label;
-}
-/* songs.js 에 들어 있는 번역 값을 꺼낸다. titleKm / titleEn / labelKm / labelEn.
-   한국어이거나 번역이 없으면 빈 값을 돌려준다. */
-function _trField(obj, base) {
-  const lang = currentLang();
-  if (lang === 'ko') return '';
-  return obj[base + (lang === 'km' ? 'Km' : 'En')] || '';
-}
-/* 제목 아래 보조 줄: 크메르어에서는 한국어 원제(공연 순서지와 맞춰 보라고),
-   영어에서는 소리 적기(유튜브 검색에 쓰라고) */
-/* 번역 제목 아래에 한국어 원제를 붙인다. 공연 순서지와 맞춰 볼 수 있게.
-   번역 제목이 없을 때만 소리 적기(로마자)로 대신한다. */
-function _songSubLine(song) {
-  /* 한국어가 아닐 때는 한국어 원제를 적지 않는다.
-     번역 제목이 아직 없는 곡만 소리 적기로 대신한다. */
-  const lang = currentLang();
-  if (lang === 'ko' || _trField(song, 'title')) return '';
-  return lang === 'en' ? (song.roman || '') : '';
-}
-
-/* 파트 꼬리말(후렴 등)을 현재 언어로 */
-const NOTE_I18N = { '후렴': 'songs.chorus', '간주': 'songs.interlude' };
-function _noteName(note) {
-  const k = NOTE_I18N[note];
-  return k ? t(k, note) : note;
-}
-
-/* 곡 배지(주제곡·앵콜·기도) 이름을 현재 언어로 */
-const TAG_I18N = { '주제곡': 'songs.tagLead', '앵콜': 'songs.tagEncore', '기도': 'songs.tagPray' };
-function _tagName(tag) {
-  const k = TAG_I18N[tag];
-  return k ? t(k, tag) : tag;
-}
-
-/* 사람 이름 — 한국어가 아닐 때는 로마자로 적는다.
-   이름은 옮길 수 없으니 소리 나는 대로 적는 것이 맞다. */
-function _personName(person) {
-  return (currentLang() !== 'ko' && person && person.roman) ? person.roman : (person ? person.name : '');
-}
-
-/* 악기·역할 이름을 현재 언어로. 사전에 없으면 한국어 그대로 둔다. */
-const ROLE_KEY = {
-  '드럼': 'role.drums', '베이스': 'role.bass', '일렉': 'role.guitar',
-  '피아노 (메인)': 'role.pianoMain', '피아노 (세컨)': 'role.pianoSecond'
-};
-function _roleName(role) {
-  const k = ROLE_KEY[role];
-  return k ? t(k, role) : role;
-}
-
-function _updateKoNotice() {
-  const ko = currentLang() === 'ko';
-  document.querySelectorAll('.song-ko-notice').forEach(el => {
-    el.textContent = ko ? '' : t('songs.koNotice', '');
-    el.hidden = ko;
-  });
-  /* 제목 아래 보조 줄: 크메르어는 한국어 원제, 영어는 소리 적기 */
-  const lang = currentLang();
-  document.querySelectorAll('.song-head-roman').forEach(el => {
-    let v = '';
-    if (lang !== 'ko') {
-      const tr = lang === 'km' ? el.dataset.km : el.dataset.en;
-      /* 번역 제목이 있으면 아무것도 덧붙이지 않는다 */
-      v = tr ? '' : (lang === 'en' ? (el.dataset.roman || '') : '');
-    }
-    el.textContent = v;
-    el.hidden = !v;
-  });
-}
-
-function onLangChange() {
-  _updateKoNotice();
-  renderFinaleDate();
-  if (typeof loadWordOpen === 'function') loadWordOpen();
-  renderDetailGrid();
-  renderMembers();
-  renderSongList();
-  _updateLP();
-  updateDday();
-  const r = parseHash();
-  /* 곡 상세는 떠나도 DOM 에 남아 있다. 지금 보고 있지 않더라도
-     그려 둔 것이 있으면 다시 그려야 옛 언어가 남지 않는다. */
-  const openSlug = (r.tab === 'songs' && r.slug) || _lastSongSlug;
-  if (openSlug) renderSongDetail(openSlug);
-  if (r.tab === 'word' && !document.getElementById('wordMain').hidden) {
-    _renderWord(_wordItems);
-  }
-}
+/* 곡·사람 이름 도우미 — 이 사이트는 한국어로만 보여 준다 */
+function _lyrics(part) { return part.lyrics; }
+function _songTitle(song) { return song.title; }
+function _partLabel(part) { return part.label; }
+function _noteName(note) { return note; }
+function _tagName(tag) { return tag; }
+function _personName(person) { return person ? person.name : ''; }
+function _roleName(role) { return role; }
 
 
 /* ══════════════════════════════════
@@ -2949,5 +2823,4 @@ document.getElementById('wordLockForm').addEventListener('submit', _wordUnlock);
 })();
 updateDday();
 setInterval(updateDday, 60000);
-setLang(currentLang());   // 저장된 언어(또는 브라우저 언어)로 맞춘다
 route();
