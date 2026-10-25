@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=92') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=96') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=92') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=96') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4121,7 +4121,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=92") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=96") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4574,7 +4574,7 @@ html.main-cinema:has(#page-main.active) .now-playing { z-index: 460; }
   html.main-cinema:has(#page-main.active) .tab-btn.active {
     color: color-mix(in srgb, var(--ink-soft) calc(var(--handoff-low, 0) * 100%), #f0c3a8);
   }
-  html.main-cinema:has(#page-main.active) .tab-btn[data-tab="songs"] {
+  html.main-cinema:has(#page-main.active) .tab-btn.is-next {
     color: color-mix(in srgb, var(--clay) calc(var(--handoff-low, 0) * 100%), rgba(247, 244, 236, .8));
   }
   html.main-cinema:has(#page-main.active) .np-text {
@@ -4856,12 +4856,68 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 }
 .sl-wheel-count {
   position: sticky;
-  top: calc(env(safe-area-inset-top, 0px) + 64px);
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
   z-index: 2;
-  margin: 0 clamp(16px, 5.5vw, 28px) 14px;
+  align-self: center;
+  margin: 0 0 14px;
+  padding: 2px 14px 4px;
   display: flex;
   align-items: baseline;
   gap: 8px;
+  border-radius: 999px;
+  background: rgba(250, 248, 242, .82);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 14px rgba(50, 44, 37, .08);
 }
 .sl-wheel-now { font-size: 26px; color: var(--clay); font-variant-numeric: tabular-nums; }
 .sl-wheel-total { font-size: 15px; color: var(--ink-faint); }
+
+
+/* ── 넘김 막: 메인으로 갈 때는 위에서 어두운 영상 빛이 내려온다 ──
+   메인 첫 화면과 같은 사진을 같은 자리에 깔아, 막이 걷힐 때 이음매가 보이지 않게 한다 */
+.tab-veil.to-dark .tab-veil-paper {
+  background:
+    linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=96") center / cover no-repeat;
+}
+.tab-veil.from-top .tab-veil-paper {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
+          mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
+}
+.tab-veil.from-top .tab-veil-glow {
+  background: radial-gradient(130% 62% at 50% 0%, rgba(240, 195, 168, .5), rgba(165, 77, 48, .18) 48%, transparent 76%);
+  transform: translateY(calc((1 - var(--handoff, 0)) * -30%));
+}
+.tab-veil.is-leaving.from-top .tab-veil-paper { -webkit-mask-image: none; mask-image: none; }
+
+/* 밝은 탭 맨 끝의 「계속 내리면 ○○」 — 메인 맨 끝 안내와 같은 한 줄 */
+.flow-cue {
+  display: block;
+  min-height: 44px;
+  margin: clamp(28px, 8vw, 40px) auto 14px;
+  padding: 0 12px;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 17px;
+  color: var(--ink-faint);
+  cursor: pointer;
+}
+.flow-cue b { font-weight: 400; font-size: 20px; color: var(--clay); }
+.flow-cue:focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; border-radius: 8px; }
+/* 맨 위·맨 끝에서 더 당기는 손짓을 탭 넘김에 쓰므로, 브라우저의 당겨서 새로고침은 끈다 */
+html { overscroll-behavior-y: none; }
+
+/* 넘김이 정해지면 탭 바의 알약도 갈 곳으로 미리 옮겨 간다 */
+html.flow-commit .tab-btn.active::before { opacity: 0; transform: scale(.82); }
+html.flow-commit .tab-btn.is-next::before { opacity: 1; transform: none; }
+html.flow-commit:not(:has(#page-main.active)) .tab-btn.is-next { color: var(--clay); }
+/* 곡 리스트 마지막 장은 화면 한 칸에 맞춰야 끝에서 더 내리는 손짓이 잡힌다 → 안내는 장 바닥에 붙인다 */
+.sl-lp-ch .flow-cue {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--tab-content-h) + max(8px, env(safe-area-inset-bottom, 0px)) + 8px);
+  margin: 0 auto;
+}

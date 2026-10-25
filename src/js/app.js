@@ -95,6 +95,17 @@ function route() {
 
 /** 기존 HTML의 onclick="switchTab('main', this)" 와 호환되는 진입점 */
 function switchTab(name) {
+  // 막이 차오르는 중에 다른 탭을 또 누르면 먼저 정한 곳으로 끝까지 간다 (두 막이 섞이지 않게)
+  if (_hoForced) return;
+  // 어두운 메인 ↔ 밝은 탭을 오갈 때는 색이 스르륵 바뀌는 막을 거쳐 간다
+  const cur = parseHash().tab;
+  if (cur !== name && (cur === 'main') !== (name === 'main') && _mainDesign() === 'cinema' && !_handing) {
+    _flowGo(name, name === 'main', 1.0);
+    return;
+  }
+  _goTab(name);
+}
+function _goTab(name) {
   const target = '#/' + name;
   if (location.hash === target) route();   // 같은 해시는 hashchange가 안 난다
   else location.hash = target;
@@ -788,10 +799,37 @@ let _cinemaTouchedAt = 0;
 // 그래서 세게 쓸어 한 번에 끝까지 가도, 색은 1.6초에 걸쳐 스르륵 바뀐다.
 let _hoTarget = 0, _hoShown = 0, _hoRaf = 0, _hoLast = 0, _hoForced = false;
 let _hoSettle = 0;
+let _hoTo = 'songs', _hoFrom = 'main', _hoUp = 1 / 1.6;   // 어디로 가는지, 차오르는 빠르기(1초에 얼마나)
+
+/* 넘김 막을 준비한다: 밝은 탭으로 가면 아래에서 종이색이 차오르고,
+   메인으로 가면 위에서 어두운 영상 빛이 내려온다. 탭 바는 갈 곳에 미리 불이 옮겨 간다. */
+function _flowPrepare(to, fromTop, secs) {
+  if (_hoShown > 0 && _hoTo === to) return;
+  _hoTo = to;
+  _hoFrom = parseHash().tab;
+  _hoUp = 1 / (_reduceMotion.matches ? 0.25 : (secs || 1.6));
+  const veil = document.getElementById('tabVeil');
+  if (veil) {
+    veil.classList.toggle('to-dark', to === 'main');
+    veil.classList.toggle('from-top', !!fromTop);
+  }
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('is-next', b.dataset.tab === to));
+}
+/* 지금 바로 그 탭으로 넘긴다 (탭 누름, 「계속 내리면」 누름, 끝에서 더 당김) */
+function _flowGo(to, fromTop, secs) {
+  if (_handing) return;
+  _flowPrepare(to, fromTop, secs);
+  document.documentElement.classList.add('flow-commit');   // 탭 바 알약이 갈 곳으로 옮겨 간다
+  _hoForced = true;
+  _hoTarget = 1;
+  _hoRun();
+}
+
 function _cinemaHandoff(root, next, h) {
   if (!next || _handing || _hoForced) return;
   // 들어온 뒤 한 번도 직접 내린 적이 없으면(새로고침 때 브라우저가 위치를 되살린 경우) 넘기지 않는다
   const p = _cinemaTouchedAt ? Math.min(1, Math.max(0, (root.scrollTop + h - next.offsetTop) / h)) : 0;
+  if (p > 0) _flowPrepare('songs', false);
   _hoTarget = p;
   if (p >= 0.98) _hoForced = true;                     // 끝까지 왔으면 반드시 끝까지 넘긴다
   _hoRun();
@@ -807,12 +845,7 @@ function _cinemaHandoff(root, next, h) {
   }, 220);
 }
 /* 「계속 내리면 곡 리스트」 를 누르면 내리지 않아도 같은 넘김이 일어난다 */
-function _cinemaHandoffGo() {
-  if (_handing) return;
-  _hoForced = true;
-  _hoTarget = 1;
-  _hoRun();
-}
+function _cinemaHandoffGo() { _flowGo('songs', false); }
 function _hoPaint(v) {
   const e = v * v * (3 - 2 * v);                       // 처음과 끝은 부드럽게
   const st = document.documentElement.style;
@@ -833,11 +866,16 @@ function _hoRun() {
     const dt = Math.min(500, now - _hoLast) / 1000;
     _hoLast = now;
     const up = _hoTarget > _hoShown;
-    const rate = up ? 1 / 1.6 : 1 / 0.45;                // 차오를 땐 천천히, 되돌릴 땐 빠르게
+    const rate = up ? _hoUp : 1 / 0.45;                  // 차오를 땐 천천히, 되돌릴 땐 빠르게
     _hoShown = up ? Math.min(_hoTarget, _hoShown + rate * dt) : Math.max(_hoTarget, _hoShown - rate * dt);
     _hoPaint(_hoShown);
     if (_hoShown >= 0.999 && _hoTarget >= 0.98) { _hoRaf = 0; _hoFinish(); return; }
-    if (_hoShown === _hoTarget) { _hoRaf = 0; return; }
+    if (_hoShown === _hoTarget) {
+      _hoRaf = 0;
+      // 당기다 그만두어 막이 다 걷혔으면 탭 바 미리 켜 둔 불도 끈다
+      if (_hoShown === 0) document.querySelectorAll('.tab-btn.is-next').forEach(b => b.classList.remove('is-next'));
+      return;
+    }
     next();
   };
   _hoRaf = 1;
@@ -845,19 +883,118 @@ function _hoRun() {
 }
 function _hoFinish() {
   const veil = document.getElementById('tabVeil');
+  const to = _hoTo, from = _hoFrom;
   _handing = true;
   veil.classList.add('is-leaving');                    // 여기서부터는 막이 시간에 맞춰 걷힌다
   // 곡 리스트는 첫 장(제목)이 이미 떠 있는 채로 열어, 막이 걷힐 때 한 번만 나타나게 한다
-  document.querySelectorAll('#page-songs .sl-ch').forEach((c, i) => c.classList.toggle('is-on', i === 0));
-  switchTab('songs');
+  if (to === 'songs') document.querySelectorAll('#page-songs .sl-ch').forEach((c, i) => c.classList.toggle('is-on', i === 0));
+  // 막이 화면을 다 덮은 지금, 색 섞기 값은 0 으로 (막은 is-leaving 동안 그대로 덮고 있다)
+  const st = document.documentElement.style;
+  st.setProperty('--handoff', '0');
+  st.setProperty('--handoff-low', '0');
+  _goTab(to);
   setTimeout(() => {
-    _cinemaReset();
+    if (from === 'main') _cinemaReset();
     _hoShown = _hoTarget = 0;
     _hoForced = false;
     _hoPaint(0);
-    setTimeout(() => { veil.classList.remove('is-leaving'); _handing = false; }, 1400);
+    document.querySelectorAll('.tab-btn.is-next').forEach(b => b.classList.remove('is-next'));
+    document.documentElement.classList.remove('flow-commit');
+    setTimeout(() => {
+      veil.classList.remove('is-leaving', 'to-dark', 'from-top');
+      _handing = false;
+    }, 1400);
   }, 320);
 }
+
+/* ── 밝은 탭들 사이의 넘김 ─────────────────────────────
+   메인 → 곡 리스트처럼, 곡 리스트·말씀 나눔·멤버 소개·팀 소개도 맨 끝에서 더 내리면 다음 탭으로,
+   맨 위에서 더 당기면 앞 탭으로 스르륵 넘어간다. 팀 소개 다음은 다시 메인(처음)이다. */
+const _FLOW = ['main', 'songs', 'word', 'artists', 'story'];
+function _flowNeighbor(tab, dir) {
+  const i = _FLOW.indexOf(tab);
+  if (i < 0) return null;
+  if (dir > 0) return _FLOW[(i + 1) % _FLOW.length];
+  return i > 0 ? _FLOW[i - 1] : null;
+}
+function _flowPageActive() {
+  const r = parseHash();
+  return r.tab !== 'main' && !r.slug && _FLOW.includes(r.tab) && !_openOverlays.length && !_handing;
+}
+const _PULL = 170;                                     // 이만큼(px) 더 당기면 넘어간다
+function _flowPull(dir, amount) {
+  const to = _flowNeighbor(parseHash().tab, dir);
+  if (!to) return;
+  _flowPrepare(to, dir < 0, 1.6);
+  _hoTarget = Math.min(0.9, Math.max(0, amount / _PULL) * 0.9);
+  _hoRun();
+}
+function _flowRelease(dir, amount) {
+  const to = _flowNeighbor(parseHash().tab, dir);
+  if (to && amount >= _PULL * 0.55) _flowGo(to, dir < 0);
+  else if (!_hoForced) { _hoTarget = 0; _hoRun(); }
+}
+function _flowEdges() {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  return { top: scrollY <= 4, bottom: scrollY >= max - 8 };   // 소수점 스크롤로 끝에서 몇 px 모자라게 멈추기도 한다
+}
+(function initFlowGestures() {
+  let base = null, dir = 0, amount = 0;
+  window.addEventListener('touchstart', () => { base = null; dir = 0; amount = 0; }, { passive: true });
+  window.addEventListener('touchmove', e => {
+    if (!_flowPageActive() || _hoForced) return;
+    const y = e.touches[0].clientY;
+    const edge = _flowEdges();
+    if (base === null) {
+      if (edge.bottom || edge.top) base = { y, bottom: edge.bottom, top: edge.top };
+      return;
+    }
+    const dy = y - base.y;
+    if (base.bottom && dy < 0 && edge.bottom) { dir = 1; amount = -dy; }
+    else if (base.top && dy > 0 && edge.top) { dir = -1; amount = dy; }
+    else { amount = 0; if (!edge.bottom && !edge.top) base = null; }
+    if (dir) _flowPull(dir, amount);
+  }, { passive: true });
+  window.addEventListener('touchend', () => {
+    if (dir && _flowPageActive()) _flowRelease(dir, amount);
+    base = null; dir = 0; amount = 0;
+  }, { passive: true });
+
+  // 마우스 휠: 끝에서 같은 방향으로 계속 굴리면 쌓여서 넘어간다
+  let acc = 0, wdir = 0, wt = 0;
+  window.addEventListener('wheel', e => {
+    if (!_flowPageActive() || _hoForced) return;
+    const edge = _flowEdges();
+    const d = e.deltaY > 0 ? 1 : -1;
+    if (!((d > 0 && edge.bottom) || (d < 0 && edge.top))) { acc = 0; return; }
+    if (d !== wdir) acc = 0;
+    wdir = d;
+    acc += Math.min(120, Math.abs(e.deltaY)) * 0.6;
+    _flowPull(d, acc);
+    clearTimeout(wt);
+    if (acc >= _PULL) { const a = acc; acc = 0; _flowRelease(d, a); return; }
+    wt = setTimeout(() => { _flowRelease(wdir, 0); acc = 0; }, 450);
+  }, { passive: true });
+})();
+
+/* 각 탭 맨 끝에 「계속 내리면 ○○」 — 눌러도 넘어간다 */
+(function initFlowCues() {
+  const where = { songs: '#page-songs .sl-lp-ch', word: '#page-word', artists: '#page-artists', story: '#page-story' };
+  Object.keys(where).forEach(tab => {
+    const box = document.querySelector(where[tab]);
+    const to = _flowNeighbor(tab, 1);
+    if (!box || !to) return;
+    const b = _el('button', 'flow-cue');
+    b.type = 'button';
+    const a = _el('span', '', '계속 내리면');
+    a.dataset.i18n = 'next.cue';
+    const n = _el('b', '', { songs: '곡 리스트', word: '말씀 나눔', artists: '멤버 소개', story: '팀 소개', main: '메인' }[to]);
+    n.dataset.i18n = 'tab.' + to;
+    b.append(a, ' ', n);
+    b.addEventListener('click', () => _flowGo(to, false));
+    box.appendChild(b);
+  });
+})();
 
 const CONCERT = {
   // 날짜 확정 완료
