@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=96') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=97') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=96') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=97') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4121,7 +4121,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=96") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=97") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4534,7 +4534,7 @@ html.main-cinema:has(#page-main.active) .lang-opt.is-on { background: rgba(255, 
   visibility: hidden;
 }
 .tab-veil.is-on, .tab-veil.is-leaving { visibility: visible; }
-.tab-veil.is-leaving { transition: opacity 1.2s ease .05s; }
+.tab-veil.is-leaving { transition: opacity .7s ease; }
 .tab-veil.is-leaving:not(.is-on) { opacity: 0; }
 
 /* 무대 조명이 켜지듯 아래쪽에서 번지는 따뜻한 빛 — 넘김의 한가운데서 가장 밝다 */
@@ -4597,9 +4597,8 @@ html.main-cinema:has(#page-main.active) .now-playing { z-index: 460; }
    소개 → 곡 묶음(화면 높이에 맞춰 JS 가 나눔) → 콘티 이야기 → 미리듣기.
    손을 떼면 한 장에 멈추고, 지금 장만 보이며 나머지는 흐려져 사라진다.
 ══════════════════════════════════ */
-html.sl-scenes:has(#page-songs.active) { scroll-snap-type: y mandatory; }
-/* 맨 위(음악 바 포함)가 첫 멈춤 자리 */
-html.sl-scenes:has(#page-songs.active) .now-playing { scroll-snap-align: start; }
+/* 페이지 전체에 거는 스크롤 스냅은 아이폰 사파리·카카오톡에서 화면이 멈추거나 비는 일이 있어 쓰지 않는다.
+   룰렛 카드 맞추기는 JS(_songWheelSettle)가 손을 뗀 뒤 부드럽게 한다. */
 #page-songs { padding-bottom: 0; }
 
 .sl-ch {
@@ -4694,7 +4693,6 @@ html:not(:has(#page-songs.active)) .sl-dots { display: none; }
 .sl-dots li.is-on { height: 18px; background: var(--clay); }
 
 @media (prefers-reduced-motion: reduce) {
-  html.sl-scenes:has(#page-songs.active) { scroll-snap-type: none; }
   html.sl-scenes .sl-ch > *,
   html.sl-scenes .sl-group .song-item { opacity: 1 !important; filter: none !important; transform: none !important; transition: none !important; }
 }
@@ -4879,7 +4877,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=96") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=97") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));

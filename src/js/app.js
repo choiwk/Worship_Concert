@@ -100,7 +100,7 @@ function switchTab(name) {
   // 어두운 메인 ↔ 밝은 탭을 오갈 때는 색이 스르륵 바뀌는 막을 거쳐 간다
   const cur = parseHash().tab;
   if (cur !== name && (cur === 'main') !== (name === 'main') && _mainDesign() === 'cinema' && !_handing) {
-    _flowGo(name, name === 'main', 1.0);
+    _flowGo(name, name === 'main', 0.8);
     return;
   }
   _goTab(name);
@@ -272,6 +272,17 @@ function _songWheelUpdate() {
   if (now && best) now.textContent = best.querySelector('.song-num')?.textContent || '';
 }
 
+function _songWheelSettle() {
+  const page = document.getElementById('page-songs');
+  const wheel = document.querySelector('#page-songs .sl-roulette');
+  if (!page || !page.classList.contains('active') || !wheel || !wheel.classList.contains('is-on')) return;
+  const li = wheel.querySelector('.song-item.is-center');
+  if (!li) return;
+  const r = li.getBoundingClientRect();
+  const off = r.top + r.height / 2 - innerHeight / 2;
+  if (Math.abs(off) > 3 && Math.abs(off) < r.height) scrollBy({ top: off, behavior: _reduceMotion.matches ? 'auto' : 'smooth' });
+}
+
 /* 지금 화면 가운데에 걸친 장만 보이고, 나머지는 흐려져 사라진다 (메인 장면 전환과 같은 결) */
 let _slChapters = [];
 function _songScenesUpdate() {
@@ -305,6 +316,12 @@ function _songScenesInit() {
     window.addEventListener('scrollend', _songScenesUpdate);
     window.addEventListener('resize', _songScenesUpdate);
     window.addEventListener('hashchange', () => setTimeout(_songScenesUpdate, 60));
+    // 룰렛: 손을 떼고 스크롤이 멈추면 가장 가까운 카드를 화면 가운데로 살며시 맞춘다
+    let touching = false, settleT = 0;
+    const settle = () => { clearTimeout(settleT); settleT = setTimeout(() => { if (!touching) _songWheelSettle(); }, 180); };
+    window.addEventListener('touchstart', () => { touching = true; clearTimeout(settleT); }, { passive: true });
+    window.addEventListener('touchend', () => { touching = false; settle(); }, { passive: true });
+    window.addEventListener('scroll', settle, { passive: true });
   }
   _slChapters.forEach((c, i) => c.classList.toggle('is-on', i === 0));
   _songScenesUpdate();
@@ -799,7 +816,7 @@ let _cinemaTouchedAt = 0;
 // 그래서 세게 쓸어 한 번에 끝까지 가도, 색은 1.6초에 걸쳐 스르륵 바뀐다.
 let _hoTarget = 0, _hoShown = 0, _hoRaf = 0, _hoLast = 0, _hoForced = false;
 let _hoSettle = 0;
-let _hoTo = 'songs', _hoFrom = 'main', _hoUp = 1 / 1.6;   // 어디로 가는지, 차오르는 빠르기(1초에 얼마나)
+let _hoTo = 'songs', _hoFrom = 'main', _hoUp = 1 / 0.9;   // 어디로 가는지, 차오르는 빠르기(1초에 얼마나)
 
 /* 넘김 막을 준비한다: 밝은 탭으로 가면 아래에서 종이색이 차오르고,
    메인으로 가면 위에서 어두운 영상 빛이 내려온다. 탭 바는 갈 곳에 미리 불이 옮겨 간다. */
@@ -807,7 +824,7 @@ function _flowPrepare(to, fromTop, secs) {
   if (_hoShown > 0 && _hoTo === to) return;
   _hoTo = to;
   _hoFrom = parseHash().tab;
-  _hoUp = 1 / (_reduceMotion.matches ? 0.25 : (secs || 1.6));
+  _hoUp = 1 / (_reduceMotion.matches ? 0.25 : (secs || 0.9));
   const veil = document.getElementById('tabVeil');
   if (veil) {
     veil.classList.toggle('to-dark', to === 'main');
@@ -903,8 +920,8 @@ function _hoFinish() {
     setTimeout(() => {
       veil.classList.remove('is-leaving', 'to-dark', 'from-top');
       _handing = false;
-    }, 1400);
-  }, 320);
+    }, 800);
+  }, 200);
 }
 
 /* ── 밝은 탭들 사이의 넘김 ─────────────────────────────
@@ -925,7 +942,7 @@ const _PULL = 170;                                     // 이만큼(px) 더 당�
 function _flowPull(dir, amount) {
   const to = _flowNeighbor(parseHash().tab, dir);
   if (!to) return;
-  _flowPrepare(to, dir < 0, 1.6);
+  _flowPrepare(to, dir < 0);
   _hoTarget = Math.min(0.9, Math.max(0, amount / _PULL) * 0.9);
   _hoRun();
 }
