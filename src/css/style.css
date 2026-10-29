@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=113') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=114') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=113') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=114') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4032,7 +4032,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=113") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=114") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4724,7 +4724,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=113") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=114") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5117,3 +5117,28 @@ html.sl-scenes #page-songs .sl-roulette > * { transform: none; filter: none; }
 
 /* 디자인 고르기 메뉴의 링크 */
 .design-opt { display: block; text-decoration: none; }
+
+/* 「영상 켜기」 — 메인에서만, 공유 버튼 맞은편(왼쪽 아래)에 유리 알약으로 */
+.cinema-play {
+  position: fixed;
+  left: max(16px, calc((100vw - var(--max-w)) / 2 + 16px));
+  bottom: calc(var(--tab-content-h) + max(8px, env(safe-area-inset-bottom, 0px)) + 18px);
+  z-index: 400;
+  min-height: 44px;
+  padding: 0 16px 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 999px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .06));
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, .26);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .32), 0 8px 24px rgba(0, 0, 0, .28);
+  font: inherit;
+  font-size: 15px;
+  color: rgba(247, 244, 236, .94);
+  cursor: pointer;
+}
+.cinema-play[hidden], html:not(.on-main) .cinema-play { display: none; }
+.cinema-play:focus-visible { outline: 2px solid #f0c3a8; outline-offset: 3px; }

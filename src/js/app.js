@@ -729,6 +729,8 @@ function initMainCinema() {
   let startTimer = null;
   let stallTimer = null;
   const onMain = () => parseHash().tab === 'main' && !document.hidden;
+  const playBtn = document.getElementById('cinemaPlay');
+  const showPlay = (on) => { if (playBtn) playBtn.hidden = !on; };
 
   const armStart = () => {
     clearTimeout(startTimer);
@@ -748,6 +750,7 @@ function initMainCinema() {
       video.pause();
       video.removeAttribute('src');
       video.load();                 // 받던 것을 멈춘다
+      showPlay(true);               // 사진에 머무는 동안 「영상 켜기」를 보여 준다
       return;
     }
     tried.add(t);
@@ -773,7 +776,28 @@ function initMainCinema() {
     clearTimeout(startTimer);
     clearTimeout(stallTimer);
     bg.dataset.video = 'playing';
+    showPlay(false);
   });
+  // 메인을 보는 중인데 휴대폰이 스스로 멈췄으면(절전 등) 멈춘 화면 대신 사진을 보이고 다시 켤 수 있게
+  video.addEventListener('pause', () => {
+    if (!onMain() || video.ended || tier === 'still') return;
+    bg.dataset.video = 'paused';
+    showPlay(true);
+  });
+
+  /* 사람이 화면을 한 번 누르면 그때 다시 재생한다.
+     저전력·데이터 절약 모드처럼 자동 재생만 막는 휴대폰도, 사람이 누른 뒤의 재생은 허락한다.
+     (재생 호출이 누른 그 순간 안에서 일어나야 해서, 이벤트에서 바로 부른다) */
+  const resume = () => {
+    if (bg.dataset.video === 'playing' || !onMain()) return;
+    if (tier === 'still') { tried.clear(); setTier('light'); }   // 가벼운 영상(1MB)부터
+    else {
+      const p = video.play();
+      if (p) p.catch(() => showPlay(true));
+    }
+  };
+  ['touchend', 'pointerup', 'click', 'keydown'].forEach(type =>
+    document.addEventListener(type, resume, { passive: true }));
   video.addEventListener('waiting', () => {
     if (bg.dataset.video !== 'playing') return;
     clearTimeout(stallTimer);
