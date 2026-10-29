@@ -52,6 +52,9 @@ function _showPage(id, tabName) {
   const html = document.documentElement;
   [...html.classList].filter(c => c.startsWith('on-')).forEach(c => html.classList.remove(c));
   html.classList.add('on-' + id.replace('page-', ''));
+  // 휴대폰 주소창·상태 표시줄 색도 화면에 맞춘다 (메인 영상 위에서 하얀 띠가 보이지 않게)
+  const theme = document.querySelector('meta[name="theme-color"]');
+  if (theme) theme.setAttribute('content', id === 'page-main' && html.classList.contains('main-cinema') ? '#17120d' : '#f3f1ee');
 }
 
 function route() {
@@ -668,7 +671,7 @@ function _mainDesign() {
    늦으면 initMainCinema 의 시간 재기가 알아서 낮춘다. */
 function _cinemaVideoPlan(conn) {
   if (!conn) return 'full';
-  if (conn.saveData) return 'still';
+  if (conn.saveData) return 'light';        // 데이터 절약 모드에서도 가벼운 영상(1MB)은 자동으로 튼다
   const t = conn.effectiveType || '';
   if (t === 'slow-2g' || t === '2g') return 'still';
   if (t === '3g' || (conn.downlink && conn.downlink < 1.5)) return 'light';
@@ -777,7 +780,28 @@ function initMainCinema() {
     clearTimeout(stallTimer);
     bg.dataset.video = 'playing';
     showPlay(false);
+    bg.querySelector('.cinema-img')?.remove();   // 진짜 영상이 돌면 대신 띄운 그림은 치운다
   });
+
+  /* 사파리는 <img> 에 mp4 를 넣으면 소리 없는 움직이는 그림(GIF 처럼)으로 돌린다.
+     영상 자동 재생 제한을 받지 않는 경우가 많아, 영상이 막혔을 때 누르지 않아도 움직이게 한다.
+     지원하지 않는 브라우저(크롬 등)는 그림을 못 불러와 조용히 지우고 사진 + 「영상 켜기」에 머문다. */
+  function tryImageVideo() {
+    if (bg.querySelector('.cinema-img')) return;
+    const img = new Image();
+    img.className = 'cinema-img';
+    img.alt = '';
+    img.setAttribute('aria-hidden', 'true');
+    img.decoding = 'async';
+    img.onload = () => {
+      if (bg.dataset.video === 'playing') { img.remove(); return; }
+      bg.dataset.video = 'img';
+      showPlay(false);
+    };
+    img.onerror = () => img.remove();
+    img.src = video.dataset.srcLight;
+    bg.insertBefore(img, bg.querySelector('.cinema-scrim'));
+  }
   // 메인을 보는 중인데 휴대폰이 스스로 멈췄으면(절전 등) 멈춘 화면 대신 사진을 보이고 다시 켤 수 있게
   video.addEventListener('pause', () => {
     if (!onMain() || video.ended || tier === 'still') return;
@@ -812,8 +836,8 @@ function initMainCinema() {
     if (onMain() && tier !== 'still') {
       const p = video.play();
       if (p) p.catch(err => {
-        // 자동 재생이 막혔다(아이폰 저전력 모드 등) → 사진에 머문다
-        if (err && err.name === 'NotAllowedError') setTier('still');
+        // 자동 재생이 막혔다(아이폰 저전력 모드 등) → 사진 위에 '움직이는 그림'으로 대신 틀어 본다
+        if (err && err.name === 'NotAllowedError') { setTier('still'); tryImageVideo(); }
       });
       armStart();
     } else {
