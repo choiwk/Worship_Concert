@@ -322,11 +322,11 @@ function _songWheelUpdate() {
   if (now && best) now.textContent = best.querySelector('.song-num')?.textContent || '';
 }
 
-/* 곡 리스트 상자(화면에 고정)의 세로 가운데 */
+/* 곡 리스트 상자(화면에 고정)에서 고른 곡이 서는 줄 — 가운데보다 조금 위 */
 function _slCenter() {
   const page = document.getElementById('page-songs');
   const r = page && page.classList.contains('active') ? page.getBoundingClientRect() : null;
-  return r && r.height ? r.top + r.height / 2 : innerHeight / 2;
+  return r && r.height ? r.top + r.height * 0.4 : innerHeight * 0.4;   // 고른 곡이 서는 줄: 위에서 40%
 }
 
 /* 지금 화면 가운데에 걸친 장만 보이고, 나머지는 흐려져 사라진다 (메인 장면 전환과 같은 결) */
@@ -744,35 +744,63 @@ function initMainCinema() {
   const seqCanvas = document.getElementById('cinemaSeq');
   const SEQ_N = seqCanvas ? (+seqCanvas.dataset.count || 60) : 0;
   const frames = new Array(SEQ_N);
-  let seqOn = false, seqRaf = 0, seqShown = -1;
+  let seqOn = false, seqRaf = 0;
   const seqSrc = i => seqCanvas.dataset.src.replace('{n}', String(i + 1).padStart(3, '0'));
   const seqWant = () => {
     // 첫 장면(맨 위) ~ 꼬리말까지 내린 만큼이 영상의 처음 ~ 끝
     const max = Math.max(1, next.offsetTop - root.clientHeight);
     return Math.round(Math.min(1, Math.max(0, root.scrollTop / max)) * (SEQ_N - 1));
   };
+  /* 보여 주는 위치(seqPos, 소수)는 스크롤이 정한 장면(seqWant)을 천천히 따라간다.
+     한 번 넘길 때 약 20장을 2초 남짓에 걸쳐 흘려, 영상처럼 부드럽다. 두 장면 사이는 겹쳐 그린다. */
+  let seqPos = -1, seqLastT = 0;
+  const seqNear = (want) => {
+    for (let d = 0; d < SEQ_N; d++) {
+      if (frames[want - d]) return want - d;
+      if (frames[want + d]) return want + d;
+    }
+    return -1;
+  };
+  const seqPaint = (ctx, img, cw, ch, alpha) => {
+    const sc = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);   // 화면을 빈틈 없이 덮게
+    const w = img.naturalWidth * sc, h = img.naturalHeight * sc;
+    ctx.globalAlpha = alpha;
+    ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+  };
   const seqDraw = () => {
     seqRaf = 0;
     if (!seqOn) return;
-    const want = seqWant();
-    let k = -1;                       // 아직 안 온 장면이면 가장 가까운 받아 둔 장면으로
-    for (let d = 0; d < SEQ_N && k < 0; d++) {
-      if (frames[want - d]) k = want - d;
-      else if (frames[want + d]) k = want + d;
-    }
-    if (k < 0) return;
+    const target = seqWant();
+    const now = performance.now();
+    const dt = seqLastT ? Math.min(0.1, (now - seqLastT) / 1000) : 0;
+    seqLastT = now;
+    if (seqPos < 0) seqPos = target;
+    const diff = target - seqPos;
+    const speed = Math.min(14, Math.max(6, Math.abs(diff) * 3));   // 1초에 6~14장
+    seqPos += Math.sign(diff) * Math.min(Math.abs(diff), speed * dt);
+
+    const a = seqNear(Math.floor(seqPos));
+    if (a < 0) { seqSchedule(); return; }
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const cw = Math.round(seqCanvas.clientWidth * dpr), ch = Math.round(seqCanvas.clientHeight * dpr);
-    if (seqCanvas.width !== cw || seqCanvas.height !== ch) { seqCanvas.width = cw; seqCanvas.height = ch; seqShown = -1; }
-    if (k === seqShown) return;
-    seqShown = k;
-    const img = frames[k];
-    const sc = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);   // 화면을 빈틈 없이 덮게
-    const w = img.naturalWidth * sc, h = img.naturalHeight * sc;
-    seqCanvas.getContext('2d').drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+    if (seqCanvas.width !== cw || seqCanvas.height !== ch) { seqCanvas.width = cw; seqCanvas.height = ch; }
+    const ctx = seqCanvas.getContext('2d');
+    seqPaint(ctx, frames[a], cw, ch, 1);
+    const frac = seqPos - Math.floor(seqPos);
+    const b = frames[Math.floor(seqPos) + 1];
+    if (frac > 0.02 && b) seqPaint(ctx, b, cw, ch, frac);   // 다음 장면을 그만큼 겹친다
+    ctx.globalAlpha = 1;
     bg.dataset.video = 'seq';
+
+    if (Math.abs(target - seqPos) > 0.01) seqSchedule();
+    else seqLastT = 0;                                     // 다 따라왔으면 쉰다
   };
-  const seqSchedule = () => { if (seqOn && !seqRaf) seqRaf = requestAnimationFrame(seqDraw); };
+  const seqSchedule = () => {
+    if (!seqOn || seqRaf) return;
+    // 화면 갱신(requestAnimationFrame)을 쓰되, 브라우저가 미루면 타이머가 대신 그린다
+    const to = setTimeout(() => { cancelAnimationFrame(seqRaf); seqDraw(); }, 60);
+    seqRaf = requestAnimationFrame(() => { clearTimeout(to); seqDraw(); });
+  };
   const startSeq = () => {
     if (!seqCanvas) return;
     if (seqOn) { seqSchedule(); return; }
@@ -794,7 +822,7 @@ function initMainCinema() {
     for (let c = 0; c < 4; c++) loadNext();          // 네 장씩 나란히 받는다
   };
   root.addEventListener('scroll', seqSchedule, { passive: true });
-  window.addEventListener('resize', () => { seqShown = -1; seqSchedule(); });
+  window.addEventListener('resize', seqSchedule);
 
   /* ── 배경 영상 ─────────────────────────────────────────
      1) 사진(80KB)을 먼저 깐다. 영상이 늦어도 첫 화면이 비지 않는다.
@@ -1089,9 +1117,14 @@ function _flowRelease(dir, amount) {
 }
 function _flowEdges() {
   const sc = _scroller();
-  const max = sc.scrollHeight - sc.clientHeight;
-  // 소수점 스크롤로 끝에서 몇 px 모자라게 멈추기도 한다
-  return { top: sc.scrollTop <= 4, bottom: sc.scrollTop >= max - 8 };
+  // 페이지 전체가 스크롤되는 화면(말씀 나눔·멤버·팀 소개)은 아이폰에서 주소창·도구 막대가 줄면
+  // 보이는 높이(innerHeight)가 문서 높이(clientHeight)보다 커져, clientHeight 로 재면 끝에 닿지 않는다.
+  // 가능한 높이 중 가장 큰 것으로 잰다. 소수점 스크롤로 몇 px 모자라게 멈추기도 한다.
+  const doc = sc === (document.scrollingElement || document.documentElement);
+  const viewH = doc
+    ? Math.max(sc.clientHeight, window.innerHeight, window.visualViewport ? window.visualViewport.height : 0)
+    : sc.clientHeight;
+  return { top: sc.scrollTop <= 4, bottom: sc.scrollTop >= sc.scrollHeight - viewH - 12 };
 }
 (function initFlowGestures() {
   let base = null, dir = 0, amount = 0;

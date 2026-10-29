@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=117') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=118') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=117') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=118') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4032,7 +4032,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=117") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=118") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4724,7 +4724,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=117") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=118") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -4943,7 +4943,8 @@ html.sl-scenes #page-songs .sl-roulette > * { transform: none; filter: none; }
 /* ══════════════════════════════════
    멤버 소개 — 곡 리스트와 같은 결: 표지 → 팀별 장(두 줄 카드) → 한 사람 시트
 ══════════════════════════════════ */
-#page-artists .mb-cover {
+#page-artists .mb-cover,
+#page-word .mb-cover {
   padding: 96px clamp(24px, 7.5vw, 34px) 30px;
   display: flex;
   flex-direction: column;
@@ -5136,3 +5137,118 @@ html.main-cinema.on-main, html.main-cinema.on-main body { background: #17120d; }
 }
 .cinema-bg[data-video="seq"] .cinema-seq { opacity: 1; }
 .cinema-bg[data-video="seq"]::before { animation-play-state: paused; }
+
+/* 룰렛: 고른 곡이 서는 줄을 화면 위쪽 40% 로 (CSS 스냅·스크롤 애니메이션·JS 가 같은 줄을 쓴다) */
+#page-songs.active { scroll-padding-bottom: 20%; }
+#page-songs .sl-ch.sl-roulette { padding: calc(var(--sl-h, 100svh) * .4 - 60px) 0 calc(var(--sl-h, 100svh) * .6 - 60px); }
+@supports (animation-timeline: view()) {
+  #page-songs .sl-wheel .song-item { view-timeline-inset: 0 20%; }
+}
+
+/* ══════════════════════════════════
+   말씀 나눔 — 새 디자인 결: 표지 → 잠금 카드 → 열어 둔 말씀(옆으로) → 이번 주 말씀 → 나눔
+   카드는 떠 있는 흰 종이, 버튼은 테두리 알약, 채운 테라코타는 쓰지 않는다(참여하기 전용)
+══════════════════════════════════ */
+#page-word .wd-cover { padding-bottom: 22px; }
+
+/* 잠금: 떠 있는 카드 한 장, 왼쪽 정렬 */
+#page-word .word-lock {
+  margin: 0 clamp(16px, 5.5vw, 26px);
+  padding: 24px 22px 22px;
+  background: rgba(255, 255, 255, .72);
+  border-radius: 20px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 10px 28px rgba(50, 44, 37, .08);
+  text-align: left;
+}
+#page-word .word-lock-mark { margin: 0 0 12px; color: var(--clay); width: 26px; height: 26px; }
+#page-word .word-lock-title { font-size: 20px; margin-bottom: 6px; }
+#page-word .word-lock-text { font-size: 15px; line-height: 1.8; margin-bottom: 18px; }
+#page-word .word-lock-form { max-width: none; margin: 0; flex-direction: row; flex-wrap: wrap; }
+#page-word .word-lock-form .rsvp-input { flex: 1 1 140px; min-height: 48px; border-radius: 999px; background: var(--paper); }
+#page-word .word-lock-form .rsvp-error { flex-basis: 100%; order: 3; }
+#page-word .word-lock-form .rsvp-submit {
+  flex: 0 0 auto;
+  width: auto;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: rgba(230, 201, 182, .55);
+  color: #7d3a20;
+  box-shadow: none;
+}
+
+/* 모두에게 열어 둔 말씀: 머리말 줄 + 떠 있는 카드를 옆으로 */
+#page-word .word-open { margin-top: 30px; }
+#page-word .word-open-head { padding: 0 clamp(22px, 7vw, 32px); margin-bottom: 12px; }
+#page-word .word-open-title { font-size: 14px; color: var(--ink-faint); }
+#page-word .word-open-rail { padding: 4px clamp(16px, 5.5vw, 26px) 14px; gap: 12px; }
+#page-word .word-open-card {
+  border: 0;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 8px 22px rgba(50, 44, 37, .08);
+  padding: 18px 18px 16px;
+}
+#page-word .word-open-name { font-size: 17px; }
+#page-word .word-open-body { font-size: 15px; line-height: 1.8; }
+
+/* 나눔 영역 */
+#page-word .word-main { padding: 22px clamp(16px, 5.5vw, 26px) 0; }
+
+/* 이번 주 말씀: 곡 화면·멤버 시트의 말씀 칸과 같은 형광펜 빛 카드 */
+#page-word .word-weekly {
+  padding: 22px 22px 20px;
+  background: rgba(230, 201, 182, .32);
+  border-radius: 20px;
+  text-align: left;
+}
+#page-word .word-weekly-label { font-size: 14px; letter-spacing: 0; color: var(--ink-faint); margin-bottom: 8px; }
+#page-word .word-weekly-ref { font-size: clamp(20px, 5.6vw, 23px); color: var(--clay); -webkit-text-stroke: 0; }
+#page-word .word-weekly-note { font-size: 15px; }
+#page-word .word-weekly-link {
+  min-height: 44px;
+  padding: 0 18px;
+  background: #fff;
+  border-color: rgba(165, 77, 48, .35);
+  font-size: 15px;
+  color: var(--clay);
+  box-shadow: 0 4px 12px rgba(50, 44, 37, .07);
+}
+
+/* 나도 나누기: 테두리 알약 (채운 색은 참여하기에만) */
+#page-word .word-write {
+  min-height: 52px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .8);
+  border: 1px solid rgba(165, 77, 48, .35);
+  color: var(--clay);
+  box-shadow: 0 8px 20px rgba(50, 44, 37, .08);
+}
+#page-word .word-write:active { background: var(--paper-warm); }
+
+/* 주차별 / 사람별: 한 덩어리 알약 안의 두 칸 */
+#page-word .word-views {
+  margin-top: 18px;
+  padding: 4px;
+  gap: 4px;
+  border-radius: 999px;
+  background: var(--paper-warm);
+}
+#page-word .word-view { min-height: 40px; border: 0; font-size: 15px; color: var(--ink-faint); }
+#page-word .word-view.is-on { background: #fff; color: var(--clay); box-shadow: 0 2px 8px rgba(50, 44, 37, .1); }
+
+/* 주차·사람 묶음 머리 + 나눔 카드 */
+#page-word .word-group { margin-top: 22px; }
+#page-word .word-group-head { border-bottom: 0; padding: 6px 4px; }
+#page-word .word-group-title { font-size: 18px; }
+#page-word .word-group-count { font-size: 14px; }
+#page-word .word-card {
+  margin-top: 10px;
+  padding: 18px 18px 14px;
+  border: 0;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 6px 18px rgba(50, 44, 37, .07);
+}
+#page-word .word-card:last-child { border-bottom: 0; }
+#page-word .word-card-body { font-size: 15px; line-height: 1.9; }
