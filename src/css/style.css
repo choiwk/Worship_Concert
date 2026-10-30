@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=123') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=125') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=123') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=125') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4032,7 +4032,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=123") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=125") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4724,7 +4724,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=123") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=125") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5254,34 +5254,37 @@ html.main-cinema.on-main, html.main-cinema.on-main body { background: #17120d; }
 #page-word .word-card-body { font-size: 15px; line-height: 1.9; }
 
 /* ══════════════════════════════════
-   팀 캐릭터 그림 — 공연 사진을 바탕으로 그린 벡터 그림을 종이 위에 겹친다
+   공연 사진 장면 — 실제 배경 위에 인물을 층으로 겹쳐 공간감을 낸다
 ══════════════════════════════════ */
 .art-band {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin-bottom: 6px;
   position: relative;
   z-index: 0;
+  width: 100%;
+  margin-bottom: 6px;
+  overflow: hidden;
   pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 7%, #000 88%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 7%, #000 88%, transparent);
 }
+/* 층은 화면보다 넓게 깔아 움직여도 가장자리가 드러나지 않는다 */
+.art-band img {
+  position: absolute;
+  top: -5%; left: -5%;
+  width: 110%; height: 110%;
+  max-width: none;
+  animation: 11s ease-in-out infinite alternate;
+}
+.art-band .art-bg { animation-name: artFar; }
+.art-band .art-floor { animation-name: artMid; }
+.art-band .art-people { animation-name: artNear; }
+@keyframes artFar { from { transform: translate3d(-.7%, 0, 0); } to { transform: translate3d(.7%, 0, 0); } }
+@keyframes artMid { from { transform: translate3d(-1.5%, 0, 0); } to { transform: translate3d(1.5%, 0, 0); } }
+@keyframes artNear { from { transform: translate3d(-2.4%, .5%, 0) scale(1.012); } to { transform: translate3d(2.4%, 0, 0) scale(1.012); } }
 html.art-on #page-artists .mb-cover,
 html.art-on #page-word .mb-cover { padding-top: 6px; position: relative; z-index: 1; }
 html.art-on #page-artists > .art-band,
 html.art-on #page-word > .art-band { margin-top: 34px; margin-bottom: 4px; }
 html.art-on .sl-cover { position: relative; z-index: 1; }
-
-/* 깊이감: 그림이 글보다 조금 느리게 움직인다 (스크롤에 묶인 CSS 애니메이션, 지원 안 하면 그대로) */
-@supports (animation-timeline: view()) {
-  .art-band {
-    animation: artDrift linear both;
-    animation-timeline: view();
-  }
-  @keyframes artDrift {
-    from { transform: translateY(-5%) scale(1.03); }
-    to   { transform: translateY(9%) scale(1.03); }
-  }
-}
 
 /* 콘티 이야기: 어두운 무대. 위아래는 종이색으로 번져 경계선이 없다 */
 html.art-on #page-songs .sl-note-ch {
@@ -5301,4 +5304,4 @@ html.art-on .art-dark { margin-bottom: -18px; }
   html.art-on .sl-intro .art-band { width: 76%; margin-inline: auto; }
   html.art-on .art-dark { width: 78%; margin-inline: auto; }
 }
-@media (prefers-reduced-motion: reduce) { .art-band { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .art-band img { animation: none; } }
