@@ -2928,7 +2928,7 @@ function initStoryParallax() {
 
   document.querySelectorAll('#page-story .scene-img-wrap img').forEach(img => {
     const id = (img.getAttribute('src').match(/story-(\d\d(?:-\d)?)\./) || [])[1];
-    if (!id) return;
+    if (!id || id === '01') return;   // 맨 위 첫 사진은 그대로 둔다
     const box = _el('div', 'plx');
     img.before(box); box.appendChild(img);
     boxes.push({ box, img, id, layers: null });
@@ -2956,7 +2956,7 @@ function initStoryParallax() {
     let left = 3;
     b.layers = Object.keys(DEPTH).map(z => {
       const l = _el('img', 'plx-layer');
-      l.dataset.z = z; l.alt = ''; l.decoding = 'async'; l.setAttribute('aria-hidden', 'true');
+      l.dataset.z = z; l.style.setProperty('--plx-d', DEPTH[z]); l.alt = ''; l.decoding = 'async'; l.setAttribute('aria-hidden', 'true');
       if (b.img.style.filter) l.style.filter = b.img.style.filter;
       l.onload = () => { if (!--left) { b.box.classList.add('is-on'); paint(); } };
       l.src = `public/images/story-plx/${b.id}-${z}.webp?${ver}`;
@@ -2967,7 +2967,6 @@ function initStoryParallax() {
   const enable = () => {
     if (enabled) return;
     enabled = true;
-    document.querySelectorAll('.plx-btn').forEach(el => el.remove());
     const io = new IntersectionObserver(es => es.forEach(e => {
       const b = boxes.find(v => v.box === e.target);
       if (e.isIntersecting) { live.add(b); addLayers(b); } else live.delete(b);
@@ -2978,6 +2977,7 @@ function initStoryParallax() {
   const onTilt = e => {
     if (e.gamma == null || e.beta == null || !document.documentElement.classList.contains('on-story')) return;
     enable();
+    document.documentElement.classList.remove('plx-auto');
     const a = screen.orientation?.angle ?? window.orientation ?? 0;
     const [g, t] = a === 90 ? [e.beta, -e.gamma] : (a === 270 || a === -90) ? [-e.beta, e.gamma] : a === 180 ? [-e.gamma, -e.beta] : [e.gamma, e.beta];
     if (!base) base = { g, t };
@@ -2987,20 +2987,19 @@ function initStoryParallax() {
   };
   addEventListener('orientationchange', () => { base = null; });
 
-  if (window.DeviceOrientationEvent?.requestPermission && matchMedia('(pointer: coarse)').matches) {
-    // iOS: 버튼을 눌러야 센서 권한을 물을 수 있다
+  const touch = matchMedia('(pointer: coarse)').matches;
+  if (touch) { document.documentElement.classList.add('plx-auto'); enable(); }
+  if (window.DeviceOrientationEvent?.requestPermission && touch) {
+    // iOS 는 터치(탭) 안에서만 센서 권한을 물을 수 있어, 팀 소개에서의 첫 탭에 묻는다. 스크롤 터치는 거절되니 다음 탭에 다시 묻는다
     const ask = async ev => {
-      ev.stopPropagation();
-      let ok = false;
-      try { ok = await DeviceOrientationEvent.requestPermission() === 'granted'; } catch (_) {}
-      document.querySelectorAll('.plx-btn').forEach(el => el.remove());
-      if (ok) addEventListener('deviceorientation', onTilt);
+      if (!document.documentElement.classList.contains('on-story') && !ev.target.closest?.('[data-tab="story"]')) return;
+      try {
+        const r = await DeviceOrientationEvent.requestPermission();
+        document.removeEventListener('click', ask, true);
+        if (r === 'granted') addEventListener('deviceorientation', onTilt);
+      } catch (_) {}
     };
-    boxes.forEach(b => {
-      const btn = _el('button', 'plx-btn', '움직임 켜기');
-      btn.type = 'button'; btn.onclick = ask;
-      b.box.appendChild(btn);
-    });
+    document.addEventListener('click', ask, true);
   } else {
     addEventListener('deviceorientation', onTilt);
   }

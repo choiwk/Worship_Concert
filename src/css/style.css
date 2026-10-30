@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=127') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=128') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=127') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=128') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3948,7 +3948,7 @@ body {
 
 /* 7) 인터랙션/접근성 안정화 */
 @media (hover: none) {
-  .story-page .scene-img-wrap:hover img,
+  .story-page .scene-img-wrap:hover img { transform: none; }
   .story-page .btn-primary:hover {
     transform: none;
     background: var(--ink);
@@ -4032,7 +4032,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=127") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=128") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4724,7 +4724,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=127") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=128") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5317,15 +5317,9 @@ html.art-on .art-dark { margin-bottom: -18px; }
   will-change: transform;
 }
 .plx.is-on .plx-layer { opacity: 1; }
-.plx-btn {
-  position: absolute;
-  right: 10px; bottom: 10px;
-  z-index: 1;
-  padding: 6px 12px;
-  font: inherit;
-  font-size: 13px;
-  color: var(--paper);
-  background: rgba(23, 18, 13, .58);
-  border: 1px solid rgba(247, 244, 236, .34);
-  border-radius: 999px;
+/* 센서를 받기 전에는 천천히 저절로 움직여 깊이를 보여 준다 */
+.plx-auto .plx-layer { animation: plxDrift 7s ease-in-out infinite alternate; }
+@keyframes plxDrift {
+  from { transform: translate3d(calc(var(--plx-d) * -1%), 0, 0); }
+  to   { transform: translate3d(calc(var(--plx-d) * 1%), 0, 0); }
 }
