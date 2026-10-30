@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=118') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=121') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=118') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=121') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4032,7 +4032,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=118") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=121") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4724,7 +4724,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=118") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=121") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -4889,7 +4889,7 @@ html.sl-scenes #page-songs .sl-roulette > * { transform: none; filter: none; }
 }
 .sl-note-label { margin-bottom: 14px; }
 #page-songs .setlist-note-body { text-align: left; font-size: 16px; line-height: 1.9; }
-#page-songs .setlist-note-body[data-i18n-html="note.p1"] {
+#page-songs .setlist-note-deco + .setlist-note-body {
   font-size: clamp(19px, 5.4vw, 22px);
   line-height: 1.6;
   color: var(--ink);
@@ -5252,3 +5252,53 @@ html.main-cinema.on-main, html.main-cinema.on-main body { background: #17120d; }
 }
 #page-word .word-card:last-child { border-bottom: 0; }
 #page-word .word-card-body { font-size: 15px; line-height: 1.9; }
+
+/* ══════════════════════════════════
+   그림 시안 (?art=1 일 때만) — 공연 사진을 유화풍으로 가공한 그림을 종이 위에 겹친다
+══════════════════════════════════ */
+.art-band {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: -26px;            /* 번진 아래 가장자리가 제목 쪽으로 살짝 겹치게 */
+  position: relative;
+  z-index: 0;
+  pointer-events: none;
+}
+html.art-on #page-artists .mb-cover,
+html.art-on #page-word .mb-cover { padding-top: 6px; position: relative; z-index: 1; }
+html.art-on #page-artists > .art-band,
+html.art-on #page-word > .art-band { margin-top: 34px; margin-bottom: 4px; }
+html.art-on .sl-cover { position: relative; z-index: 1; }
+
+/* 깊이감: 그림이 글보다 조금 느리게 움직인다 (스크롤에 묶인 CSS 애니메이션, 지원 안 하면 그대로) */
+@supports (animation-timeline: view()) {
+  .art-band {
+    animation: artDrift linear both;
+    animation-timeline: view();
+  }
+  @keyframes artDrift {
+    from { transform: translateY(-5%) scale(1.03); }
+    to   { transform: translateY(9%) scale(1.03); }
+  }
+}
+
+/* 콘티 이야기: 어두운 무대. 위아래는 종이색으로 번져 경계선이 없다 */
+html.art-on #page-songs .sl-note-ch {
+  background: linear-gradient(to bottom, rgba(23, 18, 13, 0), #17120d 15%, #17120d 85%, rgba(23, 18, 13, 0));
+}
+html.art-on #page-songs .sl-note-ch .setlist-note { background: transparent; color: var(--paper); }
+html.art-on #page-songs .sl-note-ch .setlist-note-deco { display: none; }
+html.art-on #page-songs .sl-note-ch .sl-note-label { color: rgba(247, 244, 236, .68); }
+html.art-on #page-songs .sl-note-ch .setlist-note-body { color: rgba(247, 244, 236, .84); }
+html.art-on #page-songs .sl-note-ch .setlist-note-body b { color: #f0c3a8; -webkit-text-stroke-color: #f0c3a8; }
+html.art-on #page-songs .sl-note-ch .setlist-note-deco + .setlist-note-body { color: var(--paper); }
+html.art-on #page-songs .sl-note-ch .setlist-note-toggle { color: #f0c3a8; border-color: rgba(240, 195, 168, .45); }
+html.art-on .art-dark { margin-bottom: -18px; }
+
+/* 낮은 화면에서는 표지 그림을 줄여 글을 밀어내지 않게 */
+@media (max-height: 700px) {
+  html.art-on .sl-intro .art-band { width: 76%; margin-inline: auto; }
+  html.art-on .art-dark { width: 78%; margin-inline: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .art-band { animation: none; } }

@@ -48,10 +48,10 @@
      gstatic preconnect 는 남긴다 — 크메르어를 고르면 그쪽에서 서체를 받는다. -->
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
-<link rel="preload" href="public/videos/main-portrait-poster.jpg?v=118" as="image"/>
-<link rel="preload" href="public/fonts/Sarang-site.woff2?v=118" as="font" type="font/woff2" crossorigin=""/>
+<link rel="preload" href="public/videos/main-portrait-poster.jpg?v=121" as="image"/>
+<link rel="preload" href="public/fonts/Sarang-site.woff2?v=121" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=118" rel="stylesheet"/>
+<link href="src/css/style.css?v=121" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -103,9 +103,9 @@
 <!-- 영상 주소는 JS 가 망 상태를 보고 고른다(고화질 4.2MB / 가벼운 985KB / 사진만).
      HTML 에 주소를 박아 두면 망이 느려도 고화질부터 받기 시작한다. -->
 <video id="cinemaVideo" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback
-  data-src-full="public/videos/main-portrait.mp4?v=118"
-  data-src-light="public/videos/main-portrait-light.mp4?v=118"></video>
-<canvas class="cinema-seq" id="cinemaSeq" data-src="public/videos/seq/f{n}.jpg?v=118" data-count="60" aria-hidden="true"></canvas>
+  data-src-full="public/videos/main-portrait.mp4?v=121"
+  data-src-light="public/videos/main-portrait-light.mp4?v=121"></video>
+<canvas class="cinema-seq" id="cinemaSeq" data-src="public/videos/seq/f{n}.jpg?v=121" data-count="60" aria-hidden="true"></canvas>
 <div class="cinema-scrim"></div>
 </div>
 <div class="cinema-track" id="cinemaTrack">
@@ -394,9 +394,9 @@
 </div>
 </section><div class="divider reveal"></div><section class="scene">
 <div class="scene-img-wrap">
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-0.JPG?v=118" style="aspect-ratio:3/2"/>
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-1.JPG?v=118" style="aspect-ratio:3/2"/>
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG?v=118" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-0.JPG?v=121" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-1.JPG?v=121" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG?v=121" style="aspect-ratio:3/2"/>
 </div>
 <div class="scene-text reveal">
 <p class="ch-label">07. 공동체</p>
@@ -769,11 +769,11 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/i18n.js?v=118" defer></script>
-<script src="src/js/bible.js?v=118" defer></script>
-<script src="src/js/songs.js?v=118" defer></script>
-<script src="src/js/members.js?v=118" defer></script>
-<script src="src/js/app.js?v=118" defer></script>
+<script src="src/js/i18n.js?v=121" defer></script>
+<script src="src/js/bible.js?v=121" defer></script>
+<script src="src/js/songs.js?v=121" defer></script>
+<script src="src/js/members.js?v=121" defer></script>
+<script src="src/js/app.js?v=121" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
