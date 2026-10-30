@@ -2928,7 +2928,7 @@ function initStoryParallax() {
 
   document.querySelectorAll('#page-story .scene-img-wrap img').forEach(img => {
     const id = (img.getAttribute('src').match(/story-(\d\d(?:-\d)?)\./) || [])[1];
-    if (!id || id === '01') return;   // 맨 위 첫 사진은 그대로 둔다
+    if (!id || id === '01' || id === '09-2') return;   // 맨 위 첫 사진과 07장 3번째 사진은 그대로 둔다
     const box = _el('div', 'plx');
     img.before(box); box.appendChild(img);
     boxes.push({ box, img, id, layers: null });
