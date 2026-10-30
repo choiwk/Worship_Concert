@@ -2917,34 +2917,34 @@ function _personName(person) { return person ? person.name : ''; }
 function _roleName(role) { return role; }
 
 
-/* 공연 사진 장면 — 실제 배경·바닥·인물 세 층을 겹쳐, 층마다 다르게 움직여 공간이 깊어 보이게 한다. */
-function initArt() {
+/* 그림 시안 — 주소에 ?art=1 이 있을 때만 켠다 (공연 사진을 유화풍으로 가공한 그림을 표지·경계에 겹친다).
+   꺼져 있으면 그림을 받지도 않으므로 평소 방문자에게는 아무 영향이 없다. */
+function initArtPreview() {
+  if (!/[?&]art=1/.test(location.search)) return;
   document.documentElement.classList.add('art-on');
   const ver = (document.querySelector('script[src*="app.js"]')?.src.split('?')[1]) || '';
-  const add = (name, ratio, sel, cls) => {
-    const at = document.querySelector(sel); if (!at) return;
-    const box = _el('div', 'art-band' + (cls ? ' ' + cls : ''));
-    box.style.aspectRatio = ratio;
-    box.setAttribute('aria-hidden', 'true');
-    ['bg', 'floor', 'people'].forEach(layer => {
-      const img = _el('img', 'art-' + layer);
-      img.src = 'public/images/art/scene-' + name + '-' + layer + '.webp?' + ver;
-      img.alt = ''; img.decoding = 'async'; img.loading = 'lazy';
-      box.appendChild(img);
-    });
-    at.insertAdjacentElement('beforebegin', box);
+  const add = (name, sel, pos, cls) => {
+    const at = document.querySelector(sel);
+    if (!at) return;
+    const img = _el('img', 'art-band' + (cls ? ' ' + cls : ''));
+    img.src = 'public/images/art/' + name + '.webp?' + ver;
+    img.alt = '';
+    img.decoding = 'async';
+    img.setAttribute('aria-hidden', 'true');
+    at.insertAdjacentElement(pos, img);
   };
-  add('stage', '900/428', '#page-songs .sl-cover');
-  add('group', '900/880', '#page-artists .mb-cover');
-  add('rehearsal', '900/450', '#page-word .mb-cover');
-  add('tree', '900/501', '#page-songs .sl-note-ch .setlist-note', 'art-dark');
+  add('cover-songs', '#page-songs .sl-cover', 'beforebegin');
+  add('cover-members', '#page-artists .mb-cover', 'beforebegin');
+  add('cover-word', '#page-word .mb-cover', 'beforebegin');
+  add('stage-dark', '#page-songs .sl-note-ch .setlist-note', 'beforebegin', 'art-dark');
 }
+
 
 /* ══════════════════════════════════
    boot — 최초 렌더 및 라우팅 시작
 ══════════════════════════════════ */
 
-initArt();
+initArtPreview();
 initMainCinema();
 renderDetailGrid();
 renderFinaleDate();
