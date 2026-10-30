@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#17120d">
+<title>무대 들여다보기</title>
+<style>
+  @font-face { font-family: 'Sarang'; src: url('public/fonts/Sarang-site.woff2') format('woff2'); font-display: swap; }
+  :root { --ink: #17120d; --paper: #f7f4ec; --dim: rgba(247, 244, 236, .66); --line: rgba(247, 244, 236, .28); }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: var(--ink); color: var(--paper); overflow: hidden; }
+  body {
+    display: flex; flex-direction: column; height: 100dvh;
+    padding: calc(14px + env(safe-area-inset-top)) 0 calc(14px + env(safe-area-inset-bottom));
+    font-family: 'Sarang', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  }
+  .top, .bottom { padding-inline: 18px; }
+  .top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  h1 { margin: 0; font-size: 21px; font-weight: 400; }
+  .top a { color: var(--dim); font-size: 14px; white-space: nowrap; }
+  .mid { flex: 1; min-height: 0; display: flex; align-items: center; }
+  /* 창: 사진은 창보다 크고, 기울이면 창 너머를 둘러보게 된다 */
+  #stage {
+    position: relative; width: 100%; overflow: hidden; touch-action: none;
+    perspective: 900px; background: #000;
+  }
+  #scene { position: absolute; left: 50%; top: 50%; transform-style: preserve-3d; }
+  #scene img {
+    position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+    max-width: none; will-change: transform; user-select: none; -webkit-user-drag: none;
+  }
+  .bottom { display: flex; flex-direction: column; gap: 12px; }
+  #hint { margin: 0; min-height: 1.5em; color: var(--dim); font-size: 15px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .scenes { display: flex; gap: 6px; }
+  button {
+    font: inherit; color: var(--paper); background: none; border: 1px solid var(--line);
+    border-radius: 999px; padding: 9px 14px; font-size: 15px; cursor: pointer;
+  }
+  .scenes button[aria-pressed="true"] { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+  #gyro { background: #b4583a; border-color: #b4583a; }
+  #gyro[hidden] { display: none; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
+</style>
+</head>
+<body>
+  <div class="top">
+    <h1>무대 들여다보기</h1>
+    <a href="./">사이트로</a>
+  </div>
+  <div class="mid">
+    <div id="stage" aria-label="공연 사진. 휴대폰을 기울이면 공간을 둘러볼 수 있어요" role="img">
+      <div id="scene"></div>
+    </div>
+  </div>
+  <div class="bottom">
+    <p id="hint" aria-live="polite"></p>
+    <div class="row">
+      <div class="scenes" id="scenes"></div>
+      <button id="gyro" type="button" hidden>움직임 켜기</button>
+    </div>
+  </div>
+<script>
+const SCENES = [
+  { id: 'year',   w: 1600, h: 1066, label: '하나' },
+  { id: 'circle', w: 1440, h: 811,  label: '둘' },
+  { id: 'tree',   w: 1170, h: 1372, label: '셋' },
+];
+// 깊이: 가까운 층일수록 많이 움직인다
+const DEPTH = { bg: .86, mid: 1, fg: 1.2 };
+const TILT_X = 22, TILT_Y = 16;   // 이만큼(도) 기울이면 끝까지 본다
+
+const $ = id => document.getElementById(id);
+const stage = $('stage'), scene = $('scene'), hint = $('hint'), gyroBtn = $('gyro');
+let layers = [], rangeX = 0, rangeY = 0;
+let tx = 0, ty = 0, x = 0, y = 0, running = false;
+let base = null, gotSensor = false, current = 0;
+
+function layout() {
+  const s = SCENES[current], W = stage.clientWidth || innerWidth;
+  const avail = stage.parentElement.clientHeight;
+  // 세로 화면에서는 창을 낮춰 인물이 잘리지 않게 하고, 가로 화면에서는 꽉 채운다
+  const H = Math.min(avail, innerWidth < innerHeight ? W * (s.h > s.w ? 1.25 : 1.1) : avail);
+  stage.style.height = H + 'px';
+  const k = Math.max(W * 1.15 / s.w, H * 1.09 / s.h);
+  const sw = s.w * k, sh = s.h * k;
+  scene.style.width = sw + 'px'; scene.style.height = sh + 'px';
+  scene.style.marginLeft = -sw / 2 + 'px'; scene.style.marginTop = -sh / 2 + 'px';
+  rangeX = (sw - W) / 2; rangeY = (sh - H) / 2;
+  paint();
+}
+
+function paint() {
+  const bx = -x * rangeX, by = -y * rangeY;
+  layers.forEach(l => { l.el.style.transform = `translate3d(${bx * l.k}px, ${by * l.k}px, 0)`; });
+  scene.style.transform = `rotateY(${x * 2}deg) rotateX(${-y * 1.2}deg)`;
+}
+
+function tick() {
+  x += (tx - x) * .12; y += (ty - y) * .12;
+  paint();
+  if (Math.abs(tx - x) + Math.abs(ty - y) > .001) requestAnimationFrame(tick);
+  else running = false;
+}
+function aim(nx, ny) {
+  tx = Math.max(-1, Math.min(1, nx)); ty = Math.max(-1, Math.min(1, ny));
+  if (!running) { running = true; requestAnimationFrame(tick); }
+}
+
+function show(i) {
+  current = i;
+  const s = SCENES[i];
+  scene.textContent = '';
+  layers = Object.keys(DEPTH).map(name => {
+    const el = new Image();
+    el.src = `public/images/parallax/${s.id}-${name}.webp`;
+    el.alt = ''; el.decoding = 'async'; el.draggable = false;
+    scene.appendChild(el);
+    return { el, k: DEPTH[name] };
+  });
+  document.querySelectorAll('#scenes button').forEach((b, n) => b.setAttribute('aria-pressed', n === i));
+  layout();
+}
+
+// 화면이 돌아가 있으면 센서 축도 함께 돌린다
+function screenAxes(e) {
+  const a = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+  const g = e.gamma, b = e.beta;
+  if (a === 90) return [b, -g];
+  if (a === -90 || a === 270) return [-b, g];
+  if (a === 180) return [-g, -b];
+  return [g, b];
+}
+function onTilt(e) {
+  if (e.gamma == null || e.beta == null) return;
+  const [g, b] = screenAxes(e);
+  if (!gotSensor) { gotSensor = true; gyroBtn.hidden = true; hint.textContent = '폰을 천천히 기울여 보세요'; }
+  if (!base) base = { g, b };
+  // 처음 쥔 자세가 기준. 자세를 바꿔도 기준이 천천히 따라온다
+  base.g += (g - base.g) * .004; base.b += (b - base.b) * .004;
+  aim((g - base.g) / TILT_X, (b - base.b) / TILT_Y);
+}
+
+function listen() { addEventListener('deviceorientation', onTilt); }
+async function askSensor() {
+  try {
+    const r = await DeviceOrientationEvent.requestPermission();
+    if (r === 'granted') { listen(); gyroBtn.hidden = true; hint.textContent = '폰을 천천히 기울여 보세요'; }
+    else hint.textContent = '센서를 쓸 수 없어요. 사진을 손가락으로 움직여 보세요';
+  } catch (_) { hint.textContent = '센서를 쓸 수 없어요. 사진을 손가락으로 움직여 보세요'; }
+}
+
+// 센서가 없을 때는 손가락·마우스 위치로 둘러본다
+function onPoint(e) {
+  if (gotSensor) return;
+  if (e.pointerType !== 'mouse' && !e.buttons) return;
+  const r = stage.getBoundingClientRect();
+  aim((e.clientX - r.left) / r.width * 2 - 1, (e.clientY - r.top) / r.height * 2 - 1);
+}
+stage.addEventListener('pointermove', onPoint);
+stage.addEventListener('pointerdown', onPoint);
+
+SCENES.forEach((s, i) => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = s.label; b.onclick = () => show(i);
+  $('scenes').appendChild(b);
+});
+addEventListener('resize', layout);
+addEventListener('orientationchange', () => { base = null; setTimeout(layout, 200); });
+
+show(0);
+if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) {
+  // iOS: 버튼을 눌러야 센서 권한을 물을 수 있다
+  gyroBtn.hidden = false; gyroBtn.onclick = askSensor;
+  hint.textContent = '움직임 켜기를 누르고 폰을 기울여 보세요';
+} else {
+  listen();
+  hint.textContent = '사진 위에서 움직여 보세요';
+}
+</script>
+</body>
+</html>
