@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=121') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=123') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=121') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=123') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4032,7 +4032,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=121") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=123") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4724,7 +4724,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=121") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=123") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5254,13 +5254,13 @@ html.main-cinema.on-main, html.main-cinema.on-main body { background: #17120d; }
 #page-word .word-card-body { font-size: 15px; line-height: 1.9; }
 
 /* ══════════════════════════════════
-   그림 시안 (?art=1 일 때만) — 공연 사진을 유화풍으로 가공한 그림을 종이 위에 겹친다
+   팀 캐릭터 그림 — 공연 사진을 바탕으로 그린 벡터 그림을 종이 위에 겹친다
 ══════════════════════════════════ */
 .art-band {
   display: block;
   width: 100%;
   height: auto;
-  margin-bottom: -26px;            /* 번진 아래 가장자리가 제목 쪽으로 살짝 겹치게 */
+  margin-bottom: 6px;
   position: relative;
   z-index: 0;
   pointer-events: none;
