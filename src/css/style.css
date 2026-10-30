@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=126') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=127') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=126') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=127') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -4032,7 +4032,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=126") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=127") center / cover no-repeat;
   animation: cinemaStill 30s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4724,7 +4724,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=126") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=127") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5302,3 +5302,30 @@ html.art-on .art-dark { margin-bottom: -18px; }
   html.art-on .art-dark { width: 78%; margin-inline: auto; }
 }
 @media (prefers-reduced-motion: reduce) { .art-band { animation: none; } }
+
+/* ══════════════════════════════════
+   팀 소개 단독 사진 — 2.5D 층. 층은 사진보다 넓게 깔아 움직여도 가장자리가 안 보인다
+══════════════════════════════════ */
+.plx { position: relative; overflow: hidden; }
+.scene-img-wrap .plx-layer {
+  position: absolute;
+  left: -6%; top: -6%;
+  width: 112%; height: 112%;
+  max-width: none;
+  opacity: 0;
+  transition: opacity .5s ease;
+  will-change: transform;
+}
+.plx.is-on .plx-layer { opacity: 1; }
+.plx-btn {
+  position: absolute;
+  right: 10px; bottom: 10px;
+  z-index: 1;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--paper);
+  background: rgba(23, 18, 13, .58);
+  border: 1px solid rgba(247, 244, 236, .34);
+  border-radius: 999px;
+}

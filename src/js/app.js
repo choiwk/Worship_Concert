@@ -2917,6 +2917,107 @@ function _personName(person) { return person ? person.name : ''; }
 function _roleName(role) { return role; }
 
 
+/* 팀 소개 단독 사진 — 기울기에 따라 전경·중경·배경이 다르게 움직인다(2.5D).
+   센서가 켜지기 전에는 원래 사진 그대로이고, 층도 그때부터 화면 근처 것만 받는다. */
+function initStoryParallax() {
+  if (navigator.connection?.saveData || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const DEPTH = { bg: .8, mid: 2, fg: 3.6 };   // 사진 폭 대비 % — 가까울수록 많이 움직인다
+  const ver = (document.querySelector('script[src*="app.js"]')?.src.split('?')[1]) || '';
+  const boxes = [], live = new Set();
+  let enabled = false, tx = 0, ty = 0, x = 0, y = 0, running = false, base = null;
+
+  document.querySelectorAll('#page-story .scene-img-wrap img').forEach(img => {
+    const id = (img.getAttribute('src').match(/story-(\d\d(?:-\d)?)\./) || [])[1];
+    if (!id) return;
+    const box = _el('div', 'plx');
+    img.before(box); box.appendChild(img);
+    boxes.push({ box, img, id, layers: null });
+  });
+
+  const paint = () => live.forEach(b => {
+    b.layers?.forEach(l => {
+      const k = DEPTH[l.dataset.z];
+      l.style.transform = `translate3d(${(-x * k).toFixed(2)}%, ${(-y * k * .6).toFixed(2)}%, 0)`;
+    });
+  });
+  const tick = () => {
+    x += (tx - x) * .12; y += (ty - y) * .12;
+    paint();
+    if (Math.abs(tx - x) + Math.abs(ty - y) > .002) requestAnimationFrame(tick);
+    else running = false;
+  };
+  const aim = (nx, ny) => {
+    tx = Math.max(-1, Math.min(1, nx)); ty = Math.max(-1, Math.min(1, ny));
+    if (!running) { running = true; requestAnimationFrame(tick); }
+  };
+
+  const addLayers = b => {
+    if (b.layers) return;
+    let left = 3;
+    b.layers = Object.keys(DEPTH).map(z => {
+      const l = _el('img', 'plx-layer');
+      l.dataset.z = z; l.alt = ''; l.decoding = 'async'; l.setAttribute('aria-hidden', 'true');
+      if (b.img.style.filter) l.style.filter = b.img.style.filter;
+      l.onload = () => { if (!--left) { b.box.classList.add('is-on'); paint(); } };
+      l.src = `public/images/story-plx/${b.id}-${z}.webp?${ver}`;
+      b.box.appendChild(l);
+      return l;
+    });
+  };
+  const enable = () => {
+    if (enabled) return;
+    enabled = true;
+    document.querySelectorAll('.plx-btn').forEach(el => el.remove());
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      const b = boxes.find(v => v.box === e.target);
+      if (e.isIntersecting) { live.add(b); addLayers(b); } else live.delete(b);
+    }), { rootMargin: '60% 0px' });
+    boxes.forEach(b => io.observe(b.box));
+  };
+
+  const onTilt = e => {
+    if (e.gamma == null || e.beta == null || !document.documentElement.classList.contains('on-story')) return;
+    enable();
+    const a = screen.orientation?.angle ?? window.orientation ?? 0;
+    const [g, t] = a === 90 ? [e.beta, -e.gamma] : (a === 270 || a === -90) ? [-e.beta, e.gamma] : a === 180 ? [-e.gamma, -e.beta] : [e.gamma, e.beta];
+    if (!base) base = { g, t };
+    // 처음 쥔 자세가 기준. 자세를 바꾸면 기준이 천천히 따라온다
+    base.g += (g - base.g) * .004; base.t += (t - base.t) * .004;
+    aim((g - base.g) / 18, (t - base.t) / 14);
+  };
+  addEventListener('orientationchange', () => { base = null; });
+
+  if (window.DeviceOrientationEvent?.requestPermission && matchMedia('(pointer: coarse)').matches) {
+    // iOS: 버튼을 눌러야 센서 권한을 물을 수 있다
+    const ask = async ev => {
+      ev.stopPropagation();
+      let ok = false;
+      try { ok = await DeviceOrientationEvent.requestPermission() === 'granted'; } catch (_) {}
+      document.querySelectorAll('.plx-btn').forEach(el => el.remove());
+      if (ok) addEventListener('deviceorientation', onTilt);
+    };
+    boxes.forEach(b => {
+      const btn = _el('button', 'plx-btn', '움직임 켜기');
+      btn.type = 'button'; btn.onclick = ask;
+      b.box.appendChild(btn);
+    });
+  } else {
+    addEventListener('deviceorientation', onTilt);
+  }
+
+  // 마우스가 있으면 올린 위치로 움직인다
+  if (matchMedia('(hover: hover)').matches) {
+    boxes.forEach(b => {
+      b.box.addEventListener('pointermove', e => {
+        enable();
+        const r = b.box.getBoundingClientRect();
+        aim((e.clientX - r.left) / r.width * 2 - 1, (e.clientY - r.top) / r.height * 2 - 1);
+      });
+      b.box.addEventListener('pointerleave', () => aim(0, 0));
+    });
+  }
+}
+
 /* 그림 시안 — 주소에 ?art=1 이 있을 때만 켠다 (공연 사진을 유화풍으로 가공한 그림을 표지·경계에 겹친다).
    꺼져 있으면 그림을 받지도 않으므로 평소 방문자에게는 아무 영향이 없다. */
 function initArtPreview() {
@@ -2945,6 +3046,7 @@ function initArtPreview() {
 ══════════════════════════════════ */
 
 initArtPreview();
+initStoryParallax();
 initMainCinema();
 renderDetailGrid();
 renderFinaleDate();
