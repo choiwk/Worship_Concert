@@ -744,7 +744,7 @@ function initMainCinema() {
   const seqCanvas = document.getElementById('cinemaSeq');
   const SEQ_N = seqCanvas ? (+seqCanvas.dataset.count || 60) : 0;
   const frames = new Array(SEQ_N);
-  let seqOn = false, seqRaf = 0;
+  let seqOn = false, seqRaf = 0, seqLoading = false;
   const seqSrc = i => seqCanvas.dataset.src.replace('{n}', String(i + 1).padStart(3, '0'));
   const seqWant = () => {
     // 첫 장면(맨 위) ~ 꼬리말까지 내린 만큼이 영상의 처음 ~ 끝
@@ -805,6 +805,8 @@ function initMainCinema() {
     if (!seqCanvas) return;
     if (seqOn) { seqSchedule(); return; }
     seqOn = true;
+    if (seqLoading) { seqSchedule(); return; }   // 이미 받은 장면이 있으면 다시 받지 않는다
+    seqLoading = true;
     const order = [], seen = new Set();
     [8, 4, 2, 1].forEach(step => {
       for (let i = 0; i < SEQ_N; i += step) if (!seen.has(i)) { seen.add(i); order.push(i); }
@@ -844,7 +846,7 @@ function initMainCinema() {
     clearTimeout(startTimer);
     clearTimeout(stallTimer);
     tier = t;
-    bg.dataset.video = 'still';
+    bg.dataset.video = seqOn ? 'seq' : 'still';   // 영상을 다시 시도하는 동안에도 장면은 그대로 둔다
     if (t === 'still') {
       video.pause();
       video.removeAttribute('src');
@@ -876,6 +878,8 @@ function initMainCinema() {
     clearTimeout(startTimer);
     clearTimeout(stallTimer);
     switching = false;
+    // 영상이 실제로 돌기 시작했으면 스크롤 연동 장면은 멈춘다
+    if (seqOn) { seqOn = false; cancelAnimationFrame(seqRaf); seqRaf = 0; seqLastT = 0; }
     bg.dataset.video = 'playing';
   });
   video.addEventListener('waiting', () => {
@@ -906,9 +910,22 @@ function initMainCinema() {
     }
   }
   window.addEventListener('hashchange', sync);
-  document.addEventListener('visibilitychange', sync);
   // ?bg=seq 로 열면 어느 휴대폰에서나 스크롤 연동 장면을 볼 수 있다 (확인용)
-  setTier(/[?&]bg=seq/.test(location.search) ? 'still' : _cinemaVideoPlan(navigator.connection));
+  const plan = /[?&]bg=seq/.test(location.search) ? 'still' : _cinemaVideoPlan(navigator.connection);
+
+  /* 자동 재생이 막혀(저전력 모드 등) 장면으로 바뀐 뒤에도, 메인에서 화면을 누르거나
+     다시 돌아오면 영상을 다시 시도한다. 아이폰은 누르는 순간에만 막힌 재생을 풀어 준다.
+     데이터 절약·아주 느린 망으로 처음부터 장면이었으면 시도하지 않는다. 데이터를 아끼려 3번까지만. */
+  let retries = 0;
+  const retryVideo = () => {
+    if (plan === 'still' || tier !== 'still' || retries >= 3 || !onMain()) return;
+    retries++;
+    tried.delete('light');
+    setTier('light');
+  };
+  ['click', 'touchend', 'keydown'].forEach(t => document.addEventListener(t, retryVideo, { capture: true, passive: true }));
+  document.addEventListener('visibilitychange', () => { sync(); if (!document.hidden) retryVideo(); });
+  setTier(plan);
 
   // 스크롤 위치 → 지금 장면. 위아래로 밀지 않고, 장면을 통째로 바꾼다.
   // 페이지가 아니라 이 상자(root) 안쪽이 스크롤된다. 한 장면 = 상자 높이 한 칸.
