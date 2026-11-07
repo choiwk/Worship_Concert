@@ -674,7 +674,7 @@ function _mainDesign() {
    늦으면 initMainCinema 의 시간 재기가 알아서 낮춘다. */
 function _cinemaVideoPlan(conn) {
   if (!conn) return 'full';
-  if (conn.saveData) return 'still';        // 데이터 절약 모드 → 스크롤 연동 장면
+  if (conn.saveData) return 'still';        // 데이터 절약 모드 → 사진만 (원하면 「영상 보기」)
   const t = conn.effectiveType || '';
   if (t === 'slow-2g' || t === '2g') return 'still';
   if (t === '3g' || (conn.downlink && conn.downlink < 1.5)) return 'light';
@@ -737,101 +737,12 @@ function initMainCinema() {
   let switching = false;            // 영상 파일을 바꾸는 중 (이때 나는 pause 는 무시)
   const onMain = () => parseHash().tab === 'main' && !document.hidden;
 
-  /* ── 스크롤 연동 장면 (스크롤 스크러빙) ──────────────────
-     데이터 절약 모드·아주 느린 망·자동 재생이 막힌 휴대폰(저전력 모드 등)에서는 영상 대신
-     같은 영상에서 뽑은 장면 사진 60장(약 1MB)을 스크롤 위치에 맞춰 넘긴다.
-     내리면 앞으로, 올리면 뒤로 영상처럼 움직인다. 거친 장면부터 받아 처음부터 스크롤에 반응한다. */
-  const seqCanvas = document.getElementById('cinemaSeq');
-  const SEQ_N = seqCanvas ? (+seqCanvas.dataset.count || 60) : 0;
-  const frames = new Array(SEQ_N);
-  let seqOn = false, seqRaf = 0, seqLoading = false;
-  const seqSrc = i => seqCanvas.dataset.src.replace('{n}', String(i + 1).padStart(3, '0'));
-  const seqWant = () => {
-    // 첫 장면(맨 위) ~ 꼬리말까지 내린 만큼이 영상의 처음 ~ 끝
-    const max = Math.max(1, next.offsetTop - root.clientHeight);
-    return Math.round(Math.min(1, Math.max(0, root.scrollTop / max)) * (SEQ_N - 1));
-  };
-  /* 보여 주는 위치(seqPos, 소수)는 스크롤이 정한 장면(seqWant)을 천천히 따라간다.
-     한 번 넘길 때 약 20장을 2초 남짓에 걸쳐 흘려, 영상처럼 부드럽다. 두 장면 사이는 겹쳐 그린다. */
-  let seqPos = -1, seqLastT = 0;
-  const seqNear = (want) => {
-    for (let d = 0; d < SEQ_N; d++) {
-      if (frames[want - d]) return want - d;
-      if (frames[want + d]) return want + d;
-    }
-    return -1;
-  };
-  const seqPaint = (ctx, img, cw, ch, alpha) => {
-    const sc = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);   // 화면을 빈틈 없이 덮게
-    const w = img.naturalWidth * sc, h = img.naturalHeight * sc;
-    ctx.globalAlpha = alpha;
-    ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
-  };
-  const seqDraw = () => {
-    seqRaf = 0;
-    if (!seqOn) return;
-    const target = seqWant();
-    const now = performance.now();
-    const dt = seqLastT ? Math.min(0.1, (now - seqLastT) / 1000) : 0;
-    seqLastT = now;
-    if (seqPos < 0) seqPos = target;
-    const diff = target - seqPos;
-    const speed = Math.min(14, Math.max(6, Math.abs(diff) * 3));   // 1초에 6~14장
-    seqPos += Math.sign(diff) * Math.min(Math.abs(diff), speed * dt);
-
-    const a = seqNear(Math.floor(seqPos));
-    if (a < 0) { seqSchedule(); return; }
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
-    const cw = Math.round(seqCanvas.clientWidth * dpr), ch = Math.round(seqCanvas.clientHeight * dpr);
-    if (seqCanvas.width !== cw || seqCanvas.height !== ch) { seqCanvas.width = cw; seqCanvas.height = ch; }
-    const ctx = seqCanvas.getContext('2d');
-    seqPaint(ctx, frames[a], cw, ch, 1);
-    const frac = seqPos - Math.floor(seqPos);
-    const b = frames[Math.floor(seqPos) + 1];
-    if (frac > 0.02 && b) seqPaint(ctx, b, cw, ch, frac);   // 다음 장면을 그만큼 겹친다
-    ctx.globalAlpha = 1;
-    bg.dataset.video = 'seq';
-
-    if (Math.abs(target - seqPos) > 0.01) seqSchedule();
-    else seqLastT = 0;                                     // 다 따라왔으면 쉰다
-  };
-  const seqSchedule = () => {
-    if (!seqOn || seqRaf) return;
-    // 화면 갱신(requestAnimationFrame)을 쓰되, 브라우저가 미루면 타이머가 대신 그린다
-    const to = setTimeout(() => { cancelAnimationFrame(seqRaf); seqDraw(); }, 60);
-    seqRaf = requestAnimationFrame(() => { clearTimeout(to); seqDraw(); });
-  };
-  const startSeq = () => {
-    if (!seqCanvas) return;
-    if (seqOn) { seqSchedule(); return; }
-    seqOn = true;
-    if (seqLoading) { seqSchedule(); return; }   // 이미 받은 장면이 있으면 다시 받지 않는다
-    seqLoading = true;
-    const order = [], seen = new Set();
-    [8, 4, 2, 1].forEach(step => {
-      for (let i = 0; i < SEQ_N; i += step) if (!seen.has(i)) { seen.add(i); order.push(i); }
-    });
-    let at = 0;
-    const loadNext = () => {
-      if (at >= order.length) return;
-      const i = order[at++];
-      const img = new Image();
-      img.decoding = 'async';
-      img.onload = () => { frames[i] = img; seqSchedule(); loadNext(); };
-      img.onerror = loadNext;
-      img.src = seqSrc(i);
-    };
-    for (let c = 0; c < 4; c++) loadNext();          // 네 장씩 나란히 받는다
-  };
-  root.addEventListener('scroll', seqSchedule, { passive: true });
-  window.addEventListener('resize', seqSchedule);
-
   /* ── 배경 영상 ─────────────────────────────────────────
      1) 사진(80KB)을 먼저 깐다. 영상이 늦어도 첫 화면이 비지 않는다.
      2) 망 상태를 보고 영상을 고른다: 빠르면 고화질(4.2MB), 느리면 가벼운 것(1MB).
-        데이터 절약 모드·매우 느린 망이면 처음부터 스크롤 연동 장면.
+        데이터 절약 모드·매우 느린 망이면 처음부터 천천히 움직이는 사진.
      3) 영상이 정해진 시간 안에 시작하지 않거나, 재생 중 3초 넘게 끊기거나,
-        자동 재생이 막히면(아이폰 저전력 모드 등) 한 단계씩 낮춘다: 고화질 → 가벼운 것 → 스크롤 연동 장면.
+        자동 재생이 막히면(아이폰 저전력 모드 등) 한 단계씩 낮춘다: 고화질 → 가벼운 것 → 천천히 움직이는 사진.
      영상은 실제로 재생이 시작된 뒤에야 사진 위로 서서히 나타난다. */
   const armStart = () => {
     clearTimeout(startTimer);
@@ -846,12 +757,11 @@ function initMainCinema() {
     clearTimeout(startTimer);
     clearTimeout(stallTimer);
     tier = t;
-    bg.dataset.video = seqOn ? 'seq' : 'still';   // 영상을 다시 시도하는 동안에도 장면은 그대로 둔다
+    bg.dataset.video = 'still';
     if (t === 'still') {
       video.pause();
       video.removeAttribute('src');
       video.load();                 // 받던 것을 멈춘다
-      startSeq();                   // 영상 대신 스크롤 연동 장면
       return;
     }
     switching = true;
@@ -878,8 +788,6 @@ function initMainCinema() {
     clearTimeout(startTimer);
     clearTimeout(stallTimer);
     switching = false;
-    // 영상이 실제로 돌기 시작했으면 스크롤 연동 장면은 멈춘다
-    if (seqOn) { seqOn = false; cancelAnimationFrame(seqRaf); seqRaf = 0; seqLastT = 0; }
     bg.dataset.video = 'playing';
   });
   video.addEventListener('waiting', () => {
@@ -890,7 +798,7 @@ function initMainCinema() {
   video.addEventListener('error', () => {
     if (tier !== 'still' && video.getAttribute('src')) downgrade();
   });
-  // 메인을 보는 중인데 휴대폰이 스스로 멈췄으면(절전 등) 멈춘 화면 대신 스크롤 연동 장면으로
+  // 메인을 보는 중인데 휴대폰이 스스로 멈췄으면(절전 등) 멈춘 화면 대신 천천히 움직이는 사진으로
   video.addEventListener('pause', () => {
     if (switching || !onMain() || video.ended || tier === 'still' || bg.dataset.video !== 'playing') return;
     setTier('still');
@@ -901,7 +809,7 @@ function initMainCinema() {
     if (onMain() && tier !== 'still') {
       const p = video.play();
       if (p) p.catch(err => {
-        // 자동 재생이 막혔다(아이폰 저전력 모드 등) → 스크롤 연동 장면
+        // 자동 재생이 막혔다(아이폰 저전력 모드 등) → 천천히 움직이는 사진
         if (err && err.name === 'NotAllowedError') setTier('still');
       });
       armStart();
@@ -910,8 +818,16 @@ function initMainCinema() {
     }
   }
   window.addEventListener('hashchange', sync);
-  // ?bg=seq 로 열면 어느 휴대폰에서나 스크롤 연동 장면을 볼 수 있다 (확인용)
-  const plan = /[?&]bg=seq/.test(location.search) ? 'still' : _cinemaVideoPlan(navigator.connection);
+  // ?bg=still 로 열면 어느 휴대폰에서나 데이터 절약 모드 화면을 볼 수 있다 (확인용)
+  const plan = /[?&]bg=still/.test(location.search) ? 'still' : _cinemaVideoPlan(navigator.connection);
+
+  /* 데이터 절약 모드(·아주 느린 망)일 때만 첫 장면에 「영상 보기」를 둔다. 누르면 가벼운 영상을 튼다. */
+  if (plan === 'still') {
+    const btn = _el('button', 'cinema-play', '영상 보기');
+    btn.type = 'button';
+    btn.onclick = () => { btn.remove(); tried.delete('light'); setTier('light'); };
+    root.querySelector('.scene-title').appendChild(btn);
+  }
 
   /* 자동 재생이 막혀(저전력 모드 등) 장면으로 바뀐 뒤에도, 메인에서 화면을 누르거나
      다시 돌아오면 영상을 다시 시도한다. 아이폰은 누르는 순간에만 막힌 재생을 풀어 준다.
