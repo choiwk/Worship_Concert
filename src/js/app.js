@@ -198,15 +198,6 @@ function renderSongList() {
   box.innerHTML = '';
   const lis = [];
 
-  // 목록 맨 위 '곡 전체 듣기' — 곡 수는 데이터에서 그대로 가져온다
-  const play = document.getElementById('setlistPlay');
-  if (play) {
-    play.href = SETLIST_PLAYLIST;
-    play.setAttribute('aria-label',
-      '곡 전체 듣기 — 유튜브 재생목록 ' + SONGS.length + '곡 (새 탭에서 열림)');
-    document.getElementById('setlistPlaySub').textContent =
-      t('songs.count', '{n}곡').replace('{n}', SONGS.length);
-  }
   // 표지: 곡 수와 주제곡
   const count = document.getElementById('slCount');
   if (count) count.textContent = t('songs.count', '{n}곡').replace('{n}', SONGS.length);
@@ -281,10 +272,39 @@ function _songRoulette(box, lis) {
   count.appendChild(_el('span', 'sl-wheel-total', '/ ' + String(lis.length).padStart(2, '0')));
   sec.appendChild(count);
   const ul = _el('ul', 'song-list sl-wheel');
+  ul.appendChild(_setlistScrollItem());
   lis.forEach(li => ul.appendChild(li));
   sec.appendChild(ul);
+  // 곡 리스트 맨 끝(그림·「계속 내리면」)에 멈출 자리
+  const end = _el('span', 'sl-end-snap');
+  end.setAttribute('aria-hidden', 'true');
+  sec.appendChild(end);
   box.appendChild(sec);
   _songScenesInit();
+}
+
+/* 룰렛 맨 위(01번 위) 콘티 이야기 두루마리 — 누르면 살짝 펼쳐진 뒤 팝업으로 열린다.
+   첫 문장은 팝업 글(index.html #noteScroll)에서 그대로 가져와 한 곳만 고치면 된다. */
+function _setlistScrollItem() {
+  const li = _el('li', 'sl-scroll-item');
+  const b = _el('button', 'sl-scroll');
+  b.type = 'button';
+  b.setAttribute('aria-haspopup', 'dialog');
+  b.setAttribute('aria-label', '콘티 이야기 펼쳐 읽기');
+  const paper = _el('span', 'sl-scroll-paper');
+  paper.appendChild(_el('span', 'sl-scroll-label', '콘티 이야기'));
+  const lead = document.querySelector('#noteScroll .ns-lead');
+  const line = _el('span', 'sl-scroll-lead');
+  if (lead) line.innerHTML = lead.innerHTML;
+  paper.appendChild(line);
+  paper.appendChild(_el('span', 'sl-scroll-more', '펼쳐 읽기'));
+  b.append(_el('span', 'sl-scroll-rod'), paper, _el('span', 'sl-scroll-rod'));
+  b.addEventListener('click', () => {
+    b.classList.add('is-opening');
+    setTimeout(openSetlistNote, _reduceMotion.matches ? 0 : 280);
+  });
+  li.appendChild(b);
+  return li;
 }
 
 /* 룰렛: 카드마다 화면 가운데와의 거리(카드 몇 장만큼 떨어졌는지)에 맞춰 크기·기울기·흐림을 정한다.
@@ -293,7 +313,7 @@ const _reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const _wheelByCss = !!(window.CSS && CSS.supports && CSS.supports('animation-timeline: view()'));
 let _wheelCenter = null;
 function _songWheelUpdate() {
-  const items = document.querySelectorAll('#page-songs .sl-wheel .song-item');
+  const items = document.querySelectorAll('#page-songs .sl-wheel > li');
   if (!items.length) return;
   const vc = _slCenter();
   // 스크롤에 묶인 CSS 애니메이션을 쓸 수 있으면 모양은 CSS 가 그린다 (화면 움직임과 같은 박자라 떨리지 않는다).
@@ -319,7 +339,7 @@ function _songWheelUpdate() {
   _wheelCenter = best;
   items.forEach(li => li.classList.toggle('is-center', li === best));
   const now = document.querySelector('#page-songs .sl-wheel-now');
-  if (now && best) now.textContent = best.querySelector('.song-num')?.textContent || '';
+  if (now && best) now.textContent = best.querySelector('.song-num')?.textContent || '콘티';
 }
 
 /* 곡 리스트 상자(화면에 고정)에서 고른 곡이 서는 줄 — 가운데보다 조금 위 */
@@ -1099,8 +1119,8 @@ function _flowEdges() {
 })();
 
 /* 각 탭 맨 끝에 「계속 내리면 ○○」 — 눌러도 넘어간다 */
-(function initFlowCues() {
-  const where = { songs: '#page-songs .sl-lp-ch', word: '#page-word', artists: '#page-artists', story: '#page-story' };
+function initFlowCues() {
+  const where = { songs: '#page-songs .sl-roulette', word: '#page-word', artists: '#page-artists', story: '#page-story' };
   Object.keys(where).forEach(tab => {
     const box = document.querySelector(where[tab]);
     const to = _flowNeighbor(tab, 1);
@@ -1113,7 +1133,7 @@ function _flowEdges() {
     b.addEventListener('click', () => _flowGo(to, false));
     box.appendChild(b);
   });
-})();
+}
 
 const CONCERT = {
   // 날짜 확정 완료
@@ -1512,7 +1532,8 @@ const OVERLAYS = {
   member: { backdrop: 'memberBackdrop', panel: 'memberSheet'  },
   rsvp:   { backdrop: 'rsvpBackdrop',   panel: 'rsvpSheet'   },
   word:   { backdrop: 'wordBackdrop',   panel: 'wordSheet'   },
-  wordRead: { backdrop: 'wordReadBackdrop', panel: 'wordReadModal' }
+  wordRead: { backdrop: 'wordReadBackdrop', panel: 'wordReadModal' },
+  note:   { backdrop: 'noteBackdrop',   panel: 'noteScroll'  }
 };
 
 let _openOverlays = [];   // 여러 개가 겹쳐도 스크롤 잠금이 어긋나지 않게 스택으로
@@ -1672,92 +1693,82 @@ const _LP_COLORS = ['#9c5044', '#4f6a5c', '#5c5877', '#8a6a41', '#43647b', '#7d5
 
 let _lpIndex = 0;
 
-function _updateLP() {
+/* dir: 1 = 다음 곡(곡 이름이 아래에서 올라온다), -1 = 이전 곡(위에서 내려온다), 없으면 그냥 바꾼다 */
+function _updateLP(dir) {
   const song = SONGS[_lpIndex];
-  if (!song) return;
+  const disc = document.getElementById('lpDisc');
+  const name = document.getElementById('lpTrackName');
+  if (!song || !disc || !name) return;
 
-  const color = _LP_COLORS[_lpIndex % _LP_COLORS.length];
-  const label = document.getElementById('lpLabel');
-  const name  = document.getElementById('lpTrackName');
-  const count = document.getElementById('lpTrackCount');
-  const yt    = document.getElementById('lpYtLink');
-  const disc  = document.getElementById('lpDisc');
+  disc.style.setProperty('--lp-label-color', _LP_COLORS[_lpIndex % _LP_COLORS.length]);
+  document.getElementById('lpLabel').textContent = song.no;
 
-  label.textContent = song.no;
-  name.textContent  = _songTitle(song);
-  count.textContent = (_lpIndex + 1) + ' / ' + SONGS.length;
-  disc.style.setProperty('--lp-label-color', color);
+  const track = _el('span', 'lp-row-track');
+  track.append(_el('span', 'lp-row-no', song.no), _el('span', 'lp-row-name', _songTitle(song)));
+  const old = name.querySelector('.lp-row-track:not(.is-out)');
+  if (old && dir && !_reduceMotion.matches) {
+    track.classList.add(dir > 0 ? 'from-below' : 'from-above');
+    name.appendChild(track);
+    old.classList.add('is-out', dir > 0 ? 'to-above' : 'to-below');
+    // 시작 자리를 한 번 그린 뒤 움직인다 (같은 순간에 바꾸면 미끄러지지 않고 건너뛴다)
+    setTimeout(() => track.classList.remove('from-below', 'from-above'), 30);
+    setTimeout(() => old.remove(), 480);
+  } else {
+    name.textContent = '';
+    name.appendChild(track);
+  }
 
-  // 디스크와 곡명을 누르면 해당 곡 상세로
+  // 원판과 곡 이름을 누르면 해당 곡 상세로
   const go = () => { location.hash = '#/songs/' + song.slug; };
   disc.onclick = go;
   name.onclick = go;
-  disc.setAttribute('aria-label', song.no + '번 ' + song.title + ' 가사와 말씀 보기');
-  name.setAttribute('aria-label', song.no + '번 ' + song.title + ' 가사와 말씀 보기');
+  const label = song.no + '번 ' + song.title + ' 가사와 말씀 보기';
+  disc.setAttribute('aria-label', label);
+  name.setAttribute('aria-label', label);
 
   // 유튜브 링크가 없는 곡은 버튼을 숨긴다 (빈 링크를 남기지 않는다)
-  if (song.youtube) {
-    yt.hidden = false;
-    yt.href = song.youtube;
-    yt.setAttribute('aria-label', song.title + ' ' + t('songs.youtube', 'YouTube에서 듣기'));
-  } else {
-    yt.hidden = true;
-    yt.removeAttribute('href');
+  const yt = document.getElementById('lpYtLink');
+  if (yt) {
+    yt.hidden = !song.youtube;
+    if (song.youtube) {
+      yt.href = song.youtube;
+      yt.setAttribute('aria-label', song.title + ' ' + t('songs.youtube', 'YouTube에서 듣기'));
+    } else yt.removeAttribute('href');
   }
 }
 
 function lpNext() {
   _lpIndex = (_lpIndex + 1) % SONGS.length;
-  _updateLP();
+  _updateLP(1);
 }
 
 function lpPrev() {
   _lpIndex = (_lpIndex - 1 + SONGS.length) % SONGS.length;
-  _updateLP();
+  _updateLP(-1);
 }
 
 
 /* ══════════════════════════════════
-   setlist-note.js — 콘티 한마디 접기/펼치기
+   setlist-note.js — 콘티 이야기 두루마리 팝업
 
-   글이 다섯 문단이라 그대로 두면 곡 목록과 미리듣기 사이가 멀어진다.
-   앞 두 문단(주제곡이 무엇이고 왜 그렇게 정했는지)만 보여 주고
-   나머지는 눌러서 펼친다.
-
-   페이지 안에 또 스크롤 상자를 두는 방법도 있었지만, 이미 세로로
-   스크롤되는 화면 안에서 손가락이 어느 쪽을 움직일지 헷갈린다.
-   그래서 펼치는 쪽을 골랐다.
+   곡 룰렛 맨 위 두루마리를 누르면 위아래 막대가 벌어지며 종이가 펼쳐진다.
+   여닫기·스크롤 잠금·ESC·포커스는 다른 팝업과 같은 overlay 코드를 쓴다.
 ══════════════════════════════════ */
 
-function toggleSetlistNote() {
-  const box = document.getElementById('setlistNoteRest');
-  const btn = document.getElementById('setlistNoteToggle');
-  if (!box || !btn) return;
+function openSetlistNote() {
+  const panel = document.getElementById('noteScroll');
+  if (!panel) return;
+  panel.style.setProperty('--ns-h', panel.offsetHeight + 'px');   // 접힌 자리(가운데)에서 펼치려고 높이를 잰다
+  panel.querySelector('.ns-paper').scrollTop = 0;
+  openOverlay('note');
+  panel.querySelector('.ns-close').focus({ preventScroll: true });
+  // 팝업이 다 펼쳐지면 카드는 원래대로 (ESC·배경 눌러 닫아도 카드가 벌어진 채 남지 않게)
+  setTimeout(() => document.querySelectorAll('.sl-scroll.is-opening').forEach(b => b.classList.remove('is-opening')), 700);
+}
 
-  const opening = !box.classList.contains('open');
-
-  if (opening) {
-    box.classList.add('open');
-    box.style.maxHeight = box.scrollHeight + 'px';
-    // 다 펼쳐지면 고정 높이를 풀어 준다. 그래야 화면을 돌리거나
-    // 글자 크기가 바뀌어도 잘리지 않는다.
-    box.addEventListener('transitionend', function done(e) {
-      if (e.propertyName !== 'max-height') return;
-      box.style.maxHeight = 'none';
-      box.removeEventListener('transitionend', done);
-    });
-  } else {
-    // none 상태에서는 바로 0 으로 보내도 애니메이션이 걸리지 않는다.
-    // 지금 높이를 px 로 한 번 고정한 뒤 접는다.
-    box.style.maxHeight = box.scrollHeight + 'px';
-    requestAnimationFrame(() => {
-      box.classList.remove('open');
-      box.style.maxHeight = '0px';
-    });
-  }
-
-  btn.textContent = opening ? t('songs.less', '접기') : t('songs.more', '더 읽기');
-  btn.setAttribute('aria-expanded', String(opening));
+function closeSetlistNote() {
+  closeOverlay('note');
+  document.querySelectorAll('.sl-scroll.is-opening').forEach(b => b.classList.remove('is-opening'));
 }
 
 
@@ -2950,26 +2961,27 @@ function initStoryParallax() {
   }
 }
 
-/* 그림 시안 — 주소에 ?art=1 이 있을 때만 켠다 (공연 사진을 유화풍으로 가공한 그림을 표지·경계에 겹친다).
-   꺼져 있으면 그림을 받지도 않으므로 평소 방문자에게는 아무 영향이 없다. */
-function initArtPreview() {
-  if (!/[?&]art=1/.test(location.search)) return;
+/* 유화 그림 — 공연 사진을 유화처럼 가공해 곡 리스트·말씀 나눔·멤버 소개의 표지와 경계에 겹친다.
+   메인과 팀 소개에는 넣지 않는다. 탭을 열 때 받도록 지연 로드한다. */
+function initArt() {
   document.documentElement.classList.add('art-on');
   const ver = (document.querySelector('script[src*="app.js"]')?.src.split('?')[1]) || '';
-  const add = (name, sel, pos, cls) => {
+  const add = (name, h, sel, pos, cls) => {
     const at = document.querySelector(sel);
     if (!at) return;
     const img = _el('img', 'art-band' + (cls ? ' ' + cls : ''));
-    img.src = 'public/images/art/' + name + '.webp?' + ver;
-    img.alt = '';
+    img.loading = 'lazy';             // 주소보다 먼저 정해야 지연 로드가 된다
     img.decoding = 'async';
+    img.alt = '';
+    img.width = 760; img.height = h;  // 자리를 미리 잡아 둔다 (크기가 0 이면 지연 로드가 시작되지 않는다)
+    img.src = 'public/images/art/' + name + '.webp?' + ver;
     img.setAttribute('aria-hidden', 'true');
     at.insertAdjacentElement(pos, img);
   };
-  add('cover-songs', '#page-songs .sl-cover', 'beforebegin');
-  add('cover-members', '#page-artists .mb-cover', 'beforebegin');
-  add('cover-word', '#page-word .mb-cover', 'beforebegin');
-  add('stage-dark', '#page-songs .sl-note-ch .setlist-note', 'beforebegin', 'art-dark');
+  add('cover-songs', 446, '#page-songs .sl-cover', 'beforebegin');
+  add('cover-members', 574, '#page-artists .mb-cover', 'beforebegin');
+  add('cover-word', 377, '#page-word .mb-cover', 'beforebegin');
+  add('stage-dark', 324, '#page-songs .sl-wheel', 'afterend', 'art-dark');
 }
 
 
@@ -2977,13 +2989,14 @@ function initArtPreview() {
    boot — 최초 렌더 및 라우팅 시작
 ══════════════════════════════════ */
 
-initArtPreview();
 initStoryParallax();
 initMainCinema();
 renderDetailGrid();
 renderFinaleDate();
 renderMembers();
 renderSongList();
+initFlowCues();
+initArt();
 _updateLP();
 _rsvpBindCount();
 document.getElementById('rsvpForm').addEventListener('submit', _rsvpSubmit);
