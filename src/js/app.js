@@ -2917,10 +2917,10 @@ function initArt() {
     img.setAttribute('aria-hidden', 'true');
     at.insertAdjacentElement(pos, img);
   };
-  add('cover-songs', 446, '#page-songs .sl-cover', 'beforebegin');
-  add('cover-members', 574, '#page-artists .mb-cover', 'beforebegin');
-  add('cover-word', 377, '#page-word .mb-cover', 'beforebegin');
-  add('stage-dark', 324, '#page-songs .sl-wheel', 'afterend', 'art-dark');
+  add('cover-songs', 475, '#page-songs .sl-cover', 'beforebegin');
+  add('cover-members', 570, '#page-artists .mb-cover', 'beforebegin');
+  add('cover-word', 475, '#page-word .mb-cover', 'beforebegin');
+  add('stage-dark', 475, '#page-songs .sl-wheel', 'afterend', 'art-dark');
 }
 
 
