@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=139') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=142') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=139') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=142') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -214,7 +214,6 @@ html.is-locked body {
 .venue-highlight, .message-lead, .message-text,
 .btn-ticket, .btn-secondary, .share-fab,
 .ph-title, .song-title-text, .song-num, .song-word-link,
-.lp-track-name, .lp-yt-btn, .lp-label,
 .song-back, .song-head-title, .song-part-label, .song-lyrics,
 .song-yt, .song-word-ref, .song-nav-title, .verse-full,
 .verse-ref, .verse-line,
@@ -1502,166 +1501,6 @@ html[lang="km"] .title-main .line-hand-sub {
   margin: 0 auto;
 }
 
-/* ── LP Player ── */
-@keyframes spinLP {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-.lp-player {
-  padding: clamp(20px, 6vw, 32px) clamp(16px, 5vw, 28px);
-  text-align: center;
-}
-
-.lp-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(16px, 5vw, 28px);
-  margin-bottom: clamp(16px, 5vw, 24px);
-}
-
-.lp-arrow {
-  width: 46px; height: 46px;
-  border: 1px solid rgba(196, 168, 130, .35);
-  border-radius: 50%;
-  background: none;
-  font-size: 22px;
-  color: var(--ink);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background .2s, border-color .2s;
-  flex-shrink: 0;
-}
-.lp-arrow:active {
-  background: var(--paper-warm);
-  border-color: var(--line);
-}
-
-.lp-disc-wrap {
-  width: clamp(140px, 38vw, 180px);
-  height: clamp(140px, 38vw, 180px);
-  flex-shrink: 0;
-}
-
-.lp-disc {
-  width: 100%; height: 100%;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  border-radius: 50%;
-  animation: spinLP 6s linear infinite;
-  --lp-label-color: #c47a6e;     /* 곡마다 JS 가 바꾼다 */
-  background:
-    radial-gradient(circle, transparent 17%, rgba(60,50,40,.12) 17.5%, transparent 18%),
-    radial-gradient(circle, transparent 24%, rgba(60,50,40,.07) 24.5%, transparent 25%),
-    radial-gradient(circle, transparent 31%, rgba(60,50,40,.05) 31.5%, transparent 32%),
-    radial-gradient(circle, transparent 38%, rgba(60,50,40,.07) 38.5%, transparent 39%),
-    radial-gradient(circle, transparent 52%, rgba(60,50,40,.05) 52.5%, transparent 53%),
-    radial-gradient(circle, transparent 60%, rgba(60,50,40,.07) 60.5%, transparent 61%),
-    radial-gradient(circle, transparent 68%, rgba(60,50,40,.05) 68.5%, transparent 69%),
-    radial-gradient(circle, transparent 76%, rgba(60,50,40,.08) 76.5%, transparent 77%),
-    radial-gradient(circle, transparent 84%, rgba(60,50,40,.06) 84.5%, transparent 85%),
-    radial-gradient(circle, transparent 92%, rgba(60,50,40,.1) 92.5%, transparent 93%),
-    conic-gradient(from 0deg, #1a1510, #252018, #1a1510, #252018, #1a1510, #252018, #1a1510, #252018, #1a1510);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  box-shadow:
-    0 6px 24px rgba(0, 0, 0, .35),
-    inset 0 0 3px rgba(255,255,255,.03);
-}
-.lp-disc::before {
-  content: '';
-  position: absolute;
-  width: 40%; height: 40%;
-  border-radius: 50%;
-  background: var(--lp-label-color);
-  box-shadow: 0 1px 6px rgba(0,0,0,.2), inset 0 1px 3px rgba(255,255,255,.15);
-  transition: background .5s ease;
-}
-/* 빛 반사 하이라이트 */
-.lp-disc::after {
-  content: '';
-  position: absolute;
-  width: 100%; height: 100%;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(200,190,180,.15) 2.5%, transparent 3.5%),
-    radial-gradient(circle at 72% 28%, rgba(255,255,255,.18) 1.5%, transparent 3%),
-    radial-gradient(circle at 30% 75%, rgba(255,255,255,.1) 1%, transparent 2.5%),
-    linear-gradient(135deg, transparent 40%, rgba(255,255,255,.06) 50%, transparent 60%);
-  pointer-events: none;
-}
-
-/* 라벨 번호 */
-.lp-label {
-  position: relative;
-  z-index: 2;
-  font-size: clamp(18px, 5vw, 24px);
-  color: rgba(255,255,255,.92);
-  letter-spacing: 0.02em;
-  animation: spinLP 6s linear infinite reverse;
-}
-
-/* 곡명 — 누르면 해당 곡 상세로 간다 */
-.lp-track-name {
-  display: block;
-  width: 100%;
-  background: none;
-  border: none;
-  cursor: pointer;
-  min-height: 48px;
-  padding: 13px 4px;
-  border-radius: 8px;
-  line-height: 1.4;
-  font-size: clamp(16px, 4.5vw, 20px);
-  color: var(--ink);
-  margin-bottom: 2px;
-  min-height: 1.5em;
-  text-decoration: underline;
-  text-decoration-color: var(--line);
-  text-underline-offset: 5px;
-  transition: color .2s, text-decoration-color .2s;
-}
-.lp-track-name:hover { color: var(--clay); text-decoration-color: var(--clay); }
-.lp-disc:focus-visible,
-.lp-track-name:focus-visible,
-.lp-arrow:focus-visible,
-.lp-yt-btn:focus-visible {
-  outline: 2px solid var(--clay);
-  outline-offset: 3px;
-}
-
-/* 트랙 카운터 */
-.lp-track-count {
-  font-size: clamp(14px, 3vw, 16px);
-  letter-spacing: 0.02em;
-  color: var(--ink-soft);
-  margin-bottom: clamp(14px, 4vw, 20px);
-}
-
-/* YouTube 버튼 */
-.lp-yt-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: clamp(10px, 3vw, 14px) clamp(20px, 6vw, 28px);
-  background: var(--clay);
-  color: #fdfbf6;
-  border-radius: 999px;
-  min-height: 48px;
-  font-size: clamp(14px, 3vw, 16px);
-  letter-spacing: 0.02em;
-  text-decoration: none;
-  transition: background .2s, transform .15s;
-}
-.lp-yt-btn:active { background: #8e4128; transform: scale(.96); }
-.lp-yt-btn svg { flex-shrink: 0; }
-
 /* ── 듣기 버튼 두 개 — 위는 '이 곡', 아래는 '전체' ──
    같은 알약 모양을 쓰되 위는 채우고 아래는 테두리만 둘러서,
    무엇이 주된 동작인지 색의 무게로 구분한다. */
@@ -1694,14 +1533,6 @@ html[lang="km"] .title-main .line-hand-sub {
 
 .lp-all-count { color: var(--ink-faint); }
 
-@media (prefers-reduced-motion: reduce) {
-  .lp-disc, .lp-label { animation: none; }
-}
-
-@media (max-width: 359px) {
-  .lp-disc-wrap { width: 120px; height: 120px; }
-  .lp-arrow { width: 44px; height: 44px; font-size: 18px; }
-}
 
 
 /* ══════════════════════════════════
@@ -4032,7 +3863,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=139") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=142") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4722,7 +4553,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=139") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=142") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -4876,6 +4707,7 @@ html.sl-scenes #page-songs .sl-roulette > * { transform: none; filter: none; }
   line-height: 1.7;
   color: var(--ink-faint);
 }
+.sl-cover-play { margin-top: 14px; }
 
 /* ══════════════════════════════════
    멤버 소개 — 곡 리스트와 같은 결: 표지 → 팀별 장(두 줄 카드) → 한 사람 시트
@@ -5179,43 +5011,29 @@ html.main-cinema.on-main, html.main-cinema.on-main body { background: #17120d; }
 #page-word .word-card-body { font-size: 15px; line-height: 1.9; }
 
 /* ══════════════════════════════════
-   유화 그림 — 곡 리스트·말씀 나눔·멤버 소개의 표지와 경계. 가장자리는 그림 파일 안에서
-   물감이 번지듯 흐려지므로 여기서는 자리만 잡는다
+   유화 그림 — 곡 리스트·말씀 나눔·멤버 소개. 모든 그림이 같은 폭·같은 간격으로 놓여
+   글과 같은 단을 이룬다. 가장자리는 그림 파일 안에서 물감처럼 번진다. 움직이지 않는다
 ══════════════════════════════════ */
 .art-band {
   display: block;
-  width: 100%;
+  width: calc(100% - 2 * clamp(10px, 3.5vw, 18px));
+  max-width: 620px;
   height: auto;
-  margin-bottom: 4px;
-  position: relative;
-  z-index: 0;
+  margin: 0 auto 10px;
   pointer-events: none;
 }
-html.art-on #page-artists .mb-cover,
-html.art-on #page-word .mb-cover { padding-top: 6px; position: relative; z-index: 1; }
+/* 말씀 나눔·멤버 소개: 위 음악 바 아래 같은 높이에서 그림 → 머리말 */
 html.art-on #page-artists > .art-band,
-html.art-on #page-word > .art-band { margin-top: 34px; }
-html.art-on .sl-cover { position: relative; z-index: 1; }
-/* 곡 룰렛 끝, 마지막 곡 아래 — 저녁 무대 그림 */
-html.art-on #page-songs .art-dark { width: 88%; margin: 36px auto 0; }
-
-/* 깊이감: 그림이 글보다 조금 느리게 움직인다 (스크롤에 묶인 CSS 애니메이션, 지원 안 하면 그대로) */
-@supports (animation-timeline: view()) {
-  .art-band {
-    animation: artDrift linear both;
-    animation-timeline: view();
-  }
-  @keyframes artDrift {
-    from { transform: translateY(-5%) scale(1.03); }
-    to   { transform: translateY(9%) scale(1.03); }
-  }
-}
+html.art-on #page-word > .art-band { margin-top: 72px; }
+html.art-on #page-artists .mb-cover,
+html.art-on #page-word .mb-cover { padding-top: 0; }
+/* 곡 리스트 끝, 마지막 곡 아래 — 저녁 무대 */
+html.art-on #page-songs .art-dark { margin-top: 40px; }
 
 /* 낮은 화면에서는 표지 그림을 줄여 글을 밀어내지 않게 */
 @media (max-height: 700px) {
-  html.art-on .sl-intro .art-band { width: 72%; margin-inline: auto; }
+  html.art-on .sl-intro .art-band { width: 70%; }
 }
-@media (prefers-reduced-motion: reduce) { .art-band { animation: none; } }
 
 /* ══════════════════════════════════
    팀 소개 단독 사진 — 2.5D 층. 층은 사진보다 넓게 깔아 움직여도 가장자리가 안 보인다
@@ -5260,234 +5078,6 @@ html.art-on #page-songs .art-dark { width: 88%; margin: 36px auto 0; }
 }
 .cinema-play:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
 
-/* ══════════════════════════════════
-   곡 리스트 표지 — LP 미리듣기 한 줄
-   [도는 LP] [곡 번호·이름 (위아래로 넘어간다)] [유튜브] [▲▼]
-══════════════════════════════════ */
-.lp-row {
-  display: flex;
-  align-self: stretch;
-  width: 100%;
-  box-sizing: border-box;
-  align-items: center;
-  gap: 10px;
-  margin-top: 16px;
-  padding: 8px 8px 8px 8px;
-  background: rgba(255, 255, 255, .72);
-  border-radius: 999px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 6px 18px rgba(50, 44, 37, .08);
-}
-.lp-disc.lp-mini {
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, .28);
-}
-.lp-mini .lp-label { font-size: 11px; }
-.lp-row-title {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  height: 44px;
-  padding: 0;
-  overflow: hidden;
-  background: none;
-  border: 0;
-  font: inherit;
-  color: var(--ink);
-  text-align: left;
-  cursor: pointer;
-}
-.lp-row-track {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: transform .42s cubic-bezier(.2, .8, .2, 1), opacity .3s ease;
-}
-.lp-row-track.from-below { transform: translateY(100%); opacity: 0; transition: none; }
-.lp-row-track.from-above { transform: translateY(-100%); opacity: 0; transition: none; }
-.lp-row-track.is-out { opacity: 0; }
-.lp-row-track.is-out.to-above { transform: translateY(-100%); }
-.lp-row-track.is-out.to-below { transform: translateY(100%); }
-.lp-row-no { flex-shrink: 0; font-size: 14px; color: var(--clay); font-variant-numeric: tabular-nums; }
-.lp-row-name {
-  min-width: 0;
-  font-size: 17px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.lp-row-yt {
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid rgba(165, 77, 48, .35);
-}
-.lp-row-yt svg { fill: var(--clay); }
-.lp-row-yt[hidden] { display: none; }
-.lp-row-arrows { flex-shrink: 0; display: flex; flex-direction: column; gap: 2px; margin-right: 4px; }
-.lp-row-btn {
-  width: 34px;
-  height: 22px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  background: none;
-  border: 0;
-  border-radius: 8px;
-  color: var(--ink-soft);
-  cursor: pointer;
-}
-.lp-row-btn::before {            /* 글자 ▲▼ 는 아이폰에서 그림 문자로 바뀌어 모양으로 그린다 */
-  content: '';
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-}
-.lp-row-btn.is-up::before { border-bottom: 7px solid currentColor; }
-.lp-row-btn.is-down::before { border-top: 7px solid currentColor; }
-.lp-row-btn:active { background: var(--paper-warm); color: var(--clay); }
-.lp-row-title:focus-visible, .lp-row-yt:focus-visible, .lp-row-btn:focus-visible, .lp-mini:focus-visible {
-  outline: 2px solid var(--clay);
-  outline-offset: 2px;
-}
-
-/* ══════════════════════════════════
-   콘티 이야기 — 종이 두루마리
-   룰렛 맨 위의 접힌 두루마리 카드 → 누르면 막대가 살짝 벌어진 뒤 팝업으로 펼쳐진다
-══════════════════════════════════ */
-:root {
-  --scroll-paper: #f5ecda;
-  /* 종이 결: 아주 옅은 섬유 무늬 (파일 없이 SVG 노이즈로) */
-  --scroll-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .33 0 0 0 0 .22 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  /* 말린 종이 끝: 원통처럼 위아래가 어둡고 가운데가 밝다 */
-  --scroll-roll: linear-gradient(to bottom, #d9c7a4, #efe3c9 38%, #f7eedb 52%, #d8c49e 82%, #bfa77e);
-}
-.sl-scroll-item { list-style: none; scroll-snap-align: center; }
-.sl-scroll {
-  display: block;
-  width: 100%;
-  padding: 0 6px;                 /* 막대는 카드 폭, 종이는 조금 안쪽 — 곡 카드와 같은 폭 */
-  background: none;
-  border: 0;
-  font: inherit;
-  color: var(--ink);
-  text-align: left;
-  cursor: pointer;
-  transform-origin: center;
-}
-.sl-scroll-rod {
-  display: block;
-  height: 14px;
-  margin: 0 -6px;
-  border-radius: 7px;
-  background: var(--scroll-roll);
-  box-shadow: 0 2px 5px rgba(80, 60, 35, .18);
-  position: relative;
-  z-index: 1;
-  transition: transform .28s cubic-bezier(.2, .8, .2, 1);
-}
-.sl-scroll-paper {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin: -5px 0;
-  padding: 18px 20px 16px;
-  background: var(--scroll-grain), linear-gradient(to bottom, rgba(120, 90, 50, .08), transparent 18%, transparent 82%, rgba(120, 90, 50, .08)), var(--scroll-paper);
-  box-shadow: 0 8px 20px rgba(50, 44, 37, .08);
-  transition: padding .28s cubic-bezier(.2, .8, .2, 1);
-}
-.sl-scroll-label { font-size: 13px; color: var(--clay); }
-.sl-scroll-lead { font-size: 17px; line-height: 1.55; }
-.sl-scroll-lead b { font-weight: 400; background: linear-gradient(transparent 60%, var(--clay-wash) 60%); }
-.sl-scroll-more { font-size: 14px; color: var(--ink-faint); }
-.sl-scroll-more::after { content: ' ↓'; }
-/* 누르면 위아래 막대가 벌어지며 살짝 펼쳐진다 */
-.sl-scroll.is-opening .sl-scroll-rod:first-child { transform: translateY(-6px); }
-.sl-scroll.is-opening .sl-scroll-rod:last-child { transform: translateY(6px); }
-.sl-scroll.is-opening .sl-scroll-paper { padding-top: 24px; padding-bottom: 22px; }
-.sl-scroll:focus-visible { outline: 2px solid var(--clay); outline-offset: 6px; border-radius: 10px; }
-/* 룰렛 속 두루마리도 곡 카드처럼 가운데에서 가장 또렷하다 */
-@supports (animation-timeline: view()) {
-  #page-songs .sl-wheel .sl-scroll-item { view-timeline-name: --sl-scroll; view-timeline-axis: block; }
-  #page-songs .sl-wheel .sl-scroll { animation: slWheel linear both; animation-timeline: --sl-scroll; }
-}
-
-/* 팝업: 가운데에 접힌 채 나타나 위아래로 펼쳐진다 */
-.note-scroll {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  z-index: 900;
-  width: min(88vw, 440px);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  transform: translate(-50%, -50%);
-  visibility: hidden;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity .2s ease, visibility 0s linear .5s;
-}
-.note-scroll.open { visibility: visible; pointer-events: auto; opacity: 1; transition: opacity .2s ease; }
-.note-scroll .ns-rod {
-  display: block;
-  height: 18px;
-  margin: 0 -8px;
-  border-radius: 9px;
-  background: var(--scroll-roll);
-  box-shadow: 0 3px 8px rgba(60, 40, 20, .28);
-  position: relative;
-  z-index: 1;
-  transition: transform .4s cubic-bezier(.4, 0, .6, 1);
-}
-.note-scroll .ns-rod-top { transform: translateY(calc(var(--ns-h, 400px) / 2 - 18px)); }
-.note-scroll .ns-rod-bottom { transform: translateY(calc(var(--ns-h, 400px) / -2 + 60px)); }
-.note-scroll.open .ns-rod { transform: none; transition: transform .7s cubic-bezier(.2, .8, .2, 1); }
-.ns-paper {
-  margin: -6px 0;
-  max-height: calc(76svh - 90px);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  padding: 28px clamp(20px, 6vw, 30px) 26px;
-  background: var(--scroll-grain), linear-gradient(to bottom, rgba(120, 90, 50, .1), transparent 10%, transparent 90%, rgba(120, 90, 50, .1)), var(--scroll-paper);
-  box-shadow: 0 20px 50px rgba(30, 22, 14, .3);
-  clip-path: inset(50% 0 50% 0);
-  transition: clip-path .4s cubic-bezier(.4, 0, .6, 1);
-}
-.note-scroll.open .ns-paper { clip-path: inset(0 0 0 0); transition: clip-path .7s cubic-bezier(.2, .8, .2, 1); }
-.ns-label { margin: 0 0 12px; }
-.ns-paper .setlist-note-body { text-align: left; font-size: 16px; line-height: 1.9; color: var(--ink-soft); }
-.ns-paper .setlist-note-body + .setlist-note-body { margin-top: 14px; }
-.ns-paper .ns-lead { font-size: clamp(19px, 5.4vw, 22px); line-height: 1.6; color: var(--ink); }
-.ns-close {
-  align-self: center;
-  margin-top: 18px;
-  min-height: 44px;
-  padding: 0 22px;
-  font: inherit;
-  font-size: 16px;
-  color: var(--paper);
-  background: rgba(23, 18, 13, .4);
-  border: 1px solid rgba(247, 244, 236, .45);
-  border-radius: 999px;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity .2s ease;
-}
-.note-scroll.open .ns-close { opacity: 1; transition: opacity .3s ease .45s; }
-.ns-close:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
-@media (prefers-reduced-motion: reduce) {
-  .note-scroll .ns-rod, .ns-paper, .sl-scroll-rod, .sl-scroll-paper, .lp-row-track { transition: none !important; }
-  .note-scroll .ns-rod { transform: none; }
-  .ns-paper { clip-path: none; }
-  .lp-mini, .lp-mini .lp-label { animation: none; }
-}
 /* 곡 리스트 끝(마지막 곡 아래 그림·「계속 내리면」)까지 내려갈 수 있게 맨 끝에도 멈출 자리를 둔다.
    맨 끝에 서야 더 당겨 다음 탭으로 넘어가는 손짓이 잡힌다 */
 .sl-end-snap {                    /* 상자 한 칸 높이 — 윗변을 맞추면 정확히 맨 끝에 선다 */
@@ -5498,4 +5088,124 @@ html.art-on #page-songs .art-dark { width: 88%; margin: 36px auto 0; }
   height: var(--sl-h, 100svh);
   scroll-snap-align: start;
   pointer-events: none;
+}
+
+/* ══════════════════════════════════
+   콘티 이야기 — 곡 룰렛 맨 위(01번 위) 카드와 팝업
+   곡 카드와 같은 틀에, 따뜻한 종이빛과 작은 하트가 연하게 깔린 조금 특별한 한 장
+══════════════════════════════════ */
+:root {
+  --note-hearts: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='150' fill='%23a54d30'%3E%3Cpath d='M12 20.9l-1.4-1.3C5.2 14.7 1.7 11.5 1.7 7.6 1.7 4.4 4.2 1.9 7.4 1.9c1.8 0 3.5.8 4.6 2.2 1.1-1.4 2.8-2.2 4.6-2.2 3.2 0 5.7 2.5 5.7 5.7 0 3.9-3.5 7.1-8.9 12l-1.4 1.3z' transform='translate(14 14) rotate(-16 12 12) scale(0.62)' fill-opacity='0.1'/%3E%3Cpath d='M12 20.9l-1.4-1.3C5.2 14.7 1.7 11.5 1.7 7.6 1.7 4.4 4.2 1.9 7.4 1.9c1.8 0 3.5.8 4.6 2.2 1.1-1.4 2.8-2.2 4.6-2.2 3.2 0 5.7 2.5 5.7 5.7 0 3.9-3.5 7.1-8.9 12l-1.4 1.3z' transform='translate(150 8) rotate(13 12 12) scale(0.42)' fill-opacity='0.08'/%3E%3Cpath d='M12 20.9l-1.4-1.3C5.2 14.7 1.7 11.5 1.7 7.6 1.7 4.4 4.2 1.9 7.4 1.9c1.8 0 3.5.8 4.6 2.2 1.1-1.4 2.8-2.2 4.6-2.2 3.2 0 5.7 2.5 5.7 5.7 0 3.9-3.5 7.1-8.9 12l-1.4 1.3z' transform='translate(206 62) rotate(21 12 12) scale(0.55)' fill-opacity='0.09'/%3E%3Cpath d='M12 20.9l-1.4-1.3C5.2 14.7 1.7 11.5 1.7 7.6 1.7 4.4 4.2 1.9 7.4 1.9c1.8 0 3.5.8 4.6 2.2 1.1-1.4 2.8-2.2 4.6-2.2 3.2 0 5.7 2.5 5.7 5.7 0 3.9-3.5 7.1-8.9 12l-1.4 1.3z' transform='translate(96 84) rotate(-7 12 12) scale(0.36)' fill-opacity='0.07'/%3E%3Cpath d='M12 20.9l-1.4-1.3C5.2 14.7 1.7 11.5 1.7 7.6 1.7 4.4 4.2 1.9 7.4 1.9c1.8 0 3.5.8 4.6 2.2 1.1-1.4 2.8-2.2 4.6-2.2 3.2 0 5.7 2.5 5.7 5.7 0 3.9-3.5 7.1-8.9 12l-1.4 1.3z' transform='translate(34 106) rotate(9 12 12) scale(0.48)' fill-opacity='0.08'/%3E%3Cpath d='M12 20.9l-1.4-1.3C5.2 14.7 1.7 11.5 1.7 7.6 1.7 4.4 4.2 1.9 7.4 1.9c1.8 0 3.5.8 4.6 2.2 1.1-1.4 2.8-2.2 4.6-2.2 3.2 0 5.7 2.5 5.7 5.7 0 3.9-3.5 7.1-8.9 12l-1.4 1.3z' transform='translate(176 120) rotate(-19 12 12) scale(0.4)' fill-opacity='0.07'/%3E%3C/svg%3E");
+  --note-heart: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 20.9l-1.4-1.3C5.2 14.7 1.7 11.5 1.7 7.6 1.7 4.4 4.2 1.9 7.4 1.9c1.8 0 3.5.8 4.6 2.2 1.1-1.4 2.8-2.2 4.6-2.2 3.2 0 5.7 2.5 5.7 5.7 0 3.9-3.5 7.1-8.9 12l-1.4 1.3z'/%3E%3C/svg%3E");
+  --note-paper: linear-gradient(160deg, #fffaf3, #fbf0e4);
+}
+.sl-note-item { list-style: none; }
+button.sl-note-card {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  align-items: flex-start;
+}
+.sl-wheel .sl-note-card,
+.sl-wheel .sl-note-card:hover {
+  background: var(--note-hearts) 0 0 / 240px 150px repeat, var(--note-paper);
+  border-color: rgba(165, 77, 48, .16);
+}
+.sl-wheel .song-item.is-center .sl-note-card {
+  background: var(--note-hearts) 0 0 / 240px 150px repeat, var(--note-paper);
+  border-color: rgba(165, 77, 48, .4);
+}
+/* 번호 자리에 하트 하나 */
+.sl-note-mark { padding-top: 3px; }
+.sl-note-mark::before {
+  content: '';
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: 0 auto;
+  background: var(--clay);
+  -webkit-mask: var(--note-heart) center / contain no-repeat;
+          mask: var(--note-heart) center / contain no-repeat;
+}
+.sl-wheel .song-item.is-center .sl-note-mark::before { animation: noteBeat 2.6s ease-in-out infinite; }
+@keyframes noteBeat {
+  0%, 60%, 100% { transform: scale(1); }
+  70% { transform: scale(1.16); }
+  80% { transform: scale(1); }
+  88% { transform: scale(1.1); }
+}
+.sl-note-card .song-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.sl-note-kicker { font-size: 13px; color: var(--clay); }
+.sl-note-lead { font-size: 16px; line-height: 1.55; color: var(--ink); }
+.sl-note-lead b, .ns-lead b { font-weight: 400; background: linear-gradient(transparent 60%, var(--clay-wash) 60%); padding: 0 1px; }
+.sl-note-more { font-size: 13px; color: var(--ink-faint); }
+.sl-note-card .song-arrow { align-self: center; }
+
+/* 팝업: 같은 결의 카드가 가운데에 살짝 떠오른다 */
+.note-scroll {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 900;
+  width: min(calc(100vw - 32px), 440px);
+  display: flex;
+  flex-direction: column;
+  transform: translate(-50%, calc(-50% + 14px)) scale(.97);
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .22s ease, transform .3s ease, visibility 0s linear .3s;
+}
+.note-scroll.open {
+  visibility: visible;
+  pointer-events: auto;
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  transition: opacity .3s ease, transform .45s cubic-bezier(.2, .8, .2, 1);
+}
+.ns-paper {
+  max-height: calc(76svh - 70px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 26px clamp(20px, 6vw, 28px) 24px;
+  background: var(--note-hearts) 0 0 / 240px 150px repeat, var(--note-paper);
+  border: 1px solid rgba(165, 77, 48, .16);
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(30, 22, 14, .24);
+}
+.ns-label { margin: 0 0 12px; color: var(--clay); }
+.ns-label::before {
+  content: '';
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  margin-right: 6px;
+  vertical-align: -1px;
+  background: var(--clay);
+  -webkit-mask: var(--note-heart) center / contain no-repeat;
+          mask: var(--note-heart) center / contain no-repeat;
+}
+.ns-paper .setlist-note-body { text-align: left; font-size: 16px; line-height: 1.9; color: var(--ink-soft); }
+.ns-paper .setlist-note-body + .setlist-note-body { margin-top: 14px; }
+.ns-paper .ns-lead { font-size: clamp(19px, 5.4vw, 22px); line-height: 1.6; color: var(--ink); }
+.ns-close {
+  align-self: center;
+  margin-top: 16px;
+  min-height: 44px;
+  padding: 0 22px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--paper);
+  background: rgba(23, 18, 13, .4);
+  border: 1px solid rgba(247, 244, 236, .45);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.ns-close:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .note-scroll, .note-scroll.open { transition: none; }
+  .sl-wheel .song-item.is-center .sl-note-mark::before { animation: none; }
 }
