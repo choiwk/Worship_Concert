@@ -696,7 +696,7 @@ function toggleBgmFromBar() {
    concert.js — 공연 정보 (단일 원천)
 
    날짜·시간·장소가 여기 한 곳에만 있다. 메인 화면의 날짜 블록,
-   D-Day 카운터, 캘린더 추가, 스토리 마지막 문구가 모두 이 값을 읽는다.
+   D-Day 카운터, 스토리 마지막 문구가 모두 이 값을 읽는다.
    일정이 확정되면 dates 를 하나만 남기고 confirmed 를 true 로 바꾸면 된다.
 
    ※ index.html 의 구조화 데이터(JSON-LD)와 메타 태그는 정적이라
@@ -1507,7 +1507,7 @@ function renderFinaleDate() {
 
 
 /* ══════════════════════════════════
-   5. dday.js — D-Day 카운트다운 + 캘린더
+   5. dday.js — D-Day 카운트다운
 ══════════════════════════════════ */
 
 function updateDday() {
@@ -1521,30 +1521,6 @@ function updateDday() {
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   el.textContent = diff <= 0 ? t('main.today', 'TODAY') : 'D-' + days;
 }
-
-function addToCalendar() {
-  const base = concertBaseDate();
-  const venue = concertBaseVenue();
-  const stamp = base.iso.replace(/-/g, '');
-
-  const title = '찬양이 좋아서 모인 청년들 청년 연합 라이브 워십';
-  const location = venue.name + (venue.address ? ', ' + venue.address : '');
-  // 장소가 아직 미확정이면 캘린더 설명에 남겨 둔다
-  const details = CONCERT.venueConfirmed
-    ? '찬양이 좋아서 모인 청년들 청년 연합 라이브 워십'
-    : '찬양이 좋아서 모인 청년들 청년 연합 라이브 워십\n\n장소는 ' +
-      CONCERT.venues.map(v => v.name).join(' 또는 ') +
-      ' 중 한 곳으로 정해질 예정이며, 이 일정은 ' + venue.name + ' 기준으로 등록됩니다.';
-
-  const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
-    + '&text=' + encodeURIComponent(title)
-    + '&dates=' + stamp + CONCERT.time.startUTC + '/' + stamp + CONCERT.time.endUTC
-    + '&location=' + encodeURIComponent(location)
-    + '&details=' + encodeURIComponent(details);
-
-  window.open(url, '_blank', 'noopener');
-}
-
 
 /* ══════════════════════════════════
    overlay.js — 오버레이(공유 시트·후원 모달·말씀 팝업) 공통 동작
@@ -2946,7 +2922,6 @@ function initArt() {
     at.insertAdjacentElement(pos, img);
   };
   add('cover-members', 570, '#page-artists .mb-cover', 'beforebegin');
-  add('cover-word', 475, '#page-word .mb-cover', 'beforebegin');
   add('stage-dark', 475, '#page-songs .sl-cover', 'beforeend', 'sl-head-art');   // 곡 리스트 첫 화면, 곡 바로 위
 }
 

@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=149') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=150') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=149') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=150') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3798,7 +3798,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=149") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=150") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4488,7 +4488,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=149") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=150") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -4957,11 +4957,9 @@ html.main-cinema.on-main, html.main-cinema.on-main body { background: #17120d; }
   margin: 0 auto 10px;
   pointer-events: none;
 }
-/* 말씀 나눔·멤버 소개: 위 음악 바 아래 같은 높이에서 그림 → 머리말 */
-html.art-on #page-artists > .art-band,
-html.art-on #page-word > .art-band { margin-top: 72px; }
-html.art-on #page-artists .mb-cover,
-html.art-on #page-word .mb-cover { padding-top: 0; }
+/* 멤버 소개: 위 음악 바 아래에서 그림 → 머리말 */
+html.art-on #page-artists > .art-band { margin-top: 72px; }
+html.art-on #page-artists .mb-cover { padding-top: 0; }
 /* 곡 리스트 끝, 마지막 곡 아래 — 저녁 무대 */
 
 
@@ -5280,3 +5278,5 @@ button.sl-note-card {
 .sl-head .sl-cover-play { margin-top: 6px; }
 html.art-on #page-songs .sl-head-art { margin: 18px auto 14px; align-self: center; }
 #slDots { display: none; }              /* 곡 리스트는 이제 한 장이라 장 표시를 쓰지 않는다 */
+/* 메인 일시·참여 장면의 「무대 보기」 (3D 무대, 새 탭) — 캘린더 추가 자리 */
+.btn-stage { display: flex; align-items: center; justify-content: center; gap: 6px; }
