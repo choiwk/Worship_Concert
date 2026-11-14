@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=150') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=151') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=150') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=151') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3798,7 +3798,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=150") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=151") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4488,7 +4488,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=150") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=151") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5280,3 +5280,16 @@ html.art-on #page-songs .sl-head-art { margin: 18px auto 14px; align-self: cente
 #slDots { display: none; }              /* 곡 리스트는 이제 한 장이라 장 표시를 쓰지 않는다 */
 /* 메인 일시·참여 장면의 「무대 보기」 (3D 무대, 새 탭) — 캘린더 추가 자리 */
 .btn-stage { display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+/* ══════════════════════════════════
+   화면 끝까지 가득 — 아이폰(iOS 26 사파리)의 아래 여백 막기
+   ① 맨 바탕(html)을 투명하게 두면 사파리가 아래 도구 막대 뒤를 흰색·검은색으로 채운다 → 페이지 색을 직접 칠한다
+      (메인은 위에서 이미 영상색으로 칠한다)
+   ② 화면 전체를 덮는 '완전히 불투명한' 고정 층은 떠 있는 도구 막대 윗선에서 잘려 그 아래가 비어 보인다.
+      투명도를 아주 조금(0.99) 낮추면 끝까지 그려진다 — 눈으로는 차이가 없다
+══════════════════════════════════ */
+html { background: var(--paper); }
+@supports (-webkit-touch-callout: none) {
+  .cinema-bg { opacity: .99; }
+}
+
