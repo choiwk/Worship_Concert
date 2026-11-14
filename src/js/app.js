@@ -187,6 +187,7 @@ function _extLink(href, label, cls, ariaText) {
 
 function findSong(slug) {
   for (let i = 0; i < SONGS.length; i++) if (SONGS[i].slug === slug) return SONGS[i];
+  for (let i = 0; i < SONGS.length; i++) if (SONGS[i].noEnd === slug) return SONGS[i];   // #/songs/07 → 06-07 묶음
   return null;
 }
 
@@ -203,13 +204,13 @@ function renderSongList() {
   if (play) {
     play.href = SETLIST_PLAYLIST;
     play.setAttribute('aria-label',
-      '곡 전체 듣기 — 유튜브 재생목록 ' + SONGS.length + '곡 (새 탭에서 열림)');
+      '곡 전체 듣기 — 유튜브 재생목록 ' + _songTotal() + '곡 (새 탭에서 열림)');
     document.getElementById('setlistPlaySub').textContent =
-      t('songs.count', '{n}곡').replace('{n}', SONGS.length);
+      t('songs.count', '{n}곡').replace('{n}', _songTotal());
   }
   // 표지: 곡 수와 주제곡
   const count = document.getElementById('slCount');
-  if (count) count.textContent = t('songs.count', '{n}곡').replace('{n}', SONGS.length);
+  if (count) count.textContent = t('songs.count', '{n}곡').replace('{n}', _songTotal());
   const theme = document.getElementById('slTheme');
   const lead = SONGS.find(isLeadSong);
   if (theme && lead) theme.textContent = _partLabel(lead.parts[0]) || _songTitle(lead);
@@ -222,12 +223,16 @@ function renderSongList() {
     const hasVerse = song.parts.some(p => p.bible);
     const subs = song.parts.slice(1).filter(p => p.label);
     a.setAttribute('aria-label',
-      song.no + '번 ' + (song.parts[0].label ? _partLabel(song.parts[0]) : _songTitle(song)) +
+      _songNo(song) + '번 ' + (song.parts[0].label ? _partLabel(song.parts[0]) : _songTitle(song)) +
       (song.tag ? ', ' + song.tag : '') +
       subs.map(p => ', 이어서 ' + p.label + (p.note ? ' ' + p.note : '')).join('') +
       ' — 가사' + (hasVerse ? '와 말씀' : '') + ' 보기');
 
-    a.appendChild(_el('span', 'song-num', song.no));
+    const num = _el('span', 'song-num' + (song.noEnd ? ' is-pair' : ''));
+    num.dataset.no = _songNo(song);
+    if (song.noEnd) num.append(_el('span', '', song.no), _el('span', '', song.noEnd));   // 06 위, 07 아래
+    else num.textContent = song.no;
+    a.appendChild(num);
 
     const mid = _el('span', 'song-main');
     const secTag = _songSection(song);
@@ -280,7 +285,7 @@ function _songRoulette(box, lis) {
   const count = _el('p', 'sl-wheel-count');
   count.setAttribute('aria-hidden', 'true');
   count.appendChild(_el('span', 'sl-wheel-now', '01'));
-  count.appendChild(_el('span', 'sl-wheel-total', '/ ' + String(lis.length).padStart(2, '0')));
+  count.appendChild(_el('span', 'sl-wheel-total', '/ ' + String(_songTotal()).padStart(2, '0')));
   sec.appendChild(count);
   const ul = _el('ul', 'song-list sl-wheel');
   ul.appendChild(_setlistNoteItem());
@@ -354,7 +359,7 @@ function _songWheelUpdate() {
   _wheelCenter = best;
   items.forEach(li => li.classList.toggle('is-center', li === best));
   const now = document.querySelector('#page-songs .sl-wheel-now');
-  if (now && best) now.textContent = best.querySelector('.song-num')?.textContent || '콘티';
+  if (now && best) now.textContent = best.querySelector('.song-num')?.dataset.no || '콘티';
 }
 
 /* 곡 리스트 상자(화면에 고정)에서 고른 곡이 서는 줄 — 가운데보다 조금 위 */
@@ -421,6 +426,11 @@ const tagKind = tag => TAG_KIND[tag] || 'pray';
 const isLeadSong = song => tagKind(song.tag) === 'lead';
 
 
+/** 카드 번호 — 이어 부르는 곡은 '06-07' */
+const _songNo = song => song.noEnd ? song.no + '-' + song.noEnd : song.no;
+/** 곡 수 — 이어 부르는 곡도 한 곡씩 센다 (카드 수가 아니라 마지막 번호) */
+const _songTotal = () => Math.max(...SONGS.map(s => +(s.noEnd || s.no)));
+
 /** 예배 순서 묶음(songs.js SETLIST_SECTIONS) — 색 점 + 이름. 곡 카드와 곡 화면 머리에 쓴다 */
 function _songSection(song) {
   const s = typeof SETLIST_SECTIONS !== 'undefined' && SETLIST_SECTIONS[song.section];
@@ -468,8 +478,8 @@ function renderSongDetail(slug) {
   const head = _el('header', 'song-head');
   // 몇 번째 곡인지 — 리스트의 장 표시(01 - 05 / 13)와 같은 모양
   const num = _el('p', 'song-head-num');
-  num.appendChild(_el('span', 'song-head-no', song.no));
-  num.appendChild(_el('span', 'song-head-total', '/ ' + String(SONGS.length).padStart(2, '0')));
+  num.appendChild(_el('span', 'song-head-no', _songNo(song)));
+  num.appendChild(_el('span', 'song-head-total', '/ ' + String(_songTotal()).padStart(2, '0')));
   head.appendChild(num);
   const sec = _songSection(song);
   if (sec) head.appendChild(sec);
@@ -542,13 +552,13 @@ function renderSongDetail(slug) {
   /* 이전 / 다음 곡 */
   const nav = _el('nav', 'song-nav');
   nav.setAttribute('aria-label', '곡 이동');
-  nav.appendChild(_el('p', 'song-nav-count', song.no + ' / ' + String(SONGS.length).padStart(2, '0')));
+  nav.appendChild(_el('p', 'song-nav-count', _songNo(song) + ' / ' + String(_songTotal()).padStart(2, '0')));
 
   const links = _el('div', 'song-nav-links');
   const make = (target, dir, cls) => {
     const a = _el('a', 'song-nav-btn ' + cls);
     a.href = '#/songs/' + target.slug;
-    a.setAttribute('aria-label', dir + ': ' + target.no + '번 ' + _songTitle(target));
+    a.setAttribute('aria-label', dir + ': ' + _songNo(target) + '번 ' + _songTitle(target));
     a.appendChild(_el('span', 'song-nav-dir',
       cls === 'prev' ? t('songs.prev', '← 이전 곡') : t('songs.next', '다음 곡 →')));
     a.appendChild(_el('span', 'song-nav-title', _songTitle(target)));
@@ -1528,12 +1538,12 @@ function addToCalendar() {
   const venue = concertBaseVenue();
   const stamp = base.iso.replace(/-/g, '');
 
-  const title = '찬양이 좋아서 모인 청년들 LIVE CONCERT';
+  const title = '찬양이 좋아서 모인 청년들 청년 연합 라이브 워십';
   const location = venue.name + (venue.address ? ', ' + venue.address : '');
   // 장소가 아직 미확정이면 캘린더 설명에 남겨 둔다
   const details = CONCERT.venueConfirmed
-    ? '찬양이 좋아서 모인 청년들 LIVE CONCERT'
-    : '찬양이 좋아서 모인 청년들 LIVE CONCERT\n\n장소는 ' +
+    ? '찬양이 좋아서 모인 청년들 청년 연합 라이브 워십'
+    : '찬양이 좋아서 모인 청년들 청년 연합 라이브 워십\n\n장소는 ' +
       CONCERT.venues.map(v => v.name).join(' 또는 ') +
       ' 중 한 곳으로 정해질 예정이며, 이 일정은 ' + venue.name + ' 기준으로 등록됩니다.';
 
@@ -2759,8 +2769,8 @@ function showToast(msg) {
 function shareKakao() {
   closeShare();
   const shareData = {
-    title: '찬양이 좋아서 모인 청년들 LIVE CONCERT 2026',
-    text: '찬양 콘서트에 함께해요!',
+    title: '찬양이 좋아서 모인 청년들 청년 연합 라이브 워십 2026',
+    text: '청년 연합 라이브 워십에 함께해요!',
     url: window.location.href
   };
 
