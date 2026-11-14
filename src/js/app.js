@@ -1546,7 +1546,8 @@ const OVERLAYS = {
   rsvp:   { backdrop: 'rsvpBackdrop',   panel: 'rsvpSheet'   },
   word:   { backdrop: 'wordBackdrop',   panel: 'wordSheet'   },
   wordRead: { backdrop: 'wordReadBackdrop', panel: 'wordReadModal' },
-  note:   { backdrop: 'noteBackdrop',   panel: 'noteScroll'  }
+  note:   { backdrop: 'noteBackdrop',   panel: 'noteScroll'  },
+  stage:  { backdrop: 'stageBackdrop',  panel: 'stageStory'  }
 };
 
 let _openOverlays = [];   // 여러 개가 겹쳐도 스크롤 잠금이 어긋나지 않게 스택으로
@@ -1709,6 +1710,17 @@ function openSetlistNote() {
 }
 
 function closeSetlistNote() { closeOverlay('note'); }
+
+/* 메인 '무대 이야기' 장면의 「왜 원형인지 읽기」 — 같은 카드 팝업 */
+function openStageStory() {
+  const panel = document.getElementById('stageStory');
+  if (!panel) return;
+  panel.querySelector('.ns-paper').scrollTop = 0;
+  openOverlay('stage');
+  panel.querySelector('.ns-close').focus({ preventScroll: true });
+}
+
+function closeStageStory() { closeOverlay('stage'); }
 
 
 /* ══════════════════════════════════

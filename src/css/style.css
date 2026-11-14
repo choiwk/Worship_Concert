@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=143') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=146') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=143') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=146') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3827,7 +3827,7 @@ html.main-cinema.on-main body { overflow: hidden; }
 html.main-cinema #page-main { min-height: 0; }
 
 .cinema {
-  --n: 3;                          /* 장면 수 */
+  --n: 4;                          /* 장면 수 */
   position: fixed;
   top: 0;
   bottom: 0;
@@ -3863,7 +3863,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=143") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=146") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -3956,7 +3956,7 @@ html.main-cinema #page-main { min-height: 0; }
 .scene-title .line-hand-sub { color: #f0c3a8; }
 
 /* 2~4. 정보·참여·말씀 — 아래쪽 어두운 자리에, 왼쪽 정렬 */
-.scene-info, .scene-word {
+.scene-info, .scene-stage, .scene-word {
   bottom: calc(var(--tab-content-h) + env(safe-area-inset-bottom, 0px) + 44px);
 }
 
@@ -4553,7 +4553,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=143") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=146") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5208,4 +5208,105 @@ button.sl-note-card {
 @media (prefers-reduced-motion: reduce) {
   .note-scroll, .note-scroll.open { transition: none; }
   .sl-wheel .song-item.is-center .sl-note-mark::before { animation: none; }
+}
+
+/* ══════════════════════════════════
+   메인 3. 무대 이야기 — 날짜 다음 장면. 영상 아래쪽 어두운 자리에 짧은 글 + 두 단추
+   (채운 테라코타는 「참여하기」에만 — 여기는 테두리 단추와 글자 단추)
+══════════════════════════════════ */
+.stage-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: #f0c3a8;
+}
+/* 둥글게 둘러앉은 모습: 가운데 빈 원과 둘레의 작은 점들 */
+.stage-ring {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(240, 195, 168, .85);
+  background: radial-gradient(circle, rgba(240, 195, 168, .9) 0 2px, transparent 2.5px);
+}
+.stage-title {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 7.6vw, 32px);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--paper);
+}
+.stage-title em {
+  font-style: normal;
+  background: linear-gradient(transparent 55%, rgba(165, 77, 48, .65) 55%, rgba(165, 77, 48, .65) 92%, transparent 92%);
+}
+.stage-text {
+  margin: 0;
+  max-width: 34ch;
+  font-size: clamp(15px, 4.2vw, 17px);
+  line-height: 1.95;
+  color: rgba(247, 244, 236, .88);
+  word-break: keep-all;
+}
+.stage-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 22px; }
+.stage-3d { width: auto; flex: 0 0 auto; padding-inline: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.stage-more {
+  min-height: 44px;
+  padding: 0 4px;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 16px;
+  color: rgba(247, 244, 236, .86);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-color: rgba(240, 195, 168, .6);
+  cursor: pointer;
+}
+.stage-more:focus-visible, .stage-3d:focus-visible { outline: 2px solid #f0c3a8; outline-offset: 3px; }
+
+/* 무대 이야기 팝업 — 콘티 이야기와 같은 카드, 하트 무늬 없이 종이빛만 */
+.stage-story .ns-paper { background: var(--note-paper); }
+.stage-story .ns-label::before {      /* 하트 대신 무대 장면과 같은 둥근 표시 */
+  -webkit-mask: none;
+          mask: none;
+  background: radial-gradient(circle, var(--clay) 0 1.6px, transparent 2px);
+  border: 1.5px solid var(--clay);
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+.ss-h { margin: 22px 0 8px; font-size: 17px; font-weight: 400; color: var(--clay); }
+.ss-q { color: var(--ink); }
+.ss-verses { list-style: none; margin: 8px 0 12px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ss-verses li {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .6);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.ss-verses b { font-weight: 400; font-size: 14px; color: var(--clay); }
+.ns-paper .ss-end {
+  margin-top: 18px;
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--ink);
+}
+.ss-3d { margin-top: 20px; }
+
+/* ── 아이폰 사파리: 곡 리스트를 화면 끝까지 ──
+   곡 리스트는 페이지가 아니라 안쪽 상자가 스크롤되어 사파리 아래 도구 막대가 접히지 않는다.
+   그래서 상자가 도구 막대 위에서 끝나 탭 바 밑이 비어 보였다. 상자를 화면이 가장 클 때 높이까지
+   늘리고, 늘어난 만큼(--ios-tb) 끝 쪽 여백과 안내를 올려 탭 바에 가리지 않게 한다.
+   홈 화면 앱·안드로이드는 늘어난 높이가 0 이라 그대로다. */
+@supports (-webkit-touch-callout: none) {
+  html.on-songs { --ios-tb: calc(100lvh - 100svh); }
+  #page-songs.active { bottom: calc(-1 * var(--ios-tb, 0px)); }
+  #page-songs .sl-ch { padding-bottom: calc(var(--tab-content-h) + max(8px, env(safe-area-inset-bottom, 0px)) + 28px + var(--ios-tb, 0px)); }
+  .sl-roulette .flow-cue { bottom: calc(var(--tab-content-h) + max(8px, env(safe-area-inset-bottom, 0px)) + 8px + var(--ios-tb, 0px)); }
 }
