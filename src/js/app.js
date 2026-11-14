@@ -129,20 +129,6 @@ function switchTab(name) {
   }
   _goTab(name);
 }
-/* 오른쪽 위 「디자인」 — 새 디자인과 기존 디자인(classic/ 고정본) 사이를 오간다 */
-function toggleDesignMenu(force) {
-  const menu = document.getElementById('designMenu');
-  const btn = document.getElementById('designBtn');
-  if (!menu || !btn) return;
-  const open = force !== undefined ? force : menu.hidden;
-  menu.hidden = !open;
-  btn.setAttribute('aria-expanded', String(open));
-}
-document.addEventListener('click', e => {
-  if (!e.target.closest || e.target.closest('.lang-pick')) return;
-  toggleDesignMenu(false);                 // 바깥을 누르면 닫는다
-});
-
 function _goTab(name) {
   const target = '#/' + name;
   if (location.hash === target) { route(); return; }   // 같은 해시는 hashchange가 안 난다
@@ -286,6 +272,9 @@ function _songRoulette(box, lis) {
   count.setAttribute('aria-hidden', 'true');
   count.appendChild(_el('span', 'sl-wheel-now', '01'));
   count.appendChild(_el('span', 'sl-wheel-total', '/ ' + String(_songTotal()).padStart(2, '0')));
+  // 머리(제목·곡 수·그림)를 룰렛 맨 위로 — 그림 바로 밑에서 곡이 이어진다
+  const head = document.querySelector('#page-songs .sl-head');
+  if (head) sec.appendChild(head);
   sec.appendChild(count);
   const ul = _el('ul', 'song-list sl-wheel');
   ul.appendChild(_setlistNoteItem());
@@ -2769,7 +2758,7 @@ function showToast(msg) {
 function shareKakao() {
   closeShare();
   const shareData = {
-    title: '찬양이 좋아서 모인 청년들 청년 연합 라이브 워십 2026',
+    title: '찬양이 좋아서 모인 청년들 - LIVE WORSHIP 2026',
     text: '청년 연합 라이브 워십에 함께해요!',
     url: window.location.href
   };
@@ -2956,10 +2945,9 @@ function initArt() {
     img.setAttribute('aria-hidden', 'true');
     at.insertAdjacentElement(pos, img);
   };
-  add('cover-songs', 475, '#page-songs .sl-cover', 'beforebegin');
   add('cover-members', 570, '#page-artists .mb-cover', 'beforebegin');
   add('cover-word', 475, '#page-word .mb-cover', 'beforebegin');
-  add('stage-dark', 475, '#page-songs .sl-wheel', 'afterend', 'art-dark');
+  add('stage-dark', 475, '#page-songs .sl-cover', 'beforeend', 'sl-head-art');   // 곡 리스트 첫 화면, 곡 바로 위
 }
 
 
