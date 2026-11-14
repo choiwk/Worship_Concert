@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=146') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=147') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=146') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=147') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3863,7 +3863,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=146") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=147") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4553,7 +4553,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=146") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=147") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5310,3 +5310,28 @@ button.sl-note-card {
   #page-songs .sl-ch { padding-bottom: calc(var(--tab-content-h) + max(8px, env(safe-area-inset-bottom, 0px)) + 28px + var(--ios-tb, 0px)); }
   .sl-roulette .flow-cue { bottom: calc(var(--tab-content-h) + max(8px, env(safe-area-inset-bottom, 0px)) + 8px + var(--ios-tb, 0px)); }
 }
+
+/* 예배 순서 묶음 — 곡 카드 제목 위, 곡 화면 머리에 작은 색 점 + 이름 */
+.song-section {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-faint);
+}
+.song-section::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--sec, var(--clay));
+  flex-shrink: 0;
+}
+.song-section-note { margin-left: 2px; color: var(--ink-faint); }
+.song-section-note::before { content: '('; }
+.song-section-note::after { content: ')'; }
+.song-main > .song-section { margin-bottom: 2px; }
+.song-head .song-section { margin: 2px 0 6px; font-size: 14px; }
+.song-lyrics.is-empty { color: var(--ink-faint); font-size: 16px; }
+

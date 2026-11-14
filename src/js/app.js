@@ -230,6 +230,8 @@ function renderSongList() {
     a.appendChild(_el('span', 'song-num', song.no));
 
     const mid = _el('span', 'song-main');
+    const secTag = _songSection(song);
+    if (secTag) mid.appendChild(secTag);
 
     const head = _el('span', 'song-head-row');
     // 두 곡을 한 칸에 담을 때는 첫 곡 이름만 제목 줄에 세우고,
@@ -252,7 +254,7 @@ function renderSongList() {
     // 안에 무엇이 들어 있는지 미리 알려준다.
     // 말씀은 12곡 중 일부에만 있어서 장식이 아니라 실제 정보가 된다.
     const meta = _el('span', 'song-meta');
-    meta.appendChild(_metaTag('icon-lyrics', t('songs.lyrics', '가사')));
+    if (song.parts.some(p => p.lyrics)) meta.appendChild(_metaTag('icon-lyrics', t('songs.lyrics', '가사')));
     if (song.parts.some(p => p.bible)) meta.appendChild(_metaTag('icon-verse', t('songs.verse', '말씀')));
     mid.appendChild(meta);
 
@@ -419,6 +421,16 @@ const tagKind = tag => TAG_KIND[tag] || 'pray';
 const isLeadSong = song => tagKind(song.tag) === 'lead';
 
 
+/** 예배 순서 묶음(songs.js SETLIST_SECTIONS) — 색 점 + 이름. 곡 카드와 곡 화면 머리에 쓴다 */
+function _songSection(song) {
+  const s = typeof SETLIST_SECTIONS !== 'undefined' && SETLIST_SECTIONS[song.section];
+  if (!s) return null;
+  const el = _el('span', 'song-section', s.name);
+  el.style.setProperty('--sec', s.color);
+  if (s.note) el.appendChild(_el('span', 'song-section-note', s.note));
+  return el;
+}
+
 /** 곡 줄에 붙는 '가사'·'말씀' 표시 */
 function _metaTag(iconId, label) {
   const tag = _el('span', 'song-meta-tag');
@@ -459,6 +471,8 @@ function renderSongDetail(slug) {
   num.appendChild(_el('span', 'song-head-no', song.no));
   num.appendChild(_el('span', 'song-head-total', '/ ' + String(SONGS.length).padStart(2, '0')));
   head.appendChild(num);
+  const sec = _songSection(song);
+  if (sec) head.appendChild(sec);
   const h1 = _el('h1', 'song-head-title', _songTitle(song));
   head.appendChild(h1);
   if (song.artist) head.appendChild(_el('p', 'song-head-artist', song.artist));
@@ -504,7 +518,10 @@ function renderSongDetail(slug) {
     }
     else if (i === 0) sec.appendChild(_el('h2', 'song-part-label sr-only', t('songs.lyrics', '가사')));
 
-    sec.appendChild(_el('p', 'song-lyrics', _lyrics(part)));
+    // 가사를 아직 못 받은 곡은 빈칸 대신 짧은 안내를
+    sec.appendChild(part.lyrics
+      ? _el('p', 'song-lyrics', _lyrics(part))
+      : _el('p', 'song-lyrics is-empty', t('songs.noLyrics', '가사는 준비 중이에요. 위 영상으로 먼저 들어 보세요.')));
 
     if (part.bible) {
       const word = _el('aside', 'song-word');
