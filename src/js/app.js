@@ -1307,7 +1307,8 @@ function renderMembers() {
       const person = resolveMember(entry);
       if (!person) return;               // PEOPLE 에 없는 id 는 건너뛴다
       // 남긴 이야기(말씀·한마디·교회·인스타)가 있으면 카드를 눌러 아래에서 올라오는 시트를 연다
-      const linked = !!(person.instagram || person.verse || person.bio || person.church);
+      // 교회만 있는 카드는 열 것이 없다 — 교회는 카드에 바로 보인다
+      const linked = !!(person.instagram || person.verse || person.bio);
       const card = _el(linked ? 'button' : 'div', 'artist-card mb-card' + (linked ? ' is-linked' : ''));
       if (linked) {
         card.type = 'button';

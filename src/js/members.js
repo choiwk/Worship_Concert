@@ -51,28 +51,17 @@
 ══════════════════════════════════════════════════════════ */
 
 const PEOPLE = {
-  'park-seongeun': { name: '박성은', icon: '♪' },
-  'kim-ahyeon':    { name: '김아현', icon: '♪' },
-  'kwon-yeseul':   { name: '권예슬', icon: '♪' },
-  'hwang-yuchan': {
-    name: '황유찬',
-    icon: '♪',
-    photo: 'public/images/members/hwang-yuchan.jpg',
-    instagram: 'https://www.instagram.com/y_0o0_c',
-    church: '더향상교회',
-    verse: {
-      text: '눈물을 흘리며 씨를 뿌리는 자는 기쁨으로 거두리로다',
-      ref: '시편 126편 5절'
-    }
-  },
-  'lee-hanbin':    { name: '이한빈', icon: '♪' },
-  'choi-goun':     { name: '최고운', icon: '♪' },
-  'han-gahee':     { name: '한가희', icon: '♪' },
+  'park-seongeun': { name: '박성은', church: '향상교회', icon: '♪' },
+  'kim-ahyeon':    { name: '김아현', church: '더향상교회', icon: '♪' },
+  'kwon-yeseul':   { name: '권예슬', church: '향상교회', icon: '♪' },
+  'lee-hanbin':    { name: '이한빈', church: '더향상교회', icon: '♪' },
+  'choi-goun':     { name: '최고운', church: '더향상교회', icon: '♪' },
+  'han-gahee':     { name: '한가희', church: '더향상교회', icon: '♪' },
 
-  'han-yuhee':     { name: '한유희', icon: '🎹' },
-  'ryu-danbi':     { name: '류단비', icon: '🎹' },
-  'lee-gwangbin':  { name: '이광빈', icon: '🎸' },
-  'lee-gieun':     { name: '이기은', icon: '🎸' },
+  'han-yuhee':     { name: '한유희', church: '더향상교회', icon: '🎹' },
+  'ryu-danbi':     { name: '류단비', church: '향상교회', icon: '🎹' },
+  'lee-gwangbin':  { name: '이광빈', church: '더향상교회', icon: '🎸' },
+  'lee-gieun':     { name: '이기은', church: '더향상교회', icon: '🎸' },
 
   'choi-wonkeun': {
     name: '최원근',
@@ -87,9 +76,9 @@ const PEOPLE = {
     }
   },
 
-  'kim-jaeseo':    { name: '김재서', icon: '📣' },
-  'yeo-myeong':    { name: '여명',   icon: '📷' },
-  'choi-juhee':    { name: '최주희', icon: '📷' },
+  'kim-jaeseo':    { name: '김재서', church: '향상교회', icon: '📣' },
+  'yeo-myeong':    { name: '여명',   church: '더향상교회', icon: '📷' },
+  'choi-juhee':    { name: '최주희', church: '더향상교회', icon: '📷' },
   'kim-yeeun': {
     name: '김예은',
     icon: '🤝',
@@ -101,8 +90,8 @@ const PEOPLE = {
       ref: '사도행전 20장 24절'
     }
   },
-  'lee-gijun':     { name: '이기준', icon: '🤝' },
-  'lee-kangjun':   { name: '이강준', icon: '🤝' }
+  'lee-gijun':     { name: '이기준', church: '더향상교회', icon: '🤝' },
+  'lee-kangjun':   { name: '이강준', church: '더향상교회', icon: '🤝' }
 };
 
 const MEMBERS = [
@@ -112,7 +101,6 @@ const MEMBERS = [
       { id: 'park-seongeun' },
       { id: 'kim-ahyeon' },
       { id: 'kwon-yeseul' },
-      { id: 'hwang-yuchan' },
       { id: 'lee-hanbin' },
       { id: 'choi-goun' },
       { id: 'han-gahee' }
