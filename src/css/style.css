@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=158') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=159') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=158') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=159') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3645,7 +3645,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=158") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=159") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -3775,14 +3775,28 @@ html.main-cinema #page-main { min-height: 0; }
   background: rgba(240, 195, 168, .26);
   transform-origin: left center;
 }
-/* 「!」 오른쪽 위에 대각선으로 한붓 별표 ☆ — 마지막 글자를 다 쓰면 펜으로 쓱 그린다 */
-.hand-svg .hand-star {
+/* 「!」에서 하트가 튕겨 나가듯 — 마지막 글자를 다 쓰면 오른쪽 위에 하트를 한붓으로 그리며
+   살짝 튀어 오르고, 날아간 자국처럼 짧은 곡선 두 개가 뒤따른다 */
+.hand-svg .hand-heart,
+.hand-svg .hand-swish {
   fill: none;
-  stroke-width: 34;
   stroke-opacity: 1;
 }
-.cinema .scene-title.is-on .hand-svg .hand-star { animation: handStroke .6s cubic-bezier(.45, .1, .35, 1) 3.75s both; }
-.cinema .scene-title.is-on .line-hand-sub::after { animation: handHighlight .6s cubic-bezier(.3, .1, .3, 1) 4.35s both; }
+.hand-svg .hand-heart { stroke-width: 34; transform-box: fill-box; transform-origin: 30% 80%; }
+.hand-svg .hand-swish { stroke-width: 24; }
+.cinema .scene-title.is-on .hand-svg .hand-heart {
+  animation:
+    handStroke .55s cubic-bezier(.45, .1, .35, 1) 3.75s both,
+    heartPop .6s cubic-bezier(.3, 1.6, .5, 1) 3.75s both;
+}
+.cinema .scene-title.is-on .hand-svg .hand-swish {
+  animation: handStroke .3s ease-out calc(4.05s + var(--j) * .1s) both;
+}
+@keyframes heartPop {
+  from { transform: translate(-40%, 40%) scale(.45); }
+  to   { transform: none; }
+}
+.cinema .scene-title.is-on .line-hand-sub::after { animation: handHighlight .6s cubic-bezier(.3, .1, .3, 1) 4.5s both; }
 @keyframes handHighlight { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes handStroke { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes handFill {
@@ -3791,7 +3805,8 @@ html.main-cinema #page-main { min-height: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .cinema .scene-title.is-on .hand-svg path,
-  .cinema .scene-title.is-on .hand-svg .hand-star,
+  .cinema .scene-title.is-on .hand-svg .hand-heart,
+  .cinema .scene-title.is-on .hand-svg .hand-swish,
   .cinema .scene-title.is-on .line-hand-sub::after { animation: none; }
 }
 
@@ -4367,7 +4382,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=158") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=159") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
