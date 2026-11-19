@@ -76,7 +76,7 @@ const PEOPLE = {
     }
   },
 
-  'kim-jaeseo':    { name: '김재서', church: '향상교회', icon: '📣' },
+  'kim-jaeseo':    { name: '김재서', church: '더향상교회', icon: '📣' },
   'yeo-myeong':    { name: '여명',   church: '더향상교회', icon: '📷' },
   'choi-juhee':    { name: '최주희', church: '더향상교회', icon: '📷' },
   'kim-yeeun': {

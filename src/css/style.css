@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=155') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=156') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=155') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=156') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3645,7 +3645,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=155") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=156") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -3737,26 +3737,37 @@ html.main-cinema #page-main { min-height: 0; }
 .scene-title .line-hand { color: var(--paper); }
 .scene-title .line-hand-sub { color: #f0c3a8; }
 
-/* 「우리가 서로 사랑하자!」 — 첫 장면이 보일 때마다 펜으로 쓰듯 왼쪽부터 번져 나온다.
-   글자 폭만큼만 쓰도록 inline-block, 끝 경계는 부드럽게(그라데이션 마스크). */
-.cinema .scene-title .line-hand-sub {
-  display: inline-block;
-  -webkit-mask-image: linear-gradient(90deg, #000 40%, transparent 60%);
-          mask-image: linear-gradient(90deg, #000 40%, transparent 60%);
-  -webkit-mask-size: 250% 100%;
-          mask-size: 250% 100%;
-  -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
-  -webkit-mask-position: 0 0;
-          mask-position: 0 0;
+/* 「우리가 서로 사랑하자!」 — 손글씨 획 그리기(Stroke Animation).
+   index.html 의 SVG 는 사이트 서체(사랑해 아들)의 글자 윤곽을 그대로 옮긴 것이다.
+   첫 장면이 보일 때마다 글자마다 차례로 윤곽선을 그린 뒤 속을 채우고, 선은 걷어
+   원래 서체와 똑같은 모양으로 끝난다. 화면 낭독기는 옆의 sr-only 글을 읽는다. */
+.hand-svg {
+  display: block;
+  height: 1.15em;            /* 서체의 위아래 폭(ascent+descent = 1.15em) */
+  width: auto;
+  overflow: visible;
 }
-.cinema .scene-title.is-on .line-hand-sub { animation: handWrite 1.7s cubic-bezier(.45, .1, .35, 1) .55s both; }
-@keyframes handWrite {
-  from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
-  to   { -webkit-mask-position: 0 0;    mask-position: 0 0; }
+.hand-svg path {
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 12;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 1;       /* pathLength="1" 이라 획 전체 길이가 1 */
+  stroke-opacity: 0;         /* 움직임이 없을 때는 서체 그대로 */
+}
+.cinema .scene-title.is-on .hand-svg path {
+  animation:
+    handStroke .9s cubic-bezier(.5, .1, .4, 1) calc(.5s + var(--i) * .13s) both,
+    handFill .55s ease calc(1.05s + var(--i) * .13s) both;
+}
+@keyframes handStroke { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes handFill {
+  from { fill-opacity: 0; stroke-opacity: 1; }
+  to   { fill-opacity: 1; stroke-opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cinema .scene-title.is-on .line-hand-sub { animation: none; }
+  .cinema .scene-title.is-on .hand-svg path { animation: none; }
 }
 
 /* 2~4. 정보·참여·말씀 — 아래쪽 어두운 자리에, 왼쪽 정렬 */
@@ -4331,7 +4342,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=155") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=156") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
