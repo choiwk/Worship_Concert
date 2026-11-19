@@ -123,7 +123,7 @@ function switchTab(name) {
   if (_handing) return;                    // 넘기는 중(1초 남짓)에는 한 번만
   // 어두운 메인 ↔ 밝은 탭을 오갈 때는 색이 스르륵 바뀌는 막을 거쳐 간다
   const cur = parseHash().tab;
-  if (cur !== name && (cur === 'main') !== (name === 'main') && _mainDesign() === 'cinema') {
+  if (cur !== name && (cur === 'main') !== (name === 'main')) {
     _flowGo(name, name === 'main');
     return;
   }
@@ -683,43 +683,17 @@ function triggerReveal() {
 // 첫 페이지 로드 시 즉시 실행
 triggerReveal();
 
-// ── 모바일 자동재생 강제 실행 ──
-(function () {
-  const video = document.getElementById('main-video');
-  if (!video) return;
-  // 이 영상(43MB)은 기존 메인(옵션2) 것이다. 영상 배경 메인에서는 보이지도 않으니 틀지(받지) 않는다
-  const classic = () => _mainDesign() !== 'cinema';
-
-  const tryPlay = () => {
-    if (!classic()) return;
-    video.muted = true;
-    video.play().catch(() => {});
-  };
-
-  if (document.readyState === 'complete') {
-    tryPlay();
+// ── 배경음악: 첫 터치·클릭에 시작, 화면을 떠나면 멈췄다가 돌아오면 이어서 ──
+document.addEventListener('touchstart', _tryStartBgm, { once: true });
+document.addEventListener('click', _tryStartBgm, { once: true });
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    if (_bgmWasPlaying) _bgm.play().catch(() => {});
   } else {
-    window.addEventListener('load', tryPlay);
+    _bgmWasPlaying = !_bgm.paused;
+    _bgm.pause();
   }
-
-  // 첫 터치 시 비디오 + 배경음악 동시 시작
-  const onFirstTouch = () => {
-    if (classic()) video.play().catch(() => {});
-    _tryStartBgm();
-  };
-  document.addEventListener('touchstart', onFirstTouch, { once: true });
-  document.addEventListener('click', () => { _tryStartBgm(); }, { once: true });
-
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-      if (classic()) video.play().catch(() => {});
-      if (_bgmWasPlaying) _bgm.play().catch(() => {});
-    } else {
-      _bgmWasPlaying = !_bgm.paused;
-      _bgm.pause();
-    }
-  });
-})();
+});
 
 
 /* ══════════════════════════════════
@@ -759,20 +733,6 @@ function toggleBgmFromBar() {
      여기와 함께 손으로 맞춰야 한다.
 ══════════════════════════════════ */
 
-/* ── 메인 디자인 선택 ─────────────────────────────────
-   'cinema'  : 옵션1 — 화면을 꽉 채운 배경 영상 위에서 내용이 장면별로 바뀐다
-   'classic' : 옵션2 — 기존 메인 (제목 → 영상 상자 → 정보 → 말씀)
-   이 한 줄만 바꾸면 된다. 저장하지 않고 미리 보려면 주소 뒤에
-   ?design=classic 또는 ?design=cinema 를 붙인다. */
-const MAIN_DESIGN = 'cinema';
-
-function _mainDesign() {
-  try {
-    const q = new URLSearchParams(location.search).get('design');
-    if (q === 'classic' || q === 'cinema') return q;
-  } catch (e) {}
-  return MAIN_DESIGN;
-}
 
 /* 배경 영상을 어느 단계에서 시작할지. 'full' 고화질 / 'light' 가벼운 것 / 'still' 사진만.
    망 정보를 주지 않는 브라우저(아이폰 사파리·카카오톡 등)는 고화질로 시작하고,
@@ -789,17 +749,6 @@ function _cinemaVideoPlan(conn) {
 /* 옵션1 을 켠다. 기존 메인의 요소(제목·날짜·참여하기·말씀)를 장면 안으로 옮겨 온다.
    복사하지 않고 옮기므로 D-day·참여 신청 동작은 그대로 이어진다. */
 function initMainCinema() {
-  /* 옵션2 의 영상은 HTML 에서 자동 재생을 꺼 두었다(옵션1 일 때 43MB 를 받지 않도록).
-     옵션2 일 때 여기서 예전과 똑같이 소리 없이 자동 재생한다. */
-  if (_mainDesign() !== 'cinema') {
-    const v = document.getElementById('main-video');
-    if (v) {
-      v.preload = 'metadata';
-      v.autoplay = true;
-      v.play().catch(() => {});
-    }
-    return;
-  }
   const root = document.getElementById('mainCinema');
   const page = document.getElementById('page-main');
   if (!root || !page) return;
@@ -1244,11 +1193,6 @@ function concertBaseDate() {
   return CONCERT.dates[0];
 }
 
-/** 대표 장소 (캘린더 등 한 곳만 적어야 할 때) */
-function concertBaseVenue() {
-  return CONCERT.venues[0];
-}
-
 
 /* ══════════════════════════════════
    4. main-info.js — 메인 화면의 날짜·시간·장소 렌더
@@ -1330,15 +1274,6 @@ function renderMembers() {
   const jump = document.getElementById('mbJump');
   if (jump) jump.innerHTML = '';
 
-  /* 내려가도 따라오는 팀 칩 줄 — 표지의 칩이 화면 위로 사라지면 나타난다.
-     #memberList 안 맨 앞에 두어야 팀 목록이 끝날 때까지 붙어 있다. */
-  const dock = _el('nav', 'mb-dock');
-  dock.setAttribute('aria-label', '팀 바로가기');
-  const dockRail = _el('div', 'mb-dock-rail');
-  dock.appendChild(dockRail);
-  wrap.appendChild(dock);
-  const blocks = [];
-
   const total = String(MEMBERS.length).padStart(2, '0');
   MEMBERS.forEach((section, gi) => {
     const block = _el('section', 'artist-section-block mb-team reveal');
@@ -1357,19 +1292,15 @@ function renderMembers() {
     head.appendChild(title);
     block.appendChild(head);
 
-    // 표지의 팀 바로가기 + 따라오는 칩 줄에도 같은 칩
-    const makeChip = () => {
+    // 표지의 팀 바로가기
+    if (jump) {
       const chip = _el('button', 'mb-chip');
       chip.type = 'button';
-      chip.dataset.team = gi;
       chip.appendChild(document.createTextNode(_teamName(section.group) + ' '));
       chip.appendChild(_el('span', '', String(section.people.length)));
       chip.onclick = () => block.scrollIntoView({ behavior: _reduceMotion.matches ? 'auto' : 'smooth', block: 'start' });
-      return chip;
-    };
-    if (jump) jump.appendChild(makeChip());
-    dockRail.appendChild(makeChip());
-    blocks.push(block);
+      jump.appendChild(chip);
+    }
 
     const grid = _el('div', 'artist-grid mb-grid');
     section.people.forEach((entry, pi) => {
@@ -1390,14 +1321,12 @@ function renderMembers() {
       const initial = () => _el('span', 'mb-initial', (_personName(person) || '?').trim().charAt(0));
       if (person.photo) {
         const img = _el('img');
-        avatar.classList.add('is-loading');   // 사진이 오기 전엔 종이색 자리가 은은하게 반짝인다
-        img.onload = () => avatar.classList.remove('is-loading');
+        img.src = person.photo;
         img.alt = '';                 // 이름이 바로 옆에 있으므로 중복 읽기 방지
         img.loading = 'lazy';
         img.decoding = 'async';
         // 사진을 못 불러오면 조용히 이름 첫 글자로 되돌린다
-        img.onerror = () => { avatar.classList.remove('is-loading'); img.remove(); avatar.appendChild(initial()); };
-        img.src = person.photo;
+        img.onerror = () => { img.remove(); avatar.appendChild(initial()); };
         avatar.appendChild(img);
       } else {
         avatar.appendChild(initial());
@@ -1416,42 +1345,8 @@ function renderMembers() {
     block.appendChild(grid);
     wrap.appendChild(block);
   });
-  _memberDockWatch(dock, jump, blocks);
   // 보고 있는 중에 다시 그렸으면 새 장이 숨은 채 남지 않게
   if (document.getElementById('page-artists')?.classList.contains('active')) triggerReveal();
-}
-
-/* 따라오는 칩 줄을 언제 보일지, 지금 보고 있는 팀이 어디인지 */
-let _mbDockObs = null, _mbSpyObs = null;
-function _memberDockWatch(dock, jump, blocks) {
-  if (_mbDockObs) _mbDockObs.disconnect();
-  if (_mbSpyObs) _mbSpyObs.disconnect();
-  if (!('IntersectionObserver' in window)) return;
-
-  if (jump) {
-    _mbDockObs = new IntersectionObserver(([e]) => {
-      dock.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < 0);
-    });
-    _mbDockObs.observe(jump);
-  }
-
-  const rail = dock.firstChild;
-  const mark = gi => {
-    document.querySelectorAll('#page-artists .mb-chip').forEach(c => {
-      const on = c.dataset.team === String(gi);
-      c.classList.toggle('is-on', on);
-      if (on) c.setAttribute('aria-current', 'true'); else c.removeAttribute('aria-current');
-    });
-    const chip = rail.querySelector('[data-team="' + gi + '"]');
-    // 칩 줄만 옆으로 밀어 지금 팀이 보이게 한다 (페이지는 움직이지 않게 scrollIntoView 대신).
-    // 부드럽게 밀면 크롬에서 진행 중인 페이지의 부드러운 스크롤(칩을 눌러 팀으로 가는 중)이 끊긴다 → 바로 옮긴다
-    if (chip) rail.scrollLeft = chip.offsetLeft - 24;
-  };
-  // 화면 위쪽 1/3 지점을 지나는 팀이 '지금 팀'
-  _mbSpyObs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) mark(blocks.indexOf(e.target)); });
-  }, { rootMargin: '-30% 0px -65% 0px' });
-  blocks.forEach(b => _mbSpyObs.observe(b));
 }
 
 
@@ -2949,106 +2844,6 @@ function _personName(person) { return person ? person.name : ''; }
 function _roleName(role) { return role; }
 
 
-/* 팀 소개 단독 사진 — 기울기에 따라 전경·중경·배경이 다르게 움직인다(2.5D).
-   센서가 켜지기 전에는 원래 사진 그대로이고, 층도 그때부터 화면 근처 것만 받는다. */
-function initStoryParallax() {
-  if (navigator.connection?.saveData || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const DEPTH = { bg: .8, mid: 2, fg: 3.6 };   // 사진 폭 대비 % — 가까울수록 많이 움직인다
-  const ver = (document.querySelector('script[src*="app.js"]')?.src.split('?')[1]) || '';
-  const boxes = [], live = new Set();
-  let enabled = false, tx = 0, ty = 0, x = 0, y = 0, running = false, base = null;
-
-  document.querySelectorAll('#page-story .scene-img-wrap img').forEach(img => {
-    const id = (img.getAttribute('src').match(/story-(\d\d(?:-\d)?)\./) || [])[1];
-    if (!id || id === '01' || id === '09-2') return;   // 맨 위 첫 사진과 07장 3번째 사진은 그대로 둔다
-    const box = _el('div', 'plx');
-    img.before(box); box.appendChild(img);
-    boxes.push({ box, img, id, layers: null });
-  });
-
-  const paint = () => live.forEach(b => {
-    b.layers?.forEach(l => {
-      const k = DEPTH[l.dataset.z];
-      l.style.transform = `translate3d(${(-x * k).toFixed(2)}%, ${(-y * k * .6).toFixed(2)}%, 0)`;
-    });
-  });
-  const tick = () => {
-    x += (tx - x) * .12; y += (ty - y) * .12;
-    paint();
-    if (Math.abs(tx - x) + Math.abs(ty - y) > .002) requestAnimationFrame(tick);
-    else running = false;
-  };
-  const aim = (nx, ny) => {
-    tx = Math.max(-1, Math.min(1, nx)); ty = Math.max(-1, Math.min(1, ny));
-    if (!running) { running = true; requestAnimationFrame(tick); }
-  };
-
-  const addLayers = b => {
-    if (b.layers) return;
-    let left = 3;
-    b.layers = Object.keys(DEPTH).map(z => {
-      const l = _el('img', 'plx-layer');
-      l.dataset.z = z; l.style.setProperty('--plx-d', DEPTH[z]); l.alt = ''; l.decoding = 'async'; l.setAttribute('aria-hidden', 'true');
-      if (b.img.style.filter) l.style.filter = b.img.style.filter;
-      l.onload = () => { if (!--left) { b.box.classList.add('is-on'); paint(); } };
-      l.src = `public/images/story-plx/${b.id}-${z}.webp?${ver}`;
-      b.box.appendChild(l);
-      return l;
-    });
-  };
-  const enable = () => {
-    if (enabled) return;
-    enabled = true;
-    const io = new IntersectionObserver(es => es.forEach(e => {
-      const b = boxes.find(v => v.box === e.target);
-      if (e.isIntersecting) { live.add(b); addLayers(b); } else live.delete(b);
-    }), { rootMargin: '60% 0px' });
-    boxes.forEach(b => io.observe(b.box));
-  };
-
-  const onTilt = e => {
-    if (e.gamma == null || e.beta == null || !document.documentElement.classList.contains('on-story')) return;
-    enable();
-    document.documentElement.classList.remove('plx-auto');
-    const a = screen.orientation?.angle ?? window.orientation ?? 0;
-    const [g, t] = a === 90 ? [e.beta, -e.gamma] : (a === 270 || a === -90) ? [-e.beta, e.gamma] : a === 180 ? [-e.gamma, -e.beta] : [e.gamma, e.beta];
-    if (!base) base = { g, t };
-    // 처음 쥔 자세가 기준. 자세를 바꾸면 기준이 천천히 따라온다
-    base.g += (g - base.g) * .004; base.t += (t - base.t) * .004;
-    aim((g - base.g) / 18, (t - base.t) / 14);
-  };
-  addEventListener('orientationchange', () => { base = null; });
-
-  const touch = matchMedia('(pointer: coarse)').matches;
-  if (touch) { document.documentElement.classList.add('plx-auto'); enable(); }
-  if (window.DeviceOrientationEvent?.requestPermission && touch) {
-    // iOS 는 터치(탭) 안에서만 센서 권한을 물을 수 있어, 팀 소개에서의 첫 탭에 묻는다. 스크롤 터치는 거절되니 다음 탭에 다시 묻는다
-    const ask = async ev => {
-      if (!document.documentElement.classList.contains('on-story') && !ev.target.closest?.('[data-tab="story"]')) return;
-      try {
-        const r = await DeviceOrientationEvent.requestPermission();
-        document.removeEventListener('click', ask, true);
-        if (r === 'granted') addEventListener('deviceorientation', onTilt);
-      } catch (_) {}
-    };
-    document.addEventListener('click', ask, true);
-  } else {
-    addEventListener('deviceorientation', onTilt);
-  }
-
-  // 마우스가 있으면 올린 위치로 움직인다
-  if (matchMedia('(hover: hover)').matches) {
-    boxes.forEach(b => {
-      b.box.addEventListener('pointermove', e => {
-        enable();
-        const r = b.box.getBoundingClientRect();
-        aim((e.clientX - r.left) / r.width * 2 - 1, (e.clientY - r.top) / r.height * 2 - 1);
-      });
-      b.box.addEventListener('pointerleave', () => aim(0, 0));
-    });
-  }
-}
-
 /* 유화 그림 — 공연 사진을 유화처럼 가공해 곡 리스트·말씀 나눔·멤버 소개의 표지와 경계에 겹친다.
    메인과 팀 소개에는 넣지 않는다. 탭을 열 때 받도록 지연 로드한다. */
 function initArt() {
@@ -3075,7 +2870,7 @@ function initArt() {
    boot — 최초 렌더 및 라우팅 시작
 ══════════════════════════════════ */
 
-initStoryParallax();
+
 initMainCinema();
 renderDetailGrid();
 renderFinaleDate();

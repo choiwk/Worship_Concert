@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=153') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=154') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=153') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=154') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -76,7 +76,7 @@ html {
 body {
   /* 사이트 전체 단일 서체 — 'Sarang'에 없는 글자만 'Sarang Full'로 폴백 */
   font-family: 'Sarang', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji',
-               'Khmer Sangam MN', 'Noto Serif Khmer', 'Sarang Full',
+               'Sarang Full',
                'Apple SD Gothic Neo', sans-serif;
   /* 이 손글씨는 글자마다 위아래로 출렁인다(랑 -108~640).
      행간을 넉넉히 주지 않으면 줄끼리 부딪혀 지저분해진다. */
@@ -745,25 +745,6 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   white-space: nowrap;
 }
 
-/* 한국어 팀 이름은 짧아서 한 줄에 들어가지만, 영어·크메르어로 옮기면
-   두세 배로 길어져 nowrap 때문에 화면 밖으로 뻗어 잘린다.
-   (측정: 화면 458px 일 때 영어 605px · 크메르 866px)
-   그 두 언어에서는 줄을 바꾸고 글자를 한 단계 줄인다. */
-html[lang="en"] .title-main .line-hand,
-html[lang="km"] .title-main .line-hand {
-  white-space: normal;
-  font-size: clamp(21px, 6.2vw, 31px);
-  line-height: 1.45;
-  text-wrap: balance;
-}
-html[lang="km"] .title-main .line-hand { line-height: 1.7; }
-
-html[lang="en"] .title-main .line-hand-sub,
-html[lang="km"] .title-main .line-hand-sub {
-  font-size: clamp(14px, 4vw, 19px);
-  text-wrap: balance;
-}
-
 .title-main .line-hand-sub {
   display: block;
   font-size: clamp(15px, 4.8vw, 23px);
@@ -783,47 +764,6 @@ html[lang="km"] .title-main .line-hand-sub {
 
 .title-main .line-en.top-label {
   margin-bottom: 10px;
-}
-
-/* ── 영상 ────────────────────────────────────────────────── */
-.sec-media {
-  width: 100%;
-  position: relative;
-  background: var(--paper-warm);
-  overflow: hidden;
-}
-
-.media-wrapper {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  position: relative;
-  overflow: hidden;
-}
-
-#main-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-#main-video::-webkit-media-controls,
-#main-video::-webkit-media-controls-panel {
-  display: none !important;
-}
-#main-video::-webkit-media-controls-start-playback-button {
-  display: none !important;
-  -webkit-appearance: none;
-}
-
-.media-wrapper::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 80px;
-  background: linear-gradient(to top, var(--paper), transparent);
-  pointer-events: none;
-  z-index: 2;
 }
 
 /* ── 공연 정보 ───────────────────────────────────────────── */
@@ -1034,34 +974,13 @@ html[lang="km"] .title-main .line-hand-sub {
    6. pages/songs.css — Page 2 곡 리스트
 ══════════════════════════════════ */
 
-.page-header {
-  padding: clamp(24px, 7vw, 36px) clamp(18px, 5.5vw, 28px) clamp(20px, 6vw, 28px);
-  text-align: center;
-  background: var(--paper);
-  position: relative;
-}
 
-.page-header .ph-label {
-  font-size: clamp(13px, 2.5vw, 14px);
-  letter-spacing: 0.02em;
-  color: var(--ink-faint);
-  margin-bottom: 10px;
-  display: block;
-}
 
-.page-header .ph-hint {
-  font-size: clamp(14px, 3.6vw, 16px);
-  color: var(--ink-faint);
-  margin-top: 8px;
-  line-height: 1.6;
-  word-break: keep-all;
-}
 
-.page-header .ph-title {
-  font-size: clamp(20px, 5.5vw, 26px);
-  color: var(--ink);
-  letter-spacing: 0.02em;
-}
+
+
+
+
 
 /* ── 곡 리스트 ─────────────────────────────────
    장식용 카드가 아니라 '누르면 열리는 것'으로 읽혀야 한다.
@@ -1341,34 +1260,27 @@ html[lang="km"] .title-main .line-hand-sub {
   border-radius: 16px;
 }
 /* 글은 하트 위로 */
-.setlist-note > *:not(.setlist-note-deco) { position: relative; z-index: 1; }
+
+
+.setlist-note > * { position: relative; z-index: 1; }
 
 /* ── 배경에 흩어 둔 하트 ────────────────────────────────────
    신청 완료 화면에 쓰는 하트와 같은 모양. 글이 그 위에 얹히므로
    가장 진한 것도 9%를 넘기지 않는다 — 이 정도면 글자 대비가
    4.5:1 아래로 떨어지지 않는다.
    위치를 %로 잡아 두면 '더 읽기' 로 카드가 길어져도 알아서 퍼진다. */
-.setlist-note-deco {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-.setlist-note-deco svg {
-  position: absolute;
-  fill: var(--clay);
-}
-.setlist-note-deco svg:nth-child(1)  { top:  4%; left:  6%; width: 30px; opacity: .085; transform: rotate(-16deg); }
-.setlist-note-deco svg:nth-child(2)  { top:  9%; left: 82%; width: 20px; opacity: .06;  transform: rotate(13deg); }
-.setlist-note-deco svg:nth-child(3)  { top: 24%; left: 46%; width: 15px; opacity: .05;  transform: rotate(-7deg); }
-.setlist-note-deco svg:nth-child(4)  { top: 31%; left: 88%; width: 26px; opacity: .075; transform: rotate(21deg); }
-.setlist-note-deco svg:nth-child(5)  { top: 44%; left:  3%; width: 22px; opacity: .07;  transform: rotate(9deg); }
-.setlist-note-deco svg:nth-child(6)  { top: 56%; left: 70%; width: 16px; opacity: .05;  transform: rotate(-19deg); }
-.setlist-note-deco svg:nth-child(7)  { top: 68%; left: 24%; width: 27px; opacity: .08;  transform: rotate(15deg); }
-.setlist-note-deco svg:nth-child(8)  { top: 77%; left: 90%; width: 18px; opacity: .055; transform: rotate(-11deg); }
-.setlist-note-deco svg:nth-child(9)  { top: 88%; left: 12%; width: 20px; opacity: .065; transform: rotate(24deg); }
-.setlist-note-deco svg:nth-child(10) { top: 93%; left: 58%; width: 25px; opacity: .07;  transform: rotate(-5deg); }
+
+
+
+
+
+
+
+
+
+
+
+
 
 .setlist-note-body {
   font-size: clamp(14px, 3.7vw, 16px);
@@ -1387,64 +1299,23 @@ html[lang="km"] .title-main .line-hand-sub {
 
 /* 접힌 뒷부분 — 높이를 재서 px 로 펼친다.
    max-height 를 큰 값으로 고정하면 글 길이에 따라 속도가 들쭉날쭉해진다. */
-.setlist-note-rest {
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition: max-height .42s cubic-bezier(.32, 0, .18, 1), opacity .3s;
-}
-.setlist-note-rest.open { opacity: 1; }
-.setlist-note-rest .setlist-note-body:first-child { margin-top: clamp(12px, 3.5vw, 16px); }
 
-.setlist-note-toggle {
-  display: block;
-  margin: clamp(14px, 4vw, 18px) auto 0;
-  min-height: 44px;
-  padding: 10px 22px;
-  background: transparent;
-  border: 1px solid var(--clay-wash);
-  border-radius: 999px;
-  font-size: clamp(13px, 3.4vw, 15px);
-  /* 뒤에 하트가 깔리면 강조색(--clay)은 4.5:1 아래로 떨어진다.
-     배지·오류 문구에서 쓰는 한 단계 진한 색으로 맞춘다. */
-  color: #7d3a20;
-  cursor: pointer;
-  transition: background .2s, border-color .2s;
-}
-.setlist-note-toggle:hover { background: var(--paper); border-color: var(--clay); }
 
-@media (prefers-reduced-motion: reduce) {
-  .setlist-note-rest { transition: none; }
-}
 
-.song-detail-section {
-  padding: clamp(28px, 8vw, 40px) clamp(16px, 5.5vw, 28px) 0;
-  background: var(--paper);
-}
 
-.detail-section-label {
-  font-size: clamp(13px, 2.4vw, 14px);
-  letter-spacing: 0.02em;
-  color: var(--ink-faint);
-  margin-bottom: 20px;
-  text-align: center;
-  display: block;
-}
-.detail-section-label::before {
-  content: ''; display: block;
-  height: 16px;
-  margin: 0 auto;
-}
+
+
+
+
+
+
+
+
 
 /* ── 듣기 버튼 두 개 — 위는 '이 곡', 아래는 '전체' ──
    같은 알약 모양을 쓰되 위는 채우고 아래는 테두리만 둘러서,
    무엇이 주된 동작인지 색의 무게로 구분한다. */
-.lp-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
+
 
 .lp-all-btn {
   display: inline-flex;
@@ -1935,8 +1806,6 @@ button.artist-card:focus-visible { outline: 2px solid var(--clay); outline-offse
 /* 아바타 오른쪽 아래 인스타 배지 — 눌러서 갈 수 있다는 표시 */
 
 
-@media (max-width: 340px) {
-}
 .artist-avatar .avatar-placeholder {
   font-size: clamp(18px, 5vw, 24px);
   color: var(--ink-faint);
@@ -3430,11 +3299,6 @@ body {
     margin-top: 8px;
   }
 
-
-  .media-wrapper {
-    aspect-ratio: 4 / 5.4;
-  }
-
   .detail-grid {
     grid-template-columns: 1fr;
     gap: 10px;
@@ -3483,14 +3347,9 @@ body {
   }
 
 
-  .page-header {
-    padding-top: 30px;
-    padding-bottom: 20px;
-  }
 
-  .page-header .ph-title {
-    font-size: 18px;
-  }
+
+
 
   .song-row {
     align-items: center;
@@ -3658,10 +3517,6 @@ body {
     padding-bottom: 48px;
   }
 
-  .media-wrapper {
-    aspect-ratio: 4 / 4.8;
-  }
-
   .detail-grid {
     gap: 16px;
   }
@@ -3683,16 +3538,9 @@ body {
     padding-bottom: 24px;
   }
 
-
-  .media-wrapper {
-    aspect-ratio: 16 / 9;
-  }
-
   .sec-info,
   .sec-message,
-  .page-header,
   .song-list,
-  .song-detail-section,
   .artist-section-block,
   .story-page .opening,
   .story-page .text-block,
@@ -3743,7 +3591,6 @@ body {
 
 /* 기존 메인의 껍데기는 숨긴다. 안의 내용은 JS 가 장면으로 옮겨 와 쓴다. */
 html.main-cinema #page-main > .sec-title,
-html.main-cinema #page-main > .sec-media,
 html.main-cinema #page-main > .sec-info,
 html.main-cinema #page-main > .sec-message { display: none; }
 
@@ -3798,7 +3645,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=153") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=154") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4097,9 +3944,7 @@ html.main-cinema.on-main .tab-btn .tab-icon { filter: drop-shadow(0 1px 4px rgba
 html.main-cinema.on-main .tab-btn.active { color: #f0c3a8; }
 
 /* 메인(영상)에서는 공유하기·언어 버튼을 유리처럼 — 영상이 비쳐 보이고 가장자리만 빛을 받는다 */
-html.main-cinema.on-main .share-fab,
-html.main-cinema.on-main .lang-btn,
-html.main-cinema.on-main .lang-menu {
+html.main-cinema.on-main .share-fab {
   background: linear-gradient(145deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .06));
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
   backdrop-filter: blur(14px) saturate(1.4);
@@ -4110,8 +3955,7 @@ html.main-cinema.on-main .lang-menu {
     0 8px 24px rgba(0, 0, 0, .28);
   color: rgba(247, 244, 236, .94);
 }
-html.main-cinema.on-main .share-fab:hover,
-html.main-cinema.on-main .lang-btn:hover {
+html.main-cinema.on-main .share-fab:hover {
   background: linear-gradient(145deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, .1));
   border-color: rgba(255, 255, 255, .4);
 }
@@ -4120,13 +3964,10 @@ html.main-cinema.on-main .share-fab:active {
   color: #fff;
 }
 html.main-cinema.on-main .share-fab:focus-visible { outline-color: #f0c3a8; }
-html.main-cinema.on-main .lang-btn svg { stroke: #f0c3a8; }
-html.main-cinema.on-main .lang-menu {
-  background: linear-gradient(145deg, rgba(40, 32, 25, .55), rgba(23, 18, 13, .45));
-}
-html.main-cinema.on-main .lang-opt { color: rgba(247, 244, 236, .86); }
-html.main-cinema.on-main .lang-opt:hover,
-html.main-cinema.on-main .lang-opt.is-on { background: rgba(255, 255, 255, .12); color: #f0c3a8; }
+
+
+
+
 
 /* ══════════════════════════════════
    메인 → 곡 리스트 넘김
@@ -4213,10 +4054,7 @@ html.main-cinema.on-main .now-playing { z-index: 460; }
   html.main-cinema.on-main .np-text {
     color: color-mix(in srgb, var(--ink-soft) calc(var(--handoff, 0) * 100%), rgba(247, 244, 236, .9));
   }
-  html.main-cinema.on-main .lang-btn {
-    color: color-mix(in srgb, var(--ink-soft) calc(var(--handoff, 0) * 100%), rgba(247, 244, 236, .94));
-    border-color: color-mix(in srgb, var(--line) calc(var(--handoff, 0) * 100%), rgba(255, 255, 255, .26));
-  }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4246,12 +4084,7 @@ html.main-cinema.on-main .now-playing { z-index: 460; }
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
-.sl-ch.sl-intro {
-  min-height: calc(100vh - var(--np-h, 40px));
-  min-height: calc(100svh - var(--np-h, 40px));
-  padding-top: 0;
-  scroll-snap-align: none;
-}
+
 
 /* 장 전환: 떠나는 장은 빠르게 흐려지고, 들어오는 장은 살짝 늦게 떠오른다 */
 html.sl-scenes .sl-ch > * {
@@ -4265,21 +4098,9 @@ html.sl-scenes .sl-ch.is-on > * {
 
 
 /* 1장: 소개 — 제목을 크게, 가운데에 */
-.sl-intro .page-header { background: transparent; }
-.sl-intro .ph-title { font-size: clamp(38px, 11vw, 46px); }
-.sl-hint {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(var(--tab-content-h) + max(8px, env(safe-area-inset-bottom, 0px)) + 26px);
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  font-size: 14px;
-  color: var(--ink-faint);
-}
+
+
+
 
 /* 곡 묶음 장: 지금 몇 번째 곡들인지 */
 
@@ -4488,7 +4309,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=153") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=154") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -4563,7 +4384,7 @@ html.on-songs, html.on-songs body { overflow: hidden; }
 }
 #page-songs.active::-webkit-scrollbar { display: none; }
 #page-songs .sl-ch { min-height: var(--sl-h, 100%); }
-#page-songs .sl-ch.sl-intro { min-height: var(--sl-h, 100%); }
+
 #page-songs .sl-ch.sl-roulette {
   min-height: auto;
   padding: calc(var(--sl-h, 100svh) / 2 - 60px) 0;
@@ -4575,7 +4396,7 @@ html.sl-scenes #page-songs .sl-roulette > * { transform: none; filter: none; }
    ① 카드 맞추기: 고정 상자 안에서만 스크롤 스냅 (메인과 같은 방식, 페이지 전체에는 걸지 않는다)
    ② 카드 모양: 스크롤 위치에 직접 묶인 CSS 애니메이션 — 가운데(50%)에서 가장 크고 또렷하다 */
 #page-songs.active { scroll-snap-type: y mandatory; }
-#page-songs .sl-ch.sl-intro { scroll-snap-align: start; }
+
 #page-songs .sl-wheel .song-item { scroll-snap-align: center; }
 
 @supports (animation-timeline: view()) {
@@ -4821,7 +4642,7 @@ html.sl-scenes #page-songs .sl-roulette > * { transform: none; filter: none; }
 #memberSheet .member-role { grid-row: 3; }
 
 /* 디자인 고르기 메뉴의 링크 */
-.design-opt { display: block; text-decoration: none; }
+
 
 
 /* ── 메인: 화면 맨 아래까지 빈틈 없이 ──
@@ -4966,27 +4787,6 @@ html.art-on #page-artists .mb-cover { padding-top: 0; }
 /* 낮은 화면에서는 표지 그림을 줄여 글을 밀어내지 않게 */
 @media (max-height: 700px) {
   html.art-on .sl-head .art-band { width: 70%; }
-}
-
-/* ══════════════════════════════════
-   팀 소개 단독 사진 — 2.5D 층. 층은 사진보다 넓게 깔아 움직여도 가장자리가 안 보인다
-══════════════════════════════════ */
-.plx { position: relative; overflow: hidden; }
-.scene-img-wrap .plx-layer {
-  position: absolute;
-  left: -6%; top: -6%;
-  width: 112%; height: 112%;
-  max-width: none;
-  opacity: 0;
-  transition: opacity .5s ease;
-  will-change: transform;
-}
-.plx.is-on .plx-layer { opacity: 1; }
-/* 센서를 받기 전에는 천천히 저절로 움직여 깊이를 보여 준다 */
-.plx-auto .plx-layer { animation: plxDrift 7s ease-in-out infinite alternate; }
-@keyframes plxDrift {
-  from { transform: translate3d(calc(var(--plx-d) * -1%), 0, 0); }
-  to   { transform: translate3d(calc(var(--plx-d) * 1%), 0, 0); }
 }
 
 /* 데이터 절약 모드일 때만 첫 장면에 나오는 「영상 보기」 */
@@ -5295,7 +5095,7 @@ html { background: var(--paper); }
 
 
 /* ══════════════════════════════════
-   UI 다듬기 (곡 상세 · 멤버 소개 · 말씀 나눔)
+   UI 다듬기 (곡 상세 · 말씀 나눔)
 ══════════════════════════════════ */
 
 /* ── 곡 상세: 돌아가기 단추가 머리말을 지나면 곡 제목으로, 아래 얇은 선은 읽은 만큼 ── */
@@ -5357,57 +5157,6 @@ html { background: var(--paper); }
 html.lyrics-lg .song-lyrics { font-size: clamp(20px, 5.6vw, 23px); line-height: 1.95; }
 html.lyrics-lg #songDetail.is-prayer .song-lyrics { line-height: 2.2; }
 
-/* ── 멤버 소개: 내려가도 따라오는 팀 칩 줄 ──
-   높이 0 인 sticky 상자 안에 칩 줄을 띄워, 나타나고 사라질 때 아래 내용이 밀리지 않는다 */
-.mb-dock {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  height: 0;
-}
-.mb-dock-rail {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding: calc(env(safe-area-inset-top, 0px) + 10px) clamp(18px, 5.5vw, 26px) 10px;
-  background: rgba(247, 244, 236, .9);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  backdrop-filter: blur(14px) saturate(1.2);
-  border-bottom: 1px solid var(--line);
-  box-shadow: 0 6px 18px rgba(50, 44, 37, .06);
-  transform: translateY(-100%);
-  opacity: 0;
-  visibility: hidden;
-  transition: transform .28s ease, opacity .28s ease, visibility 0s linear .28s;
-}
-.mb-dock-rail::-webkit-scrollbar { display: none; }
-.mb-dock.is-on .mb-dock-rail {
-  transform: none;
-  opacity: 1;
-  visibility: visible;
-  transition: transform .28s ease, opacity .28s ease;
-}
-.mb-dock .mb-chip { flex: none; box-shadow: none; background: #fffdf8; }
-.mb-chip { transition: background .2s, color .2s, border-color .2s; }
-.mb-chip.is-on,
-.mb-dock .mb-chip.is-on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
-.mb-chip.is-on span { color: rgba(247, 244, 236, .78); }
-/* 칩 줄이 덮지 않도록 팀 머리말을 그만큼 아래에 멈춘다 */
-#page-artists .mb-team { scroll-margin-top: 72px; }
-
-/* ── 멤버 소개: 사진이 오기 전 자리 (스켈레톤) ── */
-@keyframes mbAvShimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
-.artist-avatar.is-loading {
-  background: linear-gradient(90deg, #ece5d8 0%, #f6f1e7 50%, #ece5d8 100%);
-  background-size: 200% 100%;
-  animation: mbAvShimmer 1.3s linear infinite;
-}
-.mb-av img { transition: opacity .3s ease; }
-.artist-avatar.is-loading img { opacity: 0; }
-
 /* ── 말씀 나눔: 암호 칸 라벨과 오류 상태 ── */
 .word-lock-label {
   flex-basis: 100%;
@@ -5442,7 +5191,6 @@ html.lyrics-lg #songDetail.is-prayer .song-lyrics { line-height: 2.2; }
 .word-open-count-text { margin: 0; font-size: 13px; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
 
 @media (prefers-reduced-motion: reduce) {
-  .artist-avatar.is-loading { animation: none; }
   .word-lock-form .rsvp-input.is-shake { animation: none; }
-  .mb-dock-rail, .mb-dock.is-on .mb-dock-rail, .word-open-dots span { transition: none; }
+  .word-open-dots span { transition: none; }
 }

@@ -17,7 +17,7 @@ Worship_Concert/
 │   └── js/app.js           # 통합 스크립트
 ├── public/
 │   ├── images/             # 스토리 이미지 (13장)
-│   ├── videos/             # 메인 영상 (MainWorship.mp4)
+│   ├── videos/             # 메인 배경 영상 (main-portrait.mp4, 느린 망용 -light, 첫 화면 사진 -poster.jpg)
 │   └── audio/              # 배경음악 (bgm.mp3)
 ├── .gitignore
 └── README.md

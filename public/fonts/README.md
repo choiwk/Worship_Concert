@@ -9,7 +9,6 @@
 |---|---|---|---|
 | `Sarang-site.woff2` | **실제 로딩되는 폰트.** 사이트에 쓰인 글자만 담은 서브셋 | 70 KB | ○ |
 | `Sarang-full.woff2` | 폴백. KS X 1001 2350자 | 503 KB | ○ |
-| `NanumSonGeulSsi-DdalegeEomma.woff2` | 나눔손글씨 딸에게 엄마가 (현재 미사용, 보관용) | 538 KB | ○ |
 | `NanumSonGeulSsi-*.ttf` | 원본. 서브셋 재생성용 | 각 5 MB | ✗ (.gitignore) |
 
 ## 2단 폴백이 왜 필요한가
