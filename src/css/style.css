@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=152') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=153') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=152') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=153') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3798,7 +3798,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=152") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=153") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4488,7 +4488,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=152") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=153") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5293,3 +5293,156 @@ html { background: var(--paper); }
   .cinema-bg { opacity: .99; }
 }
 
+
+/* ══════════════════════════════════
+   UI 다듬기 (곡 상세 · 멤버 소개 · 말씀 나눔)
+══════════════════════════════════ */
+
+/* ── 곡 상세: 돌아가기 단추가 머리말을 지나면 곡 제목으로, 아래 얇은 선은 읽은 만큼 ── */
+.song-page .song-back { overflow: hidden; }
+.song-page .song-back::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  height: 2px;
+  width: var(--p, 0%);
+  background: var(--clay);
+  opacity: .75;
+}
+.song-back-now {
+  display: none;
+  max-width: min(56vw, 300px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.song-page .song-back.is-compact .song-back-label { display: none; }
+.song-page .song-back.is-compact .song-back-now { display: inline; }
+
+/* ── 곡 상세: 유튜브 알약과 가사 글자 크기를 한 줄에 ── */
+.song-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+}
+.lyric-size {
+  display: inline-flex;
+  margin-left: auto;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--paper-warm);
+  border: 1px solid var(--line);
+}
+.lyric-size button {
+  min-width: 44px;
+  height: 38px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: background .18s, color .18s, box-shadow .18s;
+}
+.lyric-size button[aria-pressed="true"] {
+  background: #fff;
+  color: var(--clay);
+  box-shadow: 0 1px 4px rgba(50, 44, 37, .14);
+}
+.lyric-size button:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+html.lyrics-lg .song-lyrics { font-size: clamp(20px, 5.6vw, 23px); line-height: 1.95; }
+html.lyrics-lg #songDetail.is-prayer .song-lyrics { line-height: 2.2; }
+
+/* ── 멤버 소개: 내려가도 따라오는 팀 칩 줄 ──
+   높이 0 인 sticky 상자 안에 칩 줄을 띄워, 나타나고 사라질 때 아래 내용이 밀리지 않는다 */
+.mb-dock {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 0;
+}
+.mb-dock-rail {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) clamp(18px, 5.5vw, 26px) 10px;
+  background: rgba(247, 244, 236, .9);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 6px 18px rgba(50, 44, 37, .06);
+  transform: translateY(-100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform .28s ease, opacity .28s ease, visibility 0s linear .28s;
+}
+.mb-dock-rail::-webkit-scrollbar { display: none; }
+.mb-dock.is-on .mb-dock-rail {
+  transform: none;
+  opacity: 1;
+  visibility: visible;
+  transition: transform .28s ease, opacity .28s ease;
+}
+.mb-dock .mb-chip { flex: none; box-shadow: none; background: #fffdf8; }
+.mb-chip { transition: background .2s, color .2s, border-color .2s; }
+.mb-chip.is-on,
+.mb-dock .mb-chip.is-on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.mb-chip.is-on span { color: rgba(247, 244, 236, .78); }
+/* 칩 줄이 덮지 않도록 팀 머리말을 그만큼 아래에 멈춘다 */
+#page-artists .mb-team { scroll-margin-top: 72px; }
+
+/* ── 멤버 소개: 사진이 오기 전 자리 (스켈레톤) ── */
+@keyframes mbAvShimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+.artist-avatar.is-loading {
+  background: linear-gradient(90deg, #ece5d8 0%, #f6f1e7 50%, #ece5d8 100%);
+  background-size: 200% 100%;
+  animation: mbAvShimmer 1.3s linear infinite;
+}
+.mb-av img { transition: opacity .3s ease; }
+.artist-avatar.is-loading img { opacity: 0; }
+
+/* ── 말씀 나눔: 암호 칸 라벨과 오류 상태 ── */
+.word-lock-label {
+  flex-basis: 100%;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+.word-lock-form .rsvp-input::placeholder { letter-spacing: 0; }
+#page-word .word-lock-form .rsvp-input.is-invalid { border-color: var(--clay); background: #fdf6f2; }
+@keyframes wordShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+.word-lock-form .rsvp-input.is-shake { animation: wordShake .3s ease 2; }
+
+/* ── 말씀 나눔: 가로 카드가 몇 번째인지 ── */
+.word-open-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  min-height: 14px;
+  margin-top: 12px;
+}
+.word-open-dots span {
+  width: 6px; height: 6px;
+  border-radius: 6px;
+  background: #d6ccbe;
+  transition: width .25s ease, background .25s ease;
+}
+.word-open-dots span.is-on { width: 18px; background: var(--clay); }
+.word-open-count-text { margin: 0; font-size: 13px; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  .artist-avatar.is-loading { animation: none; }
+  .word-lock-form .rsvp-input.is-shake { animation: none; }
+  .mb-dock-rail, .mb-dock.is-on .mb-dock-rail, .word-open-dots span { transition: none; }
+}

@@ -461,6 +461,8 @@ function renderSongDetail(slug) {
   backIcon.setAttribute('aria-hidden', 'true');
   back.appendChild(backIcon);
   back.appendChild(_el('span', 'song-back-label', t('songs.back', '곡 리스트')));
+  // 머리말이 화면 위로 지나가면 '곡 리스트' 자리에 지금 곡 번호와 제목을 보여 준다
+  back.appendChild(_el('span', 'song-back-now', _songNo(song) + '  ' + _songTitle(song)));
   wrap.appendChild(back);
 
   /* 머리말 */
@@ -484,7 +486,8 @@ function renderSongDetail(slug) {
 
   wrap.appendChild(head);
 
-  /* 유튜브 — 제목 바로 아래, 가사 시작 전 */
+  /* 유튜브 + 가사 글자 크기 — 제목 바로 아래, 가사 시작 전 */
+  const tools = _el('div', 'song-tools');
   if (song.youtube) {
     const yt = _extLink(song.youtube, t('songs.youtube', 'YouTube에서 듣기'), 'song-yt', song.title + ' 유튜브에서 듣기');
     const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -494,8 +497,10 @@ function renderSongDetail(slug) {
     use.setAttribute('href', '#icon-yt');
     icon.appendChild(use);
     yt.insertBefore(icon, yt.firstChild);
-    wrap.appendChild(yt);
+    tools.appendChild(yt);
   }
+  tools.appendChild(_lyricSizeControl());
+  wrap.appendChild(tools);
 
 
   /* 가사 + 말씀 (한 곡에 두 곡이 이어지면 파트마다 반복) */
@@ -559,8 +564,59 @@ function renderSongDetail(slug) {
   wrap.appendChild(nav);
 
   _songDetailReveal(wrap);
+  _songBackWatch(back, head);
   return true;
 }
+
+/* ── 가사 글자 크기 (보통 / 크게) ──
+   예배 중에 휴대폰을 조금 떨어뜨려 들고 따라 부를 때를 위해. 고른 크기는 이 기기에 기억한다. */
+function _lyricLarge(set) {
+  try {
+    if (set !== undefined) localStorage.setItem('lyric-size', set ? 'l' : 'n');
+    return localStorage.getItem('lyric-size') === 'l';
+  } catch (e) { return !!set; }
+}
+function _applyLyricSize(large) {
+  document.documentElement.classList.toggle('lyrics-lg', large);
+  document.querySelectorAll('.lyric-size button').forEach(b =>
+    b.setAttribute('aria-pressed', String((b.dataset.size === 'l') === large)));
+}
+function _lyricSizeControl() {
+  const box = _el('div', 'lyric-size');
+  box.setAttribute('role', 'group');
+  box.setAttribute('aria-label', '가사 글자 크기');
+  [['n', '가', '가사 보통 크기'], ['l', '가+', '가사 크게']].forEach(([key, text, label]) => {
+    const b = _el('button', null, text);
+    b.type = 'button';
+    b.dataset.size = key;
+    b.setAttribute('aria-label', label);
+    b.setAttribute('aria-pressed', String((key === 'l') === _lyricLarge()));
+    b.onclick = () => _applyLyricSize(_lyricLarge(key === 'l'));
+    box.appendChild(b);
+  });
+  return box;
+}
+_applyLyricSize(_lyricLarge());
+
+/* ── 곡 화면 돌아가기 단추: 머리말이 지나가면 곡 제목으로, 아래 얇은 선은 읽은 만큼 ── */
+let _songBackObs = null;
+function _songBackWatch(back, head) {
+  if (_songBackObs) _songBackObs.disconnect();
+  if (!('IntersectionObserver' in window)) return;
+  _songBackObs = new IntersectionObserver(([e]) => {
+    back.classList.toggle('is-compact', !e.isIntersecting && e.boundingClientRect.top < 0);
+  });
+  _songBackObs.observe(head);
+  _songReadProgress();
+}
+function _songReadProgress() {
+  if (!document.documentElement.classList.contains('on-song')) return;
+  const back = document.querySelector('#songDetail .song-back');
+  if (!back) return;
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  back.style.setProperty('--p', (max > 0 ? Math.min(100, Math.max(0, window.scrollY / max * 100)) : 0) + '%');
+}
+window.addEventListener('scroll', _songReadProgress, { passive: true });
 
 /* 곡 화면: 가사 파트·말씀·이전/다음이 화면에 들어올 때 스르륵 떠오른다 (곡 리스트 장 전환과 같은 결).
    읽는 중인 글이 사라지면 안 되므로 나타나기만 한다. */
@@ -1274,6 +1330,15 @@ function renderMembers() {
   const jump = document.getElementById('mbJump');
   if (jump) jump.innerHTML = '';
 
+  /* 내려가도 따라오는 팀 칩 줄 — 표지의 칩이 화면 위로 사라지면 나타난다.
+     #memberList 안 맨 앞에 두어야 팀 목록이 끝날 때까지 붙어 있다. */
+  const dock = _el('nav', 'mb-dock');
+  dock.setAttribute('aria-label', '팀 바로가기');
+  const dockRail = _el('div', 'mb-dock-rail');
+  dock.appendChild(dockRail);
+  wrap.appendChild(dock);
+  const blocks = [];
+
   const total = String(MEMBERS.length).padStart(2, '0');
   MEMBERS.forEach((section, gi) => {
     const block = _el('section', 'artist-section-block mb-team reveal');
@@ -1292,15 +1357,19 @@ function renderMembers() {
     head.appendChild(title);
     block.appendChild(head);
 
-    // 표지의 팀 바로가기
-    if (jump) {
+    // 표지의 팀 바로가기 + 따라오는 칩 줄에도 같은 칩
+    const makeChip = () => {
       const chip = _el('button', 'mb-chip');
       chip.type = 'button';
+      chip.dataset.team = gi;
       chip.appendChild(document.createTextNode(_teamName(section.group) + ' '));
       chip.appendChild(_el('span', '', String(section.people.length)));
       chip.onclick = () => block.scrollIntoView({ behavior: _reduceMotion.matches ? 'auto' : 'smooth', block: 'start' });
-      jump.appendChild(chip);
-    }
+      return chip;
+    };
+    if (jump) jump.appendChild(makeChip());
+    dockRail.appendChild(makeChip());
+    blocks.push(block);
 
     const grid = _el('div', 'artist-grid mb-grid');
     section.people.forEach((entry, pi) => {
@@ -1321,12 +1390,14 @@ function renderMembers() {
       const initial = () => _el('span', 'mb-initial', (_personName(person) || '?').trim().charAt(0));
       if (person.photo) {
         const img = _el('img');
-        img.src = person.photo;
+        avatar.classList.add('is-loading');   // 사진이 오기 전엔 종이색 자리가 은은하게 반짝인다
+        img.onload = () => avatar.classList.remove('is-loading');
         img.alt = '';                 // 이름이 바로 옆에 있으므로 중복 읽기 방지
         img.loading = 'lazy';
         img.decoding = 'async';
         // 사진을 못 불러오면 조용히 이름 첫 글자로 되돌린다
-        img.onerror = () => { img.remove(); avatar.appendChild(initial()); };
+        img.onerror = () => { avatar.classList.remove('is-loading'); img.remove(); avatar.appendChild(initial()); };
+        img.src = person.photo;
         avatar.appendChild(img);
       } else {
         avatar.appendChild(initial());
@@ -1345,8 +1416,42 @@ function renderMembers() {
     block.appendChild(grid);
     wrap.appendChild(block);
   });
+  _memberDockWatch(dock, jump, blocks);
   // 보고 있는 중에 다시 그렸으면 새 장이 숨은 채 남지 않게
   if (document.getElementById('page-artists')?.classList.contains('active')) triggerReveal();
+}
+
+/* 따라오는 칩 줄을 언제 보일지, 지금 보고 있는 팀이 어디인지 */
+let _mbDockObs = null, _mbSpyObs = null;
+function _memberDockWatch(dock, jump, blocks) {
+  if (_mbDockObs) _mbDockObs.disconnect();
+  if (_mbSpyObs) _mbSpyObs.disconnect();
+  if (!('IntersectionObserver' in window)) return;
+
+  if (jump) {
+    _mbDockObs = new IntersectionObserver(([e]) => {
+      dock.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < 0);
+    });
+    _mbDockObs.observe(jump);
+  }
+
+  const rail = dock.firstChild;
+  const mark = gi => {
+    document.querySelectorAll('#page-artists .mb-chip').forEach(c => {
+      const on = c.dataset.team === String(gi);
+      c.classList.toggle('is-on', on);
+      if (on) c.setAttribute('aria-current', 'true'); else c.removeAttribute('aria-current');
+    });
+    const chip = rail.querySelector('[data-team="' + gi + '"]');
+    // 칩 줄만 옆으로 밀어 지금 팀이 보이게 한다 (페이지는 움직이지 않게 scrollIntoView 대신).
+    // 부드럽게 밀면 크롬에서 진행 중인 페이지의 부드러운 스크롤(칩을 눌러 팀으로 가는 중)이 끊긴다 → 바로 옮긴다
+    if (chip) rail.scrollLeft = chip.offsetLeft - 24;
+  };
+  // 화면 위쪽 1/3 지점을 지나는 팀이 '지금 팀'
+  _mbSpyObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) mark(blocks.indexOf(e.target)); });
+  }, { rootMargin: '-30% 0px -65% 0px' });
+  blocks.forEach(b => _mbSpyObs.observe(b));
 }
 
 
@@ -1983,6 +2088,7 @@ async function loadWordOpen() {
   /* 불러오는 동안 자리를 비워 두면 화면이 덜컥 늘어난다.
      먼저 '불러오는 중' 을 보여 주고, 글이 도착하면 바꿔 끼운다. */
   rail.innerHTML = '';
+  _wordOpenDots(sec, rail, 0);     // 다시 불러오는 동안 이전 점은 거둔다
   rail.appendChild(_el('p', 'word-open-loading', t('word.openLoading', '나눔 불러오는 중...')));
   sec.hidden = false;
   const hintEl = sec.querySelector('.word-open-hint');
@@ -2042,8 +2148,35 @@ async function loadWordOpen() {
   // 넘길 것이 없으면 안내를 감춘다
   const hint = sec.querySelector('.word-open-hint');
   if (hint) hint.hidden = items.length < 2;
+  _wordOpenDots(sec, rail, items.length);
 
   sec.hidden = false;
+}
+
+/* 가로로 넘기는 공개 묵상 카드 아래 '몇 번째인지' 점. 많으면 점 대신 숫자로. */
+function _wordOpenDots(sec, rail, n) {
+  sec.querySelector('.word-open-dots')?.remove();
+  rail.onscroll = null;
+  if (n < 2) return;
+  const box = _el('div', 'word-open-dots');
+  box.setAttribute('aria-hidden', 'true');   // 카드 자체가 목록이라 화면 읽기에는 중복
+  const many = n > 8;
+  const dots = many ? [] : Array.from({ length: n }, () => box.appendChild(_el('span')));
+  const count = many ? box.appendChild(_el('p', 'word-open-count-text')) : null;
+  sec.appendChild(box);
+
+  const update = () => {
+    const card = rail.firstElementChild;
+    if (!card) return;
+    const max = rail.scrollWidth - rail.clientWidth;
+    let i = Math.round(rail.scrollLeft / (card.offsetWidth + 10));   // 10 = 카드 사이 gap
+    if (rail.scrollLeft >= max - 2) i = n - 1;                       // 끝까지 밀면 마지막
+    i = Math.max(0, Math.min(n - 1, i));
+    if (many) count.textContent = (i + 1) + ' / ' + n;
+    else dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
+  };
+  rail.onscroll = update;
+  update();
 }
 
 /* ── 잠금 화면 ──────────────────────────────────────── */
@@ -2056,6 +2189,18 @@ function _wordShowLock(msg) {
   const err = document.getElementById('wordLockError');
   err.textContent = msg || '';
   err.hidden = !msg;
+  // 틀렸으면 칸 자체가 알려 준다: 테두리 색 + 살짝 흔들림
+  const input = document.getElementById('wordPass');
+  input.classList.toggle('is-invalid', !!msg);
+  input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+  if (msg) {
+    input.setAttribute('aria-describedby', 'wordLockError');
+    input.classList.remove('is-shake');
+    void input.offsetWidth;          // 같은 클래스를 다시 붙여도 애니메이션이 처음부터 돌게
+    input.classList.add('is-shake');
+  } else {
+    input.removeAttribute('aria-describedby');
+  }
 }
 
 async function _wordUnlock(e) {
@@ -2942,6 +3087,11 @@ _rsvpBindCount();
 document.getElementById('rsvpForm').addEventListener('submit', _rsvpSubmit);
 document.getElementById('wordForm').addEventListener('submit', _wordSubmit);
 document.getElementById('wordLockForm').addEventListener('submit', _wordUnlock);
+// 다시 입력하기 시작하면 오류 표시를 거둔다
+document.getElementById('wordPass').addEventListener('input', e => {
+  e.target.classList.remove('is-invalid', 'is-shake');
+  e.target.setAttribute('aria-invalid', 'false');
+});
 (function () {
   const ta = document.getElementById('wordBody');
   const out = document.getElementById('wordCount');
