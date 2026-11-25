@@ -78,6 +78,7 @@ function route() {
     if (r.tab === 'word') loadWord();
   }
   _syncShareFab();
+  track('view', r.slug ? r.tab + '/' + r.slug : r.tab);
 
   // 곡 상세에서 목록으로 돌아온 경우에만 보던 자리를 복원하고,
   // 그 외에는 기존 동작대로 맨 위로 올린다.
@@ -712,6 +713,7 @@ function _tryStartBgm() {
 function toggleBgmFromBar() {
   if (!_bgm) return;
   const bar = document.getElementById('nowPlaying');
+  track('bgm', _bgm.paused ? 'on' : 'off');
   if (_bgm.paused) {
     _bgm.volume = 0.16;
     _bgm.play().then(() => bar.classList.remove('paused')).catch(() => {});
@@ -1561,6 +1563,7 @@ function openOverlay(name) {
   document.getElementById(o.backdrop).classList.add('open');
   document.getElementById(o.panel).classList.add('open');
   _lockScroll();
+  track('open', name);
 }
 
 function closeOverlay(name) {
@@ -1737,6 +1740,68 @@ const RSVP = {
   table: 'rsvp'
 };
 
+/* ── 익명 방문 통계 ──
+   참여 신청과 같은 공개 키로 events 표에 「넣기」만 한다 (읽기·지우기는 RLS 로 막힘).
+   이름·IP 같은 개인정보는 보내지 않고, 기기마다 만든 무작위 번호만 보낸다.
+   표 만들기와 횟수 보는 SQL: docs/방문통계-supabase-설정.md
+   ponytail: 공개 키라 누가 일부러 반복해 보내면 숫자가 부풀 수 있다. 정확한 집계가 필요해지면 Edge Function 으로 옮긴다. */
+const TRACK_OFF = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);   // 내 컴퓨터에서 본 것은 세지 않는다
+let _trackFrom = null;
+
+function _visitorId() {
+  try {
+    let id = localStorage.getItem('wc-visitor');
+    if (!id) {
+      id = (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+      localStorage.setItem('wc-visitor', id);
+    }
+    return id;
+  } catch (e) { return null; }   // 사생활 보호 모드 등에서는 번호 없이 센다
+}
+
+/** 통계 한 건 보내기. 실패해도 화면과 기능에는 아무 영향이 없다. */
+function track(name, detail) {
+  if (TRACK_OFF || !RSVP.url || !RSVP.key) return;
+  try {
+    fetch(RSVP.url.replace(/\/+$/, '') + '/rest/v1/events', {
+      method: 'POST',
+      keepalive: true,   // 공유·바깥 링크로 페이지를 떠나는 순간에도 보낸다
+      headers: {
+        'apikey': RSVP.key,
+        'Authorization': 'Bearer ' + RSVP.key,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        name: String(name).slice(0, 30),
+        detail: detail ? String(detail).slice(0, 80) : null,
+        visitor: _visitorId(),
+        src: _trackFrom
+      })
+    }).catch(() => {});
+  } catch (e) { /* 통계 실패는 무시 */ }
+}
+
+// 들어온 경로(?from=qr 등)를 기억하고 주소에서는 지운다. 그래야 이 사람이 다시 공유한 링크가 qr 로 세지지 않는다.
+(function () {
+  try {
+    const u = new URL(location.href);
+    const f = u.searchParams.get('from');
+    if (f && /^[a-z0-9_-]{1,20}$/i.test(f)) _trackFrom = f.toLowerCase();
+    if (u.searchParams.has('from')) {
+      u.searchParams.delete('from');
+      history.replaceState(history.state, '', u.pathname + u.search + u.hash);
+    }
+  } catch (e) {}
+  track('visit');
+})();
+
+// 바깥 링크(유튜브·인스타·3D 무대 등)는 한곳에서 센다
+document.addEventListener('click', e => {
+  const a = e.target.closest && e.target.closest('a[target="_blank"]');
+  if (a) track('link', a.hostname + a.pathname);
+}, true);
+
 // 같은 사람이 실수로 연속해 누르는 것만 막는다 (초)
 const RSVP_COOLDOWN = 30;
 
@@ -1842,6 +1907,7 @@ async function _rsvpSubmit(e) {
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     _rsvpStore('set');
+    track('rsvp_done');
     _rsvpShowDone(name);
   } catch (err) {
     console.error('[rsvp]', err);
@@ -2780,8 +2846,10 @@ function shareKakao() {
     url: window.location.href
   };
 
+  track('share', 'kakao');
   if (navigator.share) {
-    navigator.share(shareData).catch(() => {});
+    // 공유창에서 실제로 보냈을 때만 끝까지 온다 (취소하면 catch)
+    navigator.share(shareData).then(() => track('share_sent', 'native')).catch(() => {});
   } else {
     _copyToClipboard(window.location.href, () => {
       showToast('링크가 복사되었습니다. 카카오톡에 붙여넣기 해주세요');
@@ -2791,6 +2859,7 @@ function shareKakao() {
 
 function shareInstagram() {
   closeShare();
+  track('share', 'instagram');
   _copyToClipboard(window.location.href, () => {
     showToast('링크가 복사되었습니다. DM으로 공유해보세요');
   });
@@ -2798,6 +2867,7 @@ function shareInstagram() {
 
 function copyLink(silent) {
   closeShare();
+  track('share', 'copy');
   _copyToClipboard(window.location.href, () => {
     if (!silent) showToast('링크가 복사되었습니다');
   });
