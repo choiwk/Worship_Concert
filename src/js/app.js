@@ -376,6 +376,20 @@ function _songScenesUpdate() {
   document.querySelectorAll('#slDots li').forEach((d, i) => d.classList.toggle('is-on', i === on));
   _songWheelUpdate();
 }
+/* iOS 26: 고정 층의 바닥(bottom:0)이 실제 화면 끝보다 위에 잡힌다. 그 차이를 --ios-under 로 넘겨
+   메인 영상·곡 리스트 상자를 화면 끝까지 늘린다 (style.css 「곡 리스트를 화면 끝까지」).
+   ponytail: 화면 크기(screen)로 어림잡는다. 넘치는 만큼은 화면 밖이라 보이지 않는다. iOS 가 고쳐지면 0 이 된다. */
+function _iosUnder() {
+  if (!CSS.supports('-webkit-touch-callout', 'none')) return;
+  const portrait = innerHeight >= innerWidth;
+  const full = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+  const gap = Math.min(200, Math.max(0, full - innerHeight));
+  document.documentElement.style.setProperty('--ios-under', gap + 'px');
+}
+_iosUnder();
+window.addEventListener('resize', _iosUnder);
+window.addEventListener('pageshow', _iosUnder);
+
 /* 곡 리스트 상자는 위 음악 바 바로 아래에서 화면 바닥까지. 그 높이를 CSS 에 알려 준다 */
 function _slMeasure() {
   const np = document.getElementById('nowPlaying');

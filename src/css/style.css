@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=160') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=161') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=160') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=161') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3645,7 +3645,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=160") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=161") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4382,7 +4382,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=160") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=161") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5111,8 +5111,11 @@ button.sl-note-card {
    늘리고, 늘어난 만큼(--ios-tb) 끝 쪽 여백과 안내를 올려 탭 바에 가리지 않게 한다.
    홈 화면 앱·안드로이드는 늘어난 높이가 0 이라 그대로다. */
 @supports (-webkit-touch-callout: none) {
-  html.on-songs { --ios-tb: calc(100lvh - 100svh); }
+  /* --ios-under: 실제 화면 끝과 고정 층 바닥(bottom:0)의 차이. iOS 26 은 사파리·홈 화면 앱·카톡 모두
+     바닥을 화면 끝보다 위에 잡아 그 아래가 맨 바탕색으로 비었다. app.js 의 _iosUnder() 가 잰다. */
+  html.on-songs { --ios-tb: max(calc(100lvh - 100svh), var(--ios-under, 0px)); }
   #page-songs.active { bottom: calc(-1 * var(--ios-tb, 0px)); }
+  .cinema-bg { height: calc(100lvh + var(--ios-under, 0px)); }   /* 메인 영상도 화면 끝까지 */
   #page-songs .sl-ch { padding-bottom: calc(var(--tab-content-h) + max(8px, env(safe-area-inset-bottom, 0px)) + 28px + var(--ios-tb, 0px)); }
   .sl-roulette .flow-cue { bottom: calc(var(--tab-content-h) + max(8px, env(safe-area-inset-bottom, 0px)) + 8px + var(--ios-tb, 0px)); }
 }
