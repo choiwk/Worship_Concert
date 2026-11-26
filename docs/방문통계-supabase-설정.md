@@ -36,6 +36,7 @@ grant insert on public.events to anon;
 | `share` | `kakao`, `copy`, `qr` (예전 기록에는 `instagram` 도 있음) | 공유 시트에서 누를 때 (`qr` 은 QR 보여주기를 펼칠 때) |
 | `share_sent` | `native` | 휴대폰 공유창에서 실제로 보냈을 때 |
 | `rsvp_done` | | 참여 신청이 저장됐을 때 |
+| `rsvp_invite` | | 신청 완료 화면에서 「같이 갈 친구도 불러 볼까요?」를 눌렀을 때 |
 | `bgm` | `on`, `off` | 배경음악을 켜고 끌 때 |
 | `link` | `www.youtube.com/...` 등 | 바깥 링크를 누를 때 |
 

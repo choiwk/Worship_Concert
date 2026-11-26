@@ -1968,7 +1968,14 @@ function _rsvpShowDone(name) {
 
   const done = document.getElementById('rsvpDone');
   done.hidden = false;
-  requestAnimationFrame(() => done.querySelector('.rsvp-done-close').focus());
+  requestAnimationFrame(() => done.querySelector('.rsvp-invite').focus());
+}
+
+/* 신청을 마친 창에서 「같이 갈 친구도 불러 볼까요?」 → 신청 창을 닫고 공유 시트를 연다 */
+function rsvpInvite() {
+  track('rsvp_invite');
+  closeRsvp();
+  openShare();
 }
 
 /** 마지막 신청 시각 — 저장이 막혀 있어도(사생활 보호 모드) 터지지 않게 감싼다 */
