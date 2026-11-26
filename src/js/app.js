@@ -390,6 +390,33 @@ _iosUnder();
 window.addEventListener('resize', _iosUnder);
 window.addEventListener('pageshow', _iosUnder);
 
+/* 임시 측정: 주소에 ?debug=ios 를 붙여 열면 화면 높이 값을 띄운다. 아이폰 탭바 아래 빈칸 원인을 찾은 뒤 지운다.
+   왼쪽 빨간 줄 = bottom:0 고정 층이 끝나는 곳, 오른쪽 파란 줄 = 화면보다 200px 더 긴 고정 층. */
+if (/[?&]debug=ios\b/.test(location.search)) {
+  const mk = (tag, css) => { const e = _el(tag); e.style.cssText = css; return e; };
+  const box = mk('pre', 'position:fixed;top:60px;left:12px;right:12px;z-index:99999;margin:0;padding:8px;font:11px/1.4 monospace;background:rgba(0,0,0,.8);color:#fff;white-space:pre-wrap;pointer-events:none');
+  const red = mk('div', 'position:fixed;top:0;bottom:0;left:0;width:8px;background:red;z-index:99998;pointer-events:none');
+  const blue = mk('div', 'position:fixed;top:0;height:calc(100lvh + 200px);right:0;width:8px;background:blue;z-index:99998;pointer-events:none');
+  const probe = h => { const d = mk('div', 'position:fixed;top:0;left:0;width:1px;visibility:hidden;height:' + h); document.body.appendChild(d); const v = d.getBoundingClientRect().height; d.remove(); return Math.round(v); };
+  const show = () => {
+    const vv = window.visualViewport || {};
+    const r = s => { const e = document.querySelector(s); if (!e) return '-'; const b = e.getBoundingClientRect(); return Math.round(b.top) + '~' + Math.round(b.bottom); };
+    box.textContent = [
+      'screen ' + screen.width + 'x' + screen.height + '  inner ' + innerWidth + 'x' + innerHeight + '  outerH ' + outerHeight,
+      'docClientH ' + document.documentElement.clientHeight + '  vv ' + Math.round(vv.height || 0) + ' top ' + Math.round(vv.offsetTop || 0),
+      'lvh ' + probe('100lvh') + ' svh ' + probe('100svh') + ' dvh ' + probe('100dvh') + ' safeB ' + probe('env(safe-area-inset-bottom,0px)'),
+      '--ios-under ' + getComputedStyle(document.documentElement).getPropertyValue('--ios-under') + '  standalone ' + !!navigator.standalone,
+      'red ' + Math.round(red.getBoundingClientRect().bottom) + '  blue ' + Math.round(blue.getBoundingClientRect().bottom),
+      'tab-bar ' + r('.tab-bar') + '  songs ' + r('#page-songs.active') + '  cinema ' + r('.cinema-bg'),
+      'html bg ' + getComputedStyle(document.documentElement).backgroundColor + '  body bg ' + getComputedStyle(document.body).backgroundColor,
+      'ua ' + navigator.userAgent.replace(/^Mozilla\/5\.0 /, '').slice(0, 90)
+    ].join('\n');
+  };
+  document.body.append(red, blue, box);
+  show();
+  setInterval(show, 1000);
+}
+
 /* 곡 리스트 상자는 위 음악 바 바로 아래에서 화면 바닥까지. 그 높이를 CSS 에 알려 준다 */
 function _slMeasure() {
   const np = document.getElementById('nowPlaying');
