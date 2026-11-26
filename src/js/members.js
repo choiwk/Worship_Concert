@@ -104,7 +104,7 @@ const MEMBERS = [
       { id: 'lee-hanbin' },
       { id: 'choi-goun' },
       { id: 'han-gahee' },
-      { id: 'choi-eunho', role: '남자 싱어' }
+      { id: 'choi-eunho' }
     ]
   },
   {
@@ -122,7 +122,8 @@ const MEMBERS = [
     group: '음향/조명팀',
     people: [
       { id: 'lee-kangjun',  role: '음향', icon: '🎚️' },
-      { id: 'choi-wonkeun', role: '조명', icon: '💡' }
+      { id: 'choi-wonkeun', role: '조명', icon: '💡' },
+      { id: 'choi-juhee',   role: '조명', icon: '💡' }
     ]
   },
   {
