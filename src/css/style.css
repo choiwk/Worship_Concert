@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=172') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=173') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=172') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=173') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3701,7 +3701,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=172") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=173") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4461,7 +4461,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=172") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=173") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
@@ -5348,4 +5348,58 @@ html.lyrics-lg #songDetail.is-prayer .song-lyrics { line-height: 2.2; }
 @media (prefers-reduced-motion: reduce) {
   .word-lock-form .rsvp-input.is-shake { animation: none; }
   .word-open-dots span { transition: none; }
+}
+
+
+/* ══════════════════════════════════
+   UX 움직임 다듬기 (2026-11)
+   · 시트: 열 때 320ms 감속(빠르게 나와 부드럽게 멈춤), 닫을 때 220ms 가속 — 닫기는 빨라야 답답하지 않다
+     아래 시트는 튕김(오버슈트) 없이: 바닥에 붙은 판이 튀면 아래로 틈이 보인다
+   · 공유 시트 안쪽은 미리보기 → 카톡 → 나머지 순서로 60ms 간격 뒤따라 올라온다 (시선이 위에서 아래로)
+   · 가운데 창(참여 신청·후원)은 살짝 튕기며 커진다
+   · 참여 신청 완료: 하트가 톡 커졌다 자리 잡고, 글이 뒤따라 — 결과를 확실히
+   · 알림(토스트)·공유 버튼은 눌렀을 때 작게 찌그러졌다 튕겨 돌아온다
+══════════════════════════════════ */
+.share-sheet, .member-sheet { transition: transform .22s cubic-bezier(.4, 0, 1, 1); }
+.share-sheet.open, .member-sheet.open { transition: transform .32s cubic-bezier(.16, 1, .3, 1); }
+
+.share-sheet .share-preview,
+.share-sheet .share-kakao,
+.share-sheet .share-options {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .15s, transform .15s;
+}
+.share-sheet.open .share-preview,
+.share-sheet.open .share-kakao,
+.share-sheet.open .share-options {
+  opacity: 1;
+  transform: none;
+  transition: opacity .26s ease-out .06s, transform .32s cubic-bezier(.16, 1, .3, 1) .06s;
+}
+.share-sheet.open .share-kakao   { transition-delay: .12s; }
+.share-sheet.open .share-options { transition-delay: .18s; }
+.share-sheet.open .share-kakao:active { transform: scale(.97); transition: transform .1s; }
+
+.rsvp-modal, .donate-modal { transition: opacity .18s, transform .18s cubic-bezier(.4, 0, 1, 1); }
+.rsvp-modal.open, .donate-modal.open { transition: opacity .2s, transform .3s cubic-bezier(.34, 1.45, .64, 1); }
+
+.rsvp-done:not([hidden]) .rsvp-done-mark { animation: donePop .5s cubic-bezier(.34, 1.6, .64, 1) both; }
+.rsvp-done:not([hidden]) .rsvp-done-title { animation: doneUp .3s ease-out .18s both; }
+.rsvp-done:not([hidden]) .rsvp-done-text { animation: doneUp .3s ease-out .26s both; }
+.rsvp-done:not([hidden]) .rsvp-done-actions,
+.rsvp-done:not([hidden]) > .rsvp-done-close { animation: doneUp .3s ease-out .34s both; }
+@keyframes donePop { 0% { opacity: 0; transform: scale(.3); } 60% { opacity: 1; transform: scale(1.22); } 100% { transform: scale(1); } }
+@keyframes doneUp  { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.toast { transition: opacity .2s, transform .3s cubic-bezier(.34, 1.5, .64, 1); }
+
+.share-fab { transition: color .45s ease, transform .28s cubic-bezier(.34, 1.6, .64, 1); }
+.share-fab:active { transition: transform .08s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .share-sheet, .share-sheet.open, .member-sheet, .member-sheet.open,
+  .rsvp-modal, .rsvp-modal.open, .donate-modal, .donate-modal.open, .toast, .share-fab { transition-duration: .01s; }
+  .share-sheet .share-preview, .share-sheet .share-kakao, .share-sheet .share-options { opacity: 1; transform: none; transition: none; }
+  .rsvp-done:not([hidden]) * { animation: none !important; }
 }
