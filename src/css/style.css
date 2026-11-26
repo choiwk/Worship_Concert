@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=168') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=169') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=168') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=169') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -407,8 +407,9 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
    윗줄과 아랫줄이 서로 닿는다. */
 
 
-/* 공유 버튼: 흰 크레파스로 그린 동그라미와 공유 기호(index.html 의 SVG).
-   흰 선이 편지지 위에서 사라지지 않게 바탕은 칠판처럼 짙게, 메인 영상 위에서는 아래 유리 바탕. */
+/* 공유 버튼: 크레파스로 그린 동그라미와 공유 기호(index.html 의 SVG)뿐, 바탕은 없다.
+   선 색은 currentColor — 밝은 편지지 화면에서는 빨간 크레파스, 어두운 메인 영상 위에서는 흰 크레파스.
+   탭을 넘기거나 스크롤로 다음 화면에 넘어가면 html.on-<화면> 이 바뀌어 색이 천천히 바뀐다. */
 .share-fab {
   position: fixed;
   bottom: calc(var(--tab-content-h) + env(safe-area-inset-bottom) + 14px);
@@ -419,13 +420,13 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #3a332c;
+  background: none;
   border: 0;
   border-radius: 50%;
+  color: #b8382a;                 /* 빨간 크레파스 — 편지지 바탕 대비 5:1 이상 */
   cursor: pointer;
   z-index: 400;
-  box-shadow: 0 4px 14px rgba(50, 44, 37, .22);
-  transition: background .2s, transform .12s;
+  transition: color .45s ease, transform .12s;
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
 }
@@ -434,8 +435,8 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
    (말씀 나눔에 들어가 있는 동안 감추는 데 쓴다) */
 .share-fab[hidden] { display: none; }
 
-.share-fab:hover { background: #4a4138; }
-.share-fab:active { transform: translate3d(0, 0, 0) scale(.95); }
+.share-fab:hover { color: #962b20; }
+.share-fab:active { transform: translate3d(0, 0, 0) scale(.92); }
 .share-fab:focus-visible {
   outline: 2px solid var(--clay);
   outline-offset: 3px;
@@ -3700,7 +3701,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=168") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=169") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4072,14 +4073,9 @@ html.main-cinema.on-main .tab-btn .tab-icon { filter: drop-shadow(0 1px 4px rgba
 html.main-cinema.on-main .tab-btn.active { color: #f0c3a8; }
 
 /* 메인(영상)에서는 공유하기·언어 버튼을 유리처럼 — 영상이 비쳐 보이고 가장자리만 빛을 받는다 */
-/* 크레파스 동그라미가 테두리 역할을 하므로 유리 바탕에는 테두리를 따로 두지 않는다 */
-html.main-cinema.on-main .share-fab {
-  background: rgba(255, 255, 255, .1);
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
-  backdrop-filter: blur(14px) saturate(1.4);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
-}
-html.main-cinema.on-main .share-fab:hover { background: rgba(255, 255, 255, .18); }
+/* 메인(어두운 영상)에서는 흰 크레파스 */
+html.main-cinema.on-main .share-fab { color: #fbf8f1; }
+html.main-cinema.on-main .share-fab:hover { color: #ffffff; }
 html.main-cinema.on-main .share-fab:focus-visible { outline-color: #f0c3a8; }
 
 
@@ -4426,7 +4422,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=168") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=169") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));
