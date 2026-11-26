@@ -119,9 +119,10 @@ const MEMBERS = [
     ]
   },
   {
-    group: '음향팀',
+    group: '음향/조명팀',
     people: [
-      { id: 'lee-kangjun', icon: '🎚️' }
+      { id: 'lee-kangjun',  role: '음향', icon: '🎚️' },
+      { id: 'choi-wonkeun', role: '조명', icon: '💡' }
     ]
   },
   {
