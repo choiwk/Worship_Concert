@@ -15,12 +15,12 @@
 2. **정사각형으로 잘라** 이 폴더에 저장한다. 파일명은 영문 소문자 + 하이픈.
    권장 크기 240×240px 내외, 20KB 이하 (아바타가 화면에서 최대 76px이라 충분하다).
    ```
-   public/images/members/park-seongeun.jpg
+   public/images/members/choi-eunho.jpg
    ```
 3. `src/js/members.js` 의 해당 멤버에 경로를 적는다.
    ```js
-   { name: '박성은', icon: '♪', instagram: 'seongeun_id',
-     photo: 'public/images/members/park-seongeun.jpg' }
+   { name: '최은호', icon: '♪', instagram: 'eunho_id',
+     photo: 'public/images/members/choi-eunho.jpg' }
    ```
 4. `sw.js` 의 `CACHE_NAME` 과 `index.html`·`sw.js` 의 `?v=` 버전을 함께 올린다.
 

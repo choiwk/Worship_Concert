@@ -1297,7 +1297,7 @@ function renderDetailGrid() {
 /** 팀 이름은 옮기고, 사람 이름은 고유명사라 그대로 둔다 */
 const TEAM_KEY = {
   '싱어': 'team.singer', '악기팀': 'team.band', '마케팅팀': 'team.marketing',
-  '촬영팀': 'team.film', '스텝팀': 'team.staff', '소품팀': 'team.props'
+  '음향팀': 'team.sound', '촬영팀': 'team.film', '스텝팀': 'team.staff', '소품팀': 'team.props'
 };
 const _teamName = g => t(TEAM_KEY[g] || '', g);
 

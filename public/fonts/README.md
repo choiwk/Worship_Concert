@@ -45,7 +45,7 @@ pip install fonttools brotli
 python3 - <<'PY'
 import io
 chars = set()
-for f in ['index.html', 'src/js/app.js', 'src/js/songs.js', 'manifest.json']:
+for f in ['index.html', 'src/js/app.js', 'src/js/songs.js', 'src/js/members.js', 'manifest.json']:
     chars |= set(io.open(f, encoding='utf-8').read())
 for cp in range(0x20, 0x7F):
     chars.add(chr(cp))

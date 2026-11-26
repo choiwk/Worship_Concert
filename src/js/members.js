@@ -51,15 +51,16 @@
 ══════════════════════════════════════════════════════════ */
 
 const PEOPLE = {
-  'park-seongeun': { name: '박성은', church: '향상교회', icon: '♪' },
   'kim-ahyeon':    { name: '김아현', church: '더향상교회', icon: '♪' },
   'kwon-yeseul':   { name: '권예슬', church: '향상교회', icon: '♪' },
   'lee-hanbin':    { name: '이한빈', church: '더향상교회', icon: '♪' },
   'choi-goun':     { name: '최고운', church: '더향상교회', icon: '♪' },
   'han-gahee':     { name: '한가희', church: '더향상교회', icon: '♪' },
+  'choi-eunho':    { name: '최은호', church: '더향상교회', icon: '♪' },
 
   'han-yuhee':     { name: '한유희', church: '더향상교회', icon: '🎹' },
   'ryu-danbi':     { name: '류단비', church: '향상교회', icon: '🎹' },
+  'park-yunho':    { name: '박윤호', church: '향상교회', icon: '🎹' },
   'lee-gwangbin':  { name: '이광빈', church: '더향상교회', icon: '🎸' },
   'lee-gieun':     { name: '이기은', church: '더향상교회', icon: '🎸' },
 
@@ -98,12 +99,12 @@ const MEMBERS = [
   {
     group: '싱어',
     people: [
-      { id: 'park-seongeun' },
       { id: 'kim-ahyeon' },
       { id: 'kwon-yeseul' },
       { id: 'lee-hanbin' },
       { id: 'choi-goun' },
-      { id: 'han-gahee' }
+      { id: 'han-gahee' },
+      { id: 'choi-eunho', role: '남자 싱어' }
     ]
   },
   {
@@ -111,9 +112,16 @@ const MEMBERS = [
     people: [
       { id: 'han-yuhee',    role: '피아노 (메인)' },
       { id: 'ryu-danbi',    role: '피아노 (세컨)' },
+      { id: 'park-yunho',   role: '피아노 (세컨)' },
       { id: 'lee-gwangbin', role: '베이스' },
       { id: 'lee-gieun',    role: '일렉' },
       { id: 'choi-wonkeun', role: '드럼' }
+    ]
+  },
+  {
+    group: '음향팀',
+    people: [
+      { id: 'lee-kangjun', icon: '🎚️' }
     ]
   },
   {
