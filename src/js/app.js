@@ -2762,7 +2762,7 @@ function _setShareQr(on) {
 function toggleShareQr() {
   const on = document.getElementById('shareQr').hidden;
   _setShareQr(on);
-  if (on) track('share', 'qr');
+  if (on) { track('share', 'qr'); document.getElementById('shareQr').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
 }
 
 /* 공유 버튼은 처음엔 글자까지 보여 주고, 한 번이라도 스크롤하면 봉투 아이콘만 남긴다.
@@ -2915,14 +2915,6 @@ function shareKakao() {
       showToast('링크가 복사되었습니다. 카카오톡에 붙여넣기 해주세요');
     });
   }
-}
-
-function shareInstagram() {
-  closeShare();
-  track('share', 'instagram');
-  _copyToClipboard(window.location.href, () => {
-    showToast('링크가 복사되었습니다. DM으로 공유해보세요');
-  });
 }
 
 function copyLink(silent) {

@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=165') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=166') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=165') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=166') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -542,14 +542,15 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   margin: 0 20px 16px;
   background: #fffdf8;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
 }
-.share-preview img { width: 38%; aspect-ratio: 4 / 3; height: auto; object-fit: cover; display: block; flex: none; }
-.share-preview figcaption { padding: 10px 12px; display: flex; flex-direction: column; justify-content: center; gap: 1px; min-width: 0; }
-.sp-title { font-size: 16px; line-height: 1.4; color: var(--ink); }
-.sp-meta { font-size: 13px; line-height: 1.5; color: var(--ink-soft); word-break: keep-all; }
+.share-preview img { width: 100%; height: 150px; object-fit: cover; display: block; }
+.share-preview figcaption { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 2px; }
+.sp-title { font-size: 19px; line-height: 1.4; color: var(--ink); }
+.sp-meta { font-size: 14px; line-height: 1.5; color: var(--ink-faint); word-break: keep-all; }
 .sp-url { font-size: 12px; color: var(--ink-faint); }
 
 /* 대부분 카톡으로 보내므로 하나만 크게 */
@@ -574,19 +575,18 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .share-kakao:focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; }
 
 .share-options {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 10px;
   padding: 0 20px;
 }
 
 .share-opt {
-  min-height: 72px;
+  min-height: 48px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--paper-warm);
@@ -595,13 +595,15 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   cursor: pointer;
   transition: transform .12s, background .2s;
 }
-.share-opt svg { width: 22px; height: 22px; }
-.share-opt:active { transform: scale(.96); }
-.share-opt[aria-expanded="true"] { background: var(--clay-wash); }
+.share-opt svg { width: 20px; height: 20px; flex: none; }
+.share-opt:active { transform: scale(.98); }
 .share-opt:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+/* QR 은 점선 — 화면 밖(옆자리)으로 건네는 다른 종류의 공유라는 표시 */
+.share-opt-qr { border-style: dashed; border-color: #cdbfa8; background: transparent; color: var(--ink-soft); }
+.share-opt-qr[aria-expanded="true"] { background: var(--clay-wash); border-style: solid; }
 
 .share-opt-label {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ink);
   text-align: center;
   word-break: keep-all;
@@ -609,7 +611,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 /* 옆에 있는 친구에게 보여 주는 QR (?from=friend 로 따로 센다) */
 .share-qr {
-  margin: 14px 20px 0;
+  margin: 12px 20px 0;
   padding: 16px;
   border: 1px dashed var(--line);
   border-radius: 14px;
@@ -3499,10 +3501,6 @@ body {
     padding: 0 14px;
   }
 
-  .share-opt-label {
-    font-size: 13px;
-  }
-
   .toast {
     white-space: normal;
     text-align: center;
@@ -3693,7 +3691,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=165") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=166") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4430,7 +4428,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=165") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=166") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));

@@ -33,7 +33,7 @@ grant insert on public.events to anon;
 | `visit` | | 사이트를 열 때 |
 | `view` | `main`, `songs`, `songs/06`, `word`, `artists`, `story` | 화면을 볼 때 |
 | `open` | `share`, `rsvp`, `donate`, `stage`, `verse`, `note`, `member`, `word`, `wordRead` | 팝업을 열 때 |
-| `share` | `kakao`, `instagram`, `copy`, `qr` | 공유 시트에서 누를 때 (`qr` 은 QR 보여주기를 펼칠 때) |
+| `share` | `kakao`, `copy`, `qr` (예전 기록에는 `instagram` 도 있음) | 공유 시트에서 누를 때 (`qr` 은 QR 보여주기를 펼칠 때) |
 | `share_sent` | `native` | 휴대폰 공유창에서 실제로 보냈을 때 |
 | `rsvp_done` | | 참여 신청이 저장됐을 때 |
 | `bgm` | `on`, `off` | 배경음악을 켜고 끌 때 |
