@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=169') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=170') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=169') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=170') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3701,7 +3701,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=169") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=170") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4073,6 +4073,39 @@ html.main-cinema.on-main .tab-btn .tab-icon { filter: drop-shadow(0 1px 4px rgba
 html.main-cinema.on-main .tab-btn.active { color: #f0c3a8; }
 
 /* 메인(영상)에서는 공유하기·언어 버튼을 유리처럼 — 영상이 비쳐 보이고 가장자리만 빛을 받는다 */
+/* 처음 연 기기에서만 잠깐 뜨는 스크롤 안내 — 영상 위를 살짝 덮고 흰 크레파스 손가락이 위아래로 */
+.scroll-tut {
+  position: fixed;
+  inset: 0;
+  z-index: 700;                    /* 탭바·공유 버튼 위, 팝업(800~) 아래 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(12, 9, 7, .55);
+  color: #fbf8f1;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.scroll-tut[hidden] { display: none; }
+.scroll-tut.is-on { opacity: 1; }
+.scroll-tut svg { margin-bottom: 12px; overflow: visible; }
+.scroll-tut-text { margin: 0; font-size: 26px; line-height: 1.4; -webkit-text-stroke-width: var(--stroke-md); }
+.scroll-tut-sub { margin: 0; font-size: 14px; color: #e8dccb; }
+.scroll-tut .tut-hand { animation: tutSwipe 1.6s ease-in-out infinite; }
+.scroll-tut .tut-up   { animation: tutUp 1.6s ease-in-out infinite; }
+.scroll-tut .tut-down { animation: tutDown 1.6s ease-in-out infinite; }
+@keyframes tutSwipe { 0%, 100% { transform: translateY(26px); } 50% { transform: translateY(-26px); } }
+@keyframes tutUp    { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+@keyframes tutDown  { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) {
+  .scroll-tut .tut-hand, .scroll-tut .tut-up, .scroll-tut .tut-down { animation: none; }
+  .scroll-tut { transition: none; }
+}
+
 /* 메인(어두운 영상)에서는 흰 크레파스 */
 html.main-cinema.on-main .share-fab { color: #fbf8f1; }
 html.main-cinema.on-main .share-fab:hover { color: #ffffff; }
@@ -4422,7 +4455,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=169") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=170") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));

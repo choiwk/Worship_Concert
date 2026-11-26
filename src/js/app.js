@@ -3020,3 +3020,28 @@ document.getElementById('wordPass').addEventListener('input', e => {
 updateDday();
 setInterval(updateDday, 60000);
 route();
+
+/* 처음 연 기기에서만, 메인에서 0.8초 뒤 「위아래로 넘겨 보세요」를 띄우고 3.2초 뒤(또는 손을 대면) 걷는다.
+   안내는 누르는 동작을 가로채지 않으므로 첫 스와이프가 그대로 화면을 넘긴다. */
+(function _scrollTutorial() {
+  const el = document.getElementById('scrollTut');
+  if (!el) return;
+  try { if (localStorage.getItem('wc-tut')) return; } catch (e) { return; }
+  // 손을 댔거나 안내를 끝까지 보여 줬을 때만 '봤다'고 적는다. 다른 화면으로 바로 들어온 사람은 다음에 메인에서 본다
+  let done = false;
+  const hide = () => {
+    if (done) return;
+    done = true;
+    try { localStorage.setItem('wc-tut', '1'); } catch (e) {}
+    el.classList.remove('is-on');
+    setTimeout(() => { el.hidden = true; }, 500);
+    ['pointerdown', 'wheel', 'keydown', 'scroll'].forEach(t => document.removeEventListener(t, hide, true));
+  };
+  setTimeout(() => {
+    if (parseHash().tab !== 'main' || _openOverlays.length) return;
+    ['pointerdown', 'wheel', 'keydown', 'scroll'].forEach(t => document.addEventListener(t, hide, { capture: true, passive: true }));
+    el.hidden = false;
+    requestAnimationFrame(() => el.classList.add('is-on'));
+    setTimeout(hide, 3200);
+  }, 800);
+})();
