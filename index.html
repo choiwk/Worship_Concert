@@ -19,6 +19,9 @@
 <meta property="og:title" content="찬양이 좋아서 모인 청년들 - LIVE WORSHIP 2026"/>
 <meta property="og:description" content="2026.12.19 SAT 오후 7:30 · 청년 연합 라이브 워십 · 함께해요"/>
 <meta property="og:type" content="website"/>
+<meta property="og:image" content="https://choiwk.github.io/Worship_Concert/public/images/story-05.jpg"/>
+<meta property="og:image:width" content="900"/>
+<meta property="og:image:height" content="675"/>
 <meta property="og:locale" content="ko_KR"/>
 <!-- Twitter 카드 -->
 <meta name="twitter:card" content="summary"/>
@@ -48,10 +51,10 @@
      gstatic preconnect 는 남긴다 — 크메르어를 고르면 그쪽에서 서체를 받는다. -->
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
-<link rel="preload" href="public/videos/main-portrait-poster.jpg?v=164" as="image"/>
-<link rel="preload" href="public/fonts/Sarang-site.woff2?v=164" as="font" type="font/woff2" crossorigin=""/>
+<link rel="preload" href="public/videos/main-portrait-poster.jpg?v=165" as="image"/>
+<link rel="preload" href="public/fonts/Sarang-site.woff2?v=165" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=164" rel="stylesheet"/>
+<link href="src/css/style.css?v=165" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -91,8 +94,8 @@
 <!-- 영상 주소는 JS 가 망 상태를 보고 고른다(고화질 4.2MB / 가벼운 985KB / 사진만).
      HTML 에 주소를 박아 두면 망이 느려도 고화질부터 받기 시작한다. -->
 <video id="cinemaVideo" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback
-  data-src-full="public/videos/main-portrait.mp4?v=164"
-  data-src-light="public/videos/main-portrait-light.mp4?v=164"></video>
+  data-src-full="public/videos/main-portrait.mp4?v=165"
+  data-src-light="public/videos/main-portrait-light.mp4?v=165"></video>
 <div class="cinema-scrim"></div>
 </div>
 <div class="cinema-track" id="cinemaTrack">
@@ -330,9 +333,9 @@
 </div>
 </section><div class="divider reveal"></div><section class="scene">
 <div class="scene-img-wrap">
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-0.JPG?v=164" style="aspect-ratio:3/2"/>
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-1.JPG?v=164" style="aspect-ratio:3/2"/>
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG?v=164" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-0.JPG?v=165" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-1.JPG?v=165" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG?v=165" style="aspect-ratio:3/2"/>
 </div>
 <div class="scene-text reveal">
 <p class="ch-label">07. 공동체</p>
@@ -433,23 +436,24 @@
 <!-- ════════════════════════════════
      FLOATING BUTTONS (MUSIC + SHARE)
 ════════════════════════════════ -->
-<button aria-label="이 페이지 공유하기" class="share-fab" onclick="openShare()">
+<button aria-label="친구에게 보내기" class="share-fab" onclick="openShare()">
 <svg fill="none" stroke="currentColor" stroke-width="1.7" viewbox="0 0 24 24" aria-hidden="true">
-<circle cx="18" cy="5" r="3"></circle>
-<circle cx="6" cy="12" r="3"></circle>
-<circle cx="18" cy="19" r="3"></circle>
-<line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line>
-<line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line>
+<rect x="3" y="5.5" width="18" height="13" rx="2"></rect>
+<path d="M3.5 7l8.5 6 8.5-6"></path>
 </svg>
+<span class="fab-label" aria-hidden="true">친구에게 보내기</span>
 </button>
 <!-- ════════════════════════════════
      SHARE BOTTOM SHEET MODAL
 ════════════════════════════════ -->
 <div class="modal-backdrop" id="modalBackdrop" onclick="closeShare()"></div>
-<div class="share-sheet" id="shareSheet" role="dialog" aria-modal="true" aria-label="공유하기">
+<div class="share-sheet" id="shareSheet" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
 <div class="sheet-handle"></div>
 <div class="sheet-header">
-<span class="sheet-title">공유하기</span>
+<div class="sheet-heading">
+<span class="sheet-title" id="shareTitle">친구에게 초대장 보내기</span>
+<span class="sheet-sub">받는 친구 화면에는 이렇게 보여요</span>
+</div>
 <button aria-label="닫기" class="sheet-close" onclick="closeShare()">
 <svg fill="none" height="14" stroke="#9a8470" stroke-width="1.8" viewbox="0 0 14 14" width="14">
 <line x1="1" x2="13" y1="1" y2="13"></line>
@@ -457,31 +461,38 @@
 </svg>
 </button>
 </div>
-<div class="sheet-divider"></div>
+<!-- 카톡 등에 뜨는 링크 미리보기와 같은 모습 (index.html 의 og 태그와 맞춘다) -->
+<figure class="share-preview" aria-hidden="true">
+<img src="public/images/story-05.jpg" alt="" loading="lazy" width="900" height="675"/>
+<figcaption>
+<span class="sp-title">찬양이 좋아서 모인 청년들</span>
+<span class="sp-meta">12월 19일 토요일 저녁 7시 30분, 향상교회 3층 체육관</span>
+<span class="sp-url">choiwk.github.io</span>
+</figcaption>
+</figure>
+<button class="share-kakao" onclick="shareKakao()">
+<svg height="24" viewbox="0 0 48 48" width="24" aria-hidden="true">
+<path d="M24 6C13.5 6 5 13.2 5 22.1c0 5.5 3.4 10.4 8.6 13.3l-2.2 8.1 9.4-6.2c1 .1 2.1.2 3.2.2 10.5 0 19-7.2 19-16.1S34.5 6 24 6z" fill="#191919"></path>
+</svg>
+카카오톡으로 보내기
+</button>
 <div class="share-options">
-<div class="share-opt" onclick="shareKakao()">
-<div class="share-opt-icon kakao">
-<svg height="28" viewbox="0 0 48 48" width="28">
-<path d="M24 6C13.5 6 5 13.2 5 22.1c0 5.5 3.4 10.4 8.6 13.3l-2.2 8.1 9.4-6.2c1 .1 2.1.2 3.2.2 10.5 0 19-7.2 19-16.1S34.5 6 24 6z" fill="#3C1E1E"></path>
-</svg>
-</div>
-<span class="share-opt-label">카카오톡</span>
-</div>
-<div class="share-opt" onclick="shareInstagram()">
-<div class="share-opt-icon insta">
-<svg fill="white" height="28" width="28" aria-hidden="true"><use href="#icon-ig"/></svg>
-</div>
-<span class="share-opt-label">인스타그램 DM</span>
-</div>
-<div class="share-opt" onclick="copyLink()">
-<div class="share-opt-icon link">
-<svg fill="none" height="22" stroke="#f5f0eb" stroke-width="1.8" viewbox="0 0 24 24" width="22">
-<path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"></path>
-<path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"></path>
-</svg>
-</div>
+<button class="share-opt" onclick="shareInstagram()">
+<svg fill="none" stroke="currentColor" stroke-width="1.7" viewbox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.3" cy="6.7" r=".9" fill="currentColor"></circle></svg>
+<span class="share-opt-label">인스타그램</span>
+</button>
+<button class="share-opt" onclick="copyLink()">
+<svg fill="none" stroke="currentColor" stroke-width="1.7" viewbox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"></path></svg>
 <span class="share-opt-label">링크 복사</span>
+</button>
+<button class="share-opt" id="shareQrBtn" aria-expanded="false" aria-controls="shareQr" onclick="toggleShareQr()">
+<svg fill="none" stroke="currentColor" stroke-width="1.7" viewbox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"></path></svg>
+<span class="share-opt-label">QR 보여주기</span>
+</button>
 </div>
+<div class="share-qr" id="shareQr" hidden>
+<img src="public/images/qr-friend.svg" alt="공연 페이지로 가는 QR 코드" width="180" height="180"/>
+<p>친구 휴대폰 카메라로 찍으면 바로 열려요</p>
 </div>
 </div>
 <!-- ════════════════════════════════
@@ -747,11 +758,11 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/i18n.js?v=164" defer></script>
-<script src="src/js/bible.js?v=164" defer></script>
-<script src="src/js/songs.js?v=164" defer></script>
-<script src="src/js/members.js?v=164" defer></script>
-<script src="src/js/app.js?v=164" defer></script>
+<script src="src/js/i18n.js?v=165" defer></script>
+<script src="src/js/bible.js?v=165" defer></script>
+<script src="src/js/songs.js?v=165" defer></script>
+<script src="src/js/members.js?v=165" defer></script>
+<script src="src/js/app.js?v=165" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

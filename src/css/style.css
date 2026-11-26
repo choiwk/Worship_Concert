@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'Sarang';
-  src: url('../../public/fonts/Sarang-site.woff2?v=164') format('woff2');
+  src: url('../../public/fonts/Sarang-site.woff2?v=165') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'Sarang Full';
-  src: url('../../public/fonts/Sarang-full.woff2?v=164') format('woff2');
+  src: url('../../public/fonts/Sarang-full.woff2?v=165') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -222,7 +222,7 @@ html.is-locked body {
 .quote-lead, .quote-text, .finale-title, .finale-date,
 .story-page .btn-primary, .story-page .btn-secondary,
 .donate-title, .donate-account-num, .donate-copy-btn, .donate-close-btn,
-.sheet-title, .share-opt-label, .toast {
+.sheet-title, .share-opt-label, .share-kakao, .toast {
   -webkit-text-stroke-width: var(--stroke-md);
 }
 
@@ -407,21 +407,25 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
    윗줄과 아랫줄이 서로 닿는다. */
 
 
-/* 검은 원형 FAB은 이 사이트의 종이·손글씨 톤과 겉돌아서
-   종이 바탕에 클레이 테두리를 두른 원형 버튼으로 바꿨다. */
+/* 공유 버튼: 처음엔 「친구에게 보내기」 글자가 붙은 봉투 알약, 한 번 스크롤하면 봉투 아이콘만 남는다.
+   아이콘만으로는 처음 온 사람이 무엇을 하는 버튼인지 몰라서 글자로 먼저 알려 준다. */
 .share-fab {
   position: fixed;
   bottom: calc(var(--tab-content-h) + env(safe-area-inset-bottom) + 14px);
   right: max(16px, env(safe-area-inset-right) + 16px);
-  width: 48px;
+  min-width: 48px;
   height: 48px;
+  padding: 0 16px 0 13px;
+  gap: 7px;
+  font: inherit;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--paper);
   color: var(--clay);
   border: 1px solid var(--clay);
-  border-radius: 50%;
+  border-radius: 24px;
   cursor: pointer;
   z-index: 400;
   box-shadow: 0 4px 14px rgba(50, 44, 37, .13);
@@ -446,12 +450,16 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   outline: 2px solid var(--clay);
   outline-offset: 3px;
 }
-.share-fab svg { width: 18px; height: 18px; flex-shrink: 0; }
+.share-fab svg { width: 20px; height: 20px; flex-shrink: 0; }
+.share-fab .fab-label { white-space: nowrap; }
+.share-fab.is-compact { padding: 0; width: 48px; }
+.share-fab.is-compact .fab-label { display: none; }
 
 @media (max-width: 359px) {
   .tab-icon { width: 18px; height: 18px; }
   .tab-label { letter-spacing: 0.02em; }
-  .share-fab { width: 44px; height: 44px; right: 12px; }
+  .share-fab { height: 44px; right: 12px; }
+  .share-fab.is-compact { width: 44px; }
   .share-fab svg { width: 16px; height: 16px; }
 }
 
@@ -485,6 +493,9 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   z-index: 900;
   transition: transform .38s cubic-bezier(.32, 0, .18, 1);
   border-top: 1px solid rgba(196, 168, 130, .3);
+  max-height: 92dvh;                 /* QR 을 펼친 작은 휴대폰에서도 위가 잘리지 않게 */
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .share-sheet.open { transform: translateX(-50%) translateY(0); }
 
@@ -497,16 +508,19 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 .sheet-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 18px 20px 14px;
+  gap: 12px;
+  padding: 16px 20px 14px;
 }
+.sheet-heading { display: flex; flex-direction: column; gap: 2px; }
 
 .sheet-title {
-  font-size: clamp(14px, 3.8vw, 16px);
-  letter-spacing: 0.02em;
+  font-size: clamp(20px, 5.6vw, 24px);
+  line-height: 1.35;
   color: var(--ink);
 }
+.sheet-sub { font-size: 14px; color: var(--ink-faint); }
 
 .sheet-close {
   width: 32px; height: 32px;
@@ -519,55 +533,94 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   cursor: pointer;
   transition: background .2s;
   min-width: 44px; min-height: 44px;
+  flex: none;
 }
 .sheet-close:active { background: rgba(192, 57, 43, .12); }
 
-.sheet-divider {
-  height: 1px;
-  background: rgba(196, 168, 130, .25);
-  margin: 0 20px 20px;
+/* 받는 사람 카톡에 뜨는 링크 미리보기 모양 그대로 — 보내기 전에 무엇이 가는지 보여 준다 */
+.share-preview {
+  margin: 0 20px 16px;
+  background: #fffdf8;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
 }
+.share-preview img { width: 38%; aspect-ratio: 4 / 3; height: auto; object-fit: cover; display: block; flex: none; }
+.share-preview figcaption { padding: 10px 12px; display: flex; flex-direction: column; justify-content: center; gap: 1px; min-width: 0; }
+.sp-title { font-size: 16px; line-height: 1.4; color: var(--ink); }
+.sp-meta { font-size: 13px; line-height: 1.5; color: var(--ink-soft); word-break: keep-all; }
+.sp-url { font-size: 12px; color: var(--ink-faint); }
+
+/* 대부분 카톡으로 보내므로 하나만 크게 */
+.share-kakao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: calc(100% - 40px);
+  height: 54px;
+  margin: 0 20px 12px;
+  border: 0;
+  border-radius: 14px;
+  background: #FEE500;
+  color: #191919;
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform .12s;
+}
+.share-kakao:active { transform: scale(.98); }
+.share-kakao:focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; }
 
 .share-options {
-  display: flex;
-  gap: clamp(12px, 4vw, 24px);
-  padding: 0 clamp(16px, 5vw, 28px);
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 20px;
 }
 
 .share-opt {
+  min-height: 72px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  flex: 1;
-  max-width: 80px;
-  min-width: 56px;
-}
-
-.share-opt-icon {
-  width: clamp(48px, 13vw, 60px);
-  height: clamp(48px, 13vw, 60px);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  transition: transform .15s;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper-warm);
+  color: var(--clay);
+  font: inherit;
+  cursor: pointer;
+  transition: transform .12s, background .2s;
 }
-.share-opt:active .share-opt-icon { transform: scale(.88); }
-
-.share-opt-icon.kakao  { background: #FEE500; }
-.share-opt-icon.insta  { background: linear-gradient(135deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D); }
-.share-opt-icon.link   { background: var(--ink); }
+.share-opt svg { width: 22px; height: 22px; }
+.share-opt:active { transform: scale(.96); }
+.share-opt[aria-expanded="true"] { background: var(--clay-wash); }
+.share-opt:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
 
 .share-opt-label {
-  font-size: clamp(13px, 2.8vw, 15px);
-  color: var(--ink-soft);
-  letter-spacing: 0.02em;
+  font-size: 14px;
+  color: var(--ink);
   text-align: center;
   word-break: keep-all;
 }
+
+/* 옆에 있는 친구에게 보여 주는 QR (?from=friend 로 따로 센다) */
+.share-qr {
+  margin: 14px 20px 0;
+  padding: 16px;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.share-qr[hidden] { display: none; }
+.share-qr img { width: 180px; height: 180px; background: #fff; border-radius: 8px; }
+.share-qr p { margin: 0; font-size: 14px; color: var(--ink-soft); }
 
 .toast {
   position: fixed;
@@ -3438,17 +3491,12 @@ body {
     padding: 14px 14px 10px;
   }
 
-  .sheet-divider {
-    margin: 0 14px 16px;
-  }
+  .share-preview { margin: 0 14px 14px; }
+  .share-kakao { width: calc(100% - 28px); margin: 0 14px 10px; }
 
   .share-options {
-    gap: 10px;
+    gap: 8px;
     padding: 0 14px;
-  }
-
-  .share-opt {
-    max-width: none;
   }
 
   .share-opt-label {
@@ -3645,7 +3693,7 @@ html.main-cinema #page-main { min-height: 0; }
   content: '';
   position: absolute;
   inset: 0;
-  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=164") center / cover no-repeat;
+  background: #17120d url("../../public/videos/main-portrait-poster.jpg?v=165") center / cover no-repeat;
   animation: cinemaStill 28s ease-in-out infinite alternate;
 }
 @keyframes cinemaStill {
@@ -4382,7 +4430,7 @@ html.sd-anim .song-page .song-nav:not(.sd-in) { opacity: 0; transform: translate
 .tab-veil.to-dark .tab-veil-paper {
   background:
     linear-gradient(rgba(23, 18, 13, .62), rgba(23, 18, 13, .62)),
-    #17120d url("../../public/videos/main-portrait-poster.jpg?v=164") center / cover no-repeat;
+    #17120d url("../../public/videos/main-portrait-poster.jpg?v=165") center / cover no-repeat;
 }
 .tab-veil.from-top .tab-veil-paper {
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--handoff, 0) * 140% - 40%), transparent calc(var(--handoff, 0) * 140%));

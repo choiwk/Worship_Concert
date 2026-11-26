@@ -33,14 +33,14 @@ grant insert on public.events to anon;
 | `visit` | | 사이트를 열 때 |
 | `view` | `main`, `songs`, `songs/06`, `word`, `artists`, `story` | 화면을 볼 때 |
 | `open` | `share`, `rsvp`, `donate`, `stage`, `verse`, `note`, `member`, `word`, `wordRead` | 팝업을 열 때 |
-| `share` | `kakao`, `instagram`, `copy` | 공유 버튼을 누를 때 |
+| `share` | `kakao`, `instagram`, `copy`, `qr` | 공유 시트에서 누를 때 (`qr` 은 QR 보여주기를 펼칠 때) |
 | `share_sent` | `native` | 휴대폰 공유창에서 실제로 보냈을 때 |
 | `rsvp_done` | | 참여 신청이 저장됐을 때 |
 | `bgm` | `on`, `off` | 배경음악을 켜고 끌 때 |
 | `link` | `www.youtube.com/...` 등 | 바깥 링크를 누를 때 |
 
 - `visitor`: 기기마다 만든 무작위 번호입니다. 같은 사람 수를 셀 때 씁니다. 개인정보는 없습니다.
-- `src`: 주소에 `?from=qr` 처럼 붙여 들어온 경로입니다. 포스터 QR을 `https://choiwk.github.io/Worship_Concert/?from=qr` 로 만들면 QR로 들어온 사람만 따로 셀 수 있습니다.
+- `src`: 주소에 `?from=qr` 처럼 붙여 들어온 경로입니다. 포스터 QR을 `https://choiwk.github.io/Worship_Concert/?from=qr` 로 만들면 QR로 들어온 사람만 따로 셀 수 있습니다. 공유 시트의 「QR 보여주기」는 `?from=friend` 라서 옆 친구에게 보여 줘서 들어온 방문이 따로 셉니다.
 - localhost 에서 본 것은 보내지 않습니다.
 
 ## 3. 숫자 보기 (SQL Editor, 저장해 두고 다시 Run)
