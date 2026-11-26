@@ -832,7 +832,8 @@ function initMainCinema() {
   let startTimer = null;
   let stallTimer = null;
   let switching = false;            // 영상 파일을 바꾸는 중 (이때 나는 pause 는 무시)
-  const onMain = () => parseHash().tab === 'main' && !document.hidden;
+  // 처음 방문 안내가 떠 있는 동안(html.tut-hold)은 영상도 멈춰 둔다
+  const onMain = () => parseHash().tab === 'main' && !document.hidden && !document.documentElement.classList.contains('tut-hold');
 
   /* ── 배경 영상 ─────────────────────────────────────────
      1) 사진(80KB)을 먼저 깐다. 영상이 늦어도 첫 화면이 비지 않는다.
@@ -915,6 +916,7 @@ function initMainCinema() {
     }
   }
   window.addEventListener('hashchange', sync);
+  window.addEventListener('tut-change', sync);     // 처음 방문 안내가 뜨고(멈춤) 걷힐(재생) 때
   // ?bg=still 로 열면 어느 휴대폰에서나 데이터 절약 모드 화면을 볼 수 있다 (확인용)
   const plan = /[?&]bg=still/.test(location.search) ? 'still' : _cinemaVideoPlan(navigator.connection);
 
@@ -3021,13 +3023,18 @@ updateDday();
 setInterval(updateDday, 60000);
 route();
 
-/* 처음 연 기기에서만, 메인에서 0.8초 뒤 「위아래로 넘겨 보세요」를 띄우고 3.2초 뒤(또는 손을 대면) 걷는다.
-   안내는 누르는 동작을 가로채지 않으므로 첫 스와이프가 그대로 화면을 넘긴다. */
+/* 처음 연 기기에서만, 메인에서 「위아래로 넘겨 보세요」를 띄우고 3.2초 뒤(또는 손을 대면) 걷는다.
+   안내가 떠 있는 동안은 html.tut-hold 로 메인의 영상·글씨 쓰기 등 모든 움직임을 멈추고(음악은 그대로),
+   걷히면 멈춘 자리에서 이어 간다. 안내는 누르는 동작을 가로채지 않으므로 첫 스와이프가 그대로 화면을 넘긴다. */
 (function _scrollTutorial() {
   const el = document.getElementById('scrollTut');
   if (!el) return;
   try { if (localStorage.getItem('wc-tut')) return; } catch (e) { return; }
-  // 손을 댔거나 안내를 끝까지 보여 줬을 때만 '봤다'고 적는다. 다른 화면으로 바로 들어온 사람은 다음에 메인에서 본다
+  // 다른 화면으로 바로 들어온 사람은 다음에 메인에서 본다 (보여 준 적 없으면 '봤다'고 적지 않는다)
+  if (parseHash().tab !== 'main' || _openOverlays.length) return;
+  const root = document.documentElement;
+  root.classList.add('tut-hold');           // 글씨 쓰기가 시작되기 전에 바로 멈춘다
+  window.dispatchEvent(new Event('tut-change'));   // 이미 재생을 시작한 영상도 멈춘다
   let done = false;
   const hide = () => {
     if (done) return;
@@ -3035,13 +3042,12 @@ route();
     try { localStorage.setItem('wc-tut', '1'); } catch (e) {}
     el.classList.remove('is-on');
     setTimeout(() => { el.hidden = true; }, 500);
+    root.classList.remove('tut-hold');
+    window.dispatchEvent(new Event('tut-change'));
     ['pointerdown', 'wheel', 'keydown', 'scroll'].forEach(t => document.removeEventListener(t, hide, true));
   };
-  setTimeout(() => {
-    if (parseHash().tab !== 'main' || _openOverlays.length) return;
-    ['pointerdown', 'wheel', 'keydown', 'scroll'].forEach(t => document.addEventListener(t, hide, { capture: true, passive: true }));
-    el.hidden = false;
-    requestAnimationFrame(() => el.classList.add('is-on'));
-    setTimeout(hide, 3200);
-  }, 800);
+  ['pointerdown', 'wheel', 'keydown', 'scroll'].forEach(t => document.addEventListener(t, hide, { capture: true, passive: true }));
+  el.hidden = false;
+  setTimeout(() => el.classList.add('is-on'), 300);
+  setTimeout(hide, 3500);
 })();
