@@ -2772,11 +2772,6 @@ function toggleShareQr() {
   if (on) { track('share', 'qr'); document.getElementById('shareQr').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
 }
 
-/* 공유 버튼은 처음엔 글자까지 보여 주고, 한 번이라도 스크롤하면 봉투 아이콘만 남긴다.
-   메인·곡 리스트는 안쪽 상자가 스크롤되므로 문서 전체에서 캡처로 받는다. */
-document.addEventListener('scroll', () => {
-  document.querySelector('.share-fab')?.classList.add('is-compact');
-}, { capture: true, passive: true, once: true });
 
 /* ── Now Playing 키보드 지원 ── */
 document.addEventListener('DOMContentLoaded', () => {

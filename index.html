@@ -51,10 +51,10 @@
      gstatic preconnect 는 남긴다 — 크메르어를 고르면 그쪽에서 서체를 받는다. -->
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <!-- 로컬 웹폰트 preload — 나눔손글씨 사랑해 아들 (사이트 전역 서브셋 70KB) -->
-<link rel="preload" href="public/videos/main-portrait-poster.jpg?v=167" as="image"/>
-<link rel="preload" href="public/fonts/Sarang-site.woff2?v=167" as="font" type="font/woff2" crossorigin=""/>
+<link rel="preload" href="public/videos/main-portrait-poster.jpg?v=168" as="image"/>
+<link rel="preload" href="public/fonts/Sarang-site.woff2?v=168" as="font" type="font/woff2" crossorigin=""/>
 <!-- ─── CSS (통합 스타일시트) ─── -->
-<link href="src/css/style.css?v=167" rel="stylesheet"/>
+<link href="src/css/style.css?v=168" rel="stylesheet"/>
 </head>
 <body>
 <!-- SVG 심볼 정의 (중복 제거용) -->
@@ -94,8 +94,8 @@
 <!-- 영상 주소는 JS 가 망 상태를 보고 고른다(고화질 4.2MB / 가벼운 985KB / 사진만).
      HTML 에 주소를 박아 두면 망이 느려도 고화질부터 받기 시작한다. -->
 <video id="cinemaVideo" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback
-  data-src-full="public/videos/main-portrait.mp4?v=167"
-  data-src-light="public/videos/main-portrait-light.mp4?v=167"></video>
+  data-src-full="public/videos/main-portrait.mp4?v=168"
+  data-src-light="public/videos/main-portrait-light.mp4?v=168"></video>
 <div class="cinema-scrim"></div>
 </div>
 <div class="cinema-track" id="cinemaTrack">
@@ -333,9 +333,9 @@
 </div>
 </section><div class="divider reveal"></div><section class="scene">
 <div class="scene-img-wrap">
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-0.JPG?v=167" style="aspect-ratio:3/2"/>
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-1.JPG?v=167" style="aspect-ratio:3/2"/>
-<img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG?v=167" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-0.JPG?v=168" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-1.JPG?v=168" style="aspect-ratio:3/2"/>
+<img alt="함께 찬양" loading="lazy" src="public/images/story-09-2.JPG?v=168" style="aspect-ratio:3/2"/>
 </div>
 <div class="scene-text reveal">
 <p class="ch-label">07. 공동체</p>
@@ -436,12 +436,27 @@
 <!-- ════════════════════════════════
      FLOATING BUTTONS (MUSIC + SHARE)
 ════════════════════════════════ -->
-<button aria-label="친구에게 보내기" class="share-fab" onclick="openShare()">
-<svg fill="none" stroke="currentColor" stroke-width="1.7" viewbox="0 0 24 24" aria-hidden="true">
-<rect x="3" y="5.5" width="18" height="13" rx="2"></rect>
-<path d="M3.5 7l8.5 6 8.5-6"></path>
+<!-- 흰 크레파스로 그린 동그라미와 공유 기호. 거친 선은 SVG 필터(번짐 + 종이 결)로 낸다 -->
+<button aria-label="공유하기" class="share-fab" onclick="openShare()">
+<svg viewbox="0 0 56 56" aria-hidden="true">
+<defs>
+<filter id="crayon" x="-20%" y="-20%" width="140%" height="140%">
+<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="wob"></feTurbulence>
+<feDisplacementMap in="SourceGraphic" in2="wob" scale="1.4" xChannelSelector="R" yChannelSelector="G" result="rough"></feDisplacementMap>
+<feTurbulence type="fractalNoise" baseFrequency="2.4" numOctaves="1" seed="8" result="grain"></feTurbulence>
+<feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  3.2 0 0 0 -0.95" result="mask"></feColorMatrix>
+<feComposite in="rough" in2="mask" operator="in"></feComposite>
+</filter>
+</defs>
+<g filter="url(#crayon)" fill="none" stroke="#fbf8f1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4">
+<path d="M28 6.6C40.4 6.2 49.4 15.6 49.2 28.1C49 40.5 39.8 49.5 27.7 49.3C15.5 49.1 6.7 39.9 6.9 27.7C7.1 16.3 15.8 7.5 26.8 7C29.9 6.9 32.6 7.4 34.6 8.3" stroke-width="2.7"></path>
+<path d="M34.2 15.9C36 15.8 37.4 17.2 37.3 19C37.2 20.8 35.8 22.1 34 22C32.3 21.9 31 20.5 31.1 18.8C31.2 17.2 32.5 15.9 34.2 15.9Z"></path>
+<path d="M20.8 24.9C22.6 24.8 24 26.2 23.9 28C23.8 29.8 22.4 31.1 20.6 31C18.9 30.9 17.6 29.5 17.7 27.8C17.8 26.2 19.1 24.9 20.8 24.9Z"></path>
+<path d="M34.1 33.9C35.9 33.8 37.3 35.2 37.2 37C37.1 38.8 35.7 40.1 33.9 40C32.2 39.9 30.9 38.5 31 36.8C31.1 35.2 32.4 33.9 34.1 33.9Z"></path>
+<path d="M23.6 26.3L31.2 21.2"></path>
+<path d="M23.5 29.8L31.3 35.1"></path>
+</g>
 </svg>
-<span class="fab-label" aria-hidden="true">친구에게 보내기</span>
 </button>
 <!-- ════════════════════════════════
      SHARE BOTTOM SHEET MODAL
@@ -761,11 +776,11 @@
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 <!-- ─── JavaScript (통합 스크립트) ─── -->
-<script src="src/js/i18n.js?v=167" defer></script>
-<script src="src/js/bible.js?v=167" defer></script>
-<script src="src/js/songs.js?v=167" defer></script>
-<script src="src/js/members.js?v=167" defer></script>
-<script src="src/js/app.js?v=167" defer></script>
+<script src="src/js/i18n.js?v=168" defer></script>
+<script src="src/js/bible.js?v=168" defer></script>
+<script src="src/js/songs.js?v=168" defer></script>
+<script src="src/js/members.js?v=168" defer></script>
+<script src="src/js/app.js?v=168" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
