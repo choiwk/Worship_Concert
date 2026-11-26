@@ -574,19 +574,21 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .share-kakao:active { transform: scale(.98); }
 .share-kakao:focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; }
 
+/* 시안대로 가로로 나란히 — 아이콘 위, 글자 아래 */
 .share-options {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   padding: 0 20px;
 }
 
 .share-opt {
-  min-height: 48px;
+  min-height: 76px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--paper-warm);
@@ -595,15 +597,13 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   cursor: pointer;
   transition: transform .12s, background .2s;
 }
-.share-opt svg { width: 20px; height: 20px; flex: none; }
-.share-opt:active { transform: scale(.98); }
+.share-opt svg { width: 24px; height: 24px; flex: none; }
+.share-opt:active { transform: scale(.97); }
 .share-opt:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
-/* QR 은 점선 — 화면 밖(옆자리)으로 건네는 다른 종류의 공유라는 표시 */
-.share-opt-qr { border-style: dashed; border-color: #cdbfa8; background: transparent; color: var(--ink-soft); }
-.share-opt-qr[aria-expanded="true"] { background: var(--clay-wash); border-style: solid; }
+.share-opt[aria-expanded="true"] { background: var(--clay-wash); }
 
 .share-opt-label {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--ink);
   text-align: center;
   word-break: keep-all;
